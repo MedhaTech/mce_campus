@@ -20,7 +20,7 @@ jobs:
           echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
           ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{secrets.HOSTNAME}} '
             cd /var/www/html/campus &&
-            git pull origin main '
+            sudo git pull origin main '
             
 
       
