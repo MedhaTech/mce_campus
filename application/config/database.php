@@ -71,18 +71,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | the query builder class.
 */
 $active_group = 'default';
+
+if($_SERVER['HTTP_HOST']=="127.0.0.1" || $_SERVER['HTTP_HOST']=="localhost"){
+	$active_group = 'default';
+}
+
+if($_SERVER['HTTP_HOST']=="campus.mcehassan.ac.in"){
+	$active_group = 'prod';
+}
+
 $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => '',
-	'password' => '',
-	'database' => '',
+	'hostname' => '15.206.117.153',
+	'username' => 'campus-portal',
+	'password' => 'Campus@2024',
+	'database' => 'campus_portal',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
+	'db_debug' => (ENVIRONMENT !== 'development'),
 	'cache_on' => FALSE,
 	'cachedir' => '',
 	'char_set' => 'utf8',
@@ -94,3 +103,26 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+$db['prod'] = array(
+	'dsn'	=> '',
+	'hostname' => '15.206.117.153',
+	'username' => 'campus-portal',
+	'password' => 'Campus@2024',
+	'database' => 'campus_portal',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => (ENVIRONMENT !== 'development'),
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
