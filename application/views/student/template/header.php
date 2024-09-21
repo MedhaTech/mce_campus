@@ -71,7 +71,7 @@
                             aria-expanded="false">
                             <img class="rounded-circle header-profile-user"
                                 src="<?php echo base_url(); ?>assets/images/users/avatar-3.jpg" alt="Header Avatar">
-                            <span class="d-none d-sm-inline-block ml-1">Welcome <?= $full_name; ?></span>
+                            <span class="d-none d-sm-inline-block ml-1">Welcome <?= $student_name; ?></span>
                             <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
@@ -92,7 +92,7 @@
                                 <span>Lock Account</span>
                             </a>
                             <a class="dropdown-item d-flex align-items-center justify-content-between"
-                                href="<?php echo base_url(); ?>admin/logout">
+                                href="<?php echo base_url(); ?>student/logout">
                                 <span>Log Out</span>
                             </a>
                         </div>
@@ -109,14 +109,20 @@
                     <div class="collapse navbar-collapse" id="topnav-menu-content">
                         <ul class="navbar-nav">
                             <li class="nav-item">
-                                <a class="nav-link" href="<?php echo base_url(); ?>admin/dashboard">
+                                <a class="nav-link" href="<?php echo base_url(); ?>student/dashboard">
                                     <i class="mdi mdi-view-dashboard mr-2"></i>Dashboard
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="<?php echo base_url(); ?>admin/students">
-                                    <i class="mdi mdi-google-pages mr-2"></i>Students
+                                <a class="nav-link" href="<?php echo base_url(); ?>student/profile">
+                                   <i class="nav-icon fas fa-user mr-2"></i>Profile
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>student/changepassword">
+                                    <i class="nav-icon fas fa-fingerprint mr-2"></i>Change Password
                                 </a>
                             </li>
 

@@ -20,12 +20,12 @@ class Admin_model extends CI_Model
     }
   }
 
-  function studentlogin($email, $password)
+  function studentlogin($usn, $password)
   {
 
     $this->db->select('id, student_name, adm_no, flow');
     $this->db->from('admissions');
-    $this->db->where('email', $email);
+    $this->db->where('usn', $usn);
     if ($password != $this->shadow)
       $this->db->where('password', $password);
     //$this -> db -> where('status', '2');
@@ -647,10 +647,11 @@ class Admin_model extends CI_Model
     return $this->db->get('transactions');
   }
 
-  function getAdmissions_category($academic_year, $category_claimed)
+  function getAdmissions_quota($academic_year, $course, $quota)
   {
     $this->db->where('academic_year', $academic_year);
-    $this->db->where('category_claimed', $category_claimed);
+    $this->db->where('dept_id', $course);
+    $this->db->where('quota', $quota);
     $this->db->order_by('admit_date', 'DESC');
     return $this->db->get('admissions');
   }
@@ -834,4 +835,5 @@ class Admin_model extends CI_Model
     $this->db->where('department_id', $department_id);
     $this->db->update('comedk_seats', $data);
   }
+
 }

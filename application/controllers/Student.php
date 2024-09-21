@@ -17,7 +17,7 @@ class Student extends CI_Controller
 
 	function index()
 	{
-		$this->form_validation->set_rules('usn', 'USN', 'trim|required|valid_email');
+		$this->form_validation->set_rules('usn', 'USN', 'trim|required');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
 		if ($this->form_validation->run() == FALSE) {
 			$data['page_title'] = "Student Login";
@@ -25,7 +25,7 @@ class Student extends CI_Controller
 
 			$this->login_template->show('student/login', $data);
 		} else {
-			$email = $this->input->post('email');
+			$usn = $this->input->post('usn');
 			redirect('student/dashboard', 'refresh');
 		}
 	}
@@ -49,7 +49,7 @@ class Student extends CI_Controller
 			}
 			return TRUE;
 		} else {
-			$this->form_validation->set_message('check_database', 'Invalid Email or password');
+			$this->form_validation->set_message('check_database', 'Invalid Usn or password');
 			return false;
 		}
 	}
@@ -63,54 +63,177 @@ class Student extends CI_Controller
 			$data['student_name'] = $student_session['student_name'];
 			$data['page_title'] = "Dashboard";
 			$data['menu'] = "dashboard";
+ 
+			$this->student_template->show('student/dashboard', $data);
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
 
-			$flow = $this->admin_model->getDetailsFilter('flow', $data['id'], 'admissions')->row()->flow;
+	function profile()
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$data['id'] = $student_session['id'];
+			$student_id = $student_session['id'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Profile";
+			$data['menu'] = "profile";
 
-			if ($flow) {
-				$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
-				$data['entranceDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
-				$data['personalDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
-				$data['parentDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
-				$data['educations_details'] = $this->admin_model->getDetailsbyfield($student_id, 'student_id', 'student_education_details')->result();
-				$data['flow_status'] = $flow;
+			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
+ 
+			$this->student_template->show('student/profile', $data);
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
 
-				$upload_path = "./assets/students/$student_id/";
+	function personaldetails()
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$data['id'] = $student_session['id'];
+			$student_id = $student_session['id'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Edit Personal Details";
+			$data['menu'] = "editpersonaldetails";
 
-				// Check if the directory exists
-				$photo = null;
-				if (is_dir($upload_path)) {
-					// Get list of files in the directory
-					$files = scandir($upload_path);
+			$data['username'] = $student_session['username'];
+			$data['id'] = $student_session['id'];
+			$data['menu'] = "personaldetails";
+			$data['userTypes'] = $this->globals->userTypes();
+			$data['states'] = array(" " => "Select State") + $this->globals->states();
+			$data['religion_option'] = array(" " => "Select Religion") + $this->globals->religion();
+			$data['caste_option'] = array(" " => "Select Caste") + $this->globals->caste();
+			$data['countries'] = $this->admin_model->getCountries();
+			$data['states1']= $this->admin_model->get_states();
+			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
 
-					// Remove . and .. from the list
-					$files = array_diff($files, array('.', '..'));
+			$this->load->library('form_validation');
 
-					// Filter for photo files
-					$image_extensions = array('jpg', 'jpeg', 'png');
-					foreach ($files as $file) {
-						$ext = pathinfo($file, PATHINFO_EXTENSION);
-						$filename = pathinfo($file, PATHINFO_FILENAME);
+			$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+			// $data['admissions'] = $this->admin_model->get_details_by_id($id, 'id', 'admissions');
 
-						// Check if the file is an image and contains keywords like 'profile' or the student's ID
-						if (
-							in_array(strtolower($ext), $image_extensions) &&
-							(stripos($filename, 'profile') !== false)
-						) {
-							$photo = $upload_path . $file;  // Use the first matching photo found
-							break;
-						}
-					}
+			$this->form_validation->set_rules('student_name', 'Student Name', 'required');
+			$this->form_validation->set_rules('mobile', 'Mobile', 'required');
+			$this->form_validation->set_rules('email', 'Email Id', 'required');
+			$this->form_validation->set_rules('aadhaar', 'Aadhar Number', 'required');
+			$this->form_validation->set_rules('date_of_birth', 'Date of Birth', 'required');
+			$this->form_validation->set_rules('gender', 'Gender', 'required');
+			$this->form_validation->set_rules('sports', 'Sports', 'required');
+			$this->form_validation->set_rules('blood_group', 'Blood Group', 'required');
+			$this->form_validation->set_rules('place_of_birth', 'Place of Birth', 'required');
+			$this->form_validation->set_rules('country_of_birth', '	Country of Birth', 'required');
+			$this->form_validation->set_rules('nationality', 'Nationality', 'required');
+			$this->form_validation->set_rules('religion', 'Religion', 'required');
+			$this->form_validation->set_rules('caste', 'Caste', 'required');
+			$this->form_validation->set_rules('current_address', 'Current Address', 'required');
+			$this->form_validation->set_rules('present_address', 'Present Address', 'required');
 
-					$data['files'] = $files;
+			if ($this->form_validation->run() === FALSE) {
+
+				$data['action'] = 'student/personaldetails/' . $data['id'];
+
+				$personalDetails = $this->admin_model->getDetails('admissions', $data['id'])->row();
+
+				$data['student_name'] = $personalDetails->student_name;
+				$data['mobile'] = $personalDetails->mobile;
+				$data['email'] = $personalDetails->email;
+				$data['aadhaar'] = $personalDetails->aadhaar;
+				$data['date_of_birth'] = $personalDetails->date_of_birth;
+				$data['gender'] = $personalDetails->gender;
+				$data['sports'] = $personalDetails->sports;
+				$data['blood_group'] = $personalDetails->blood_group;
+				$data['place_of_birth'] = $personalDetails->place_of_birth;
+				$data['country_of_birth'] = $personalDetails->country_of_birth;
+				$data['nationality'] = $personalDetails->nationality;
+				$data['religion'] = $personalDetails->religion;
+				$data['caste'] = $personalDetails->caste;
+				$data['mother_tongue'] = $personalDetails->mother_tongue;
+				$data['current_address'] = $personalDetails->current_address;
+				$data['present_address'] = $personalDetails->present_address;
+				$this->student_template->show('student/personal_details', $data);
+			} else {
+				$updateDetails = array(
+					'student_name' => $this->input->post('student_name'),
+					'mobile' => $this->input->post('mobile'),
+					'email' => $this->input->post('email'),
+					'aadhaar' => $this->input->post('aadhaar'),
+					'date_of_birth' => $this->input->post('date_of_birth'),
+					'gender' => $this->input->post('gender'),
+					'sports' => $this->input->post('sports'),
+					'blood_group' => $this->input->post('blood_group'),
+					'place_of_birth' => $this->input->post('place_of_birth'),
+					'country_of_birth' => $this->input->post('country_of_birth'),
+					'nationality' => $this->input->post('nationality'),
+					'religion' => $this->input->post('religion'),
+					'caste' => $this->input->post('caste'),
+					'mother_tongue' => $this->input->post('mother_tongue'),
+					'current_address' => $this->input->post('current_address'),
+					'present_address' => $this->input->post('present_address'),
+				);
+				// print_r($updateDetails);
+				// die();
+				$result = $this->admin_model->updateDetails($data['id'], $updateDetails, 'admissions');
+
+				// var_dump($this->db->last_query());
+				// die();
+				if ($result) {
+					$this->session->set_flashdata('message', 'Personal Details updated successfully...!');
+					$this->session->set_flashdata('status', 'alert-success');
 				} else {
-					$data['files'] = array();
+					$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
+					$this->session->set_flashdata('status', 'alert-warning');
 				}
 
-				$data['student_photo'] = $photo;  // Pass the photo path to the view
+				redirect('student/profile', 'refresh');
+			}
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
 
-				$this->student_template->show('student/finish', $data);
+	function changePassword()
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$data['id'] = $student_session['id'];
+			$student_id = $student_session['id'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Dashboard";
+			$data['menu'] = "dashboard";
+			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
+
+			// $this->form_validation->set_rules('oldPassword', 'Old Password', 'required');
+			$this->form_validation->set_rules('oldpassword', 'Old Password', 'required');
+			$this->form_validation->set_rules('newpassword', 'New Password', 'required');
+			$this->form_validation->set_rules('confirmpassword', 'Confirm Password', 'required|matches[newpassword]');
+
+			if ($this->form_validation->run() === FALSE) {
+
+				$data['action'] = 'student/changePassword/' . $data['id'];
+				$this->student_template->show('student/changepassword', $data);
 			} else {
-				$this->student_template->show('student/Dashboard', $data);
+				// $oldPassword = $this->input->post('oldPassword');
+				$oldpassword = $this->input->post('oldpassword');
+				$newpassword = $this->input->post('newpassword');
+				$confirmpassword = $this->input->post('confirmpassword');
+
+				if ($oldpassword == $newpassword) {
+					$this->session->set_flashdata('message', 'Old and New Password should not be same...!');
+					$this->session->set_flashdata('status', 'alert-warning');
+				} else {
+					$updateDetails = array('password' => md5($newpassword));
+					$result = $this->admin_model->changePassword($data['id'], $oldpassword, $updateDetails, 'admissions');
+					if ($result) {
+						$this->session->set_flashdata('message', 'Password udpated successfully...!');
+						$this->session->set_flashdata('status', 'alert-success');
+					} else {
+						$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
+						$this->session->set_flashdata('status', 'alert-warning');
+					}
+				}
+				redirect('/student/changePassword', 'refresh');
 			}
 		} else {
 			redirect('student', 'refresh');

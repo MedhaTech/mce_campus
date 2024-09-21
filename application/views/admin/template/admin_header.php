@@ -14,6 +14,16 @@
     <link href="<?php echo base_url(); ?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>assets/css/theme.min.css" rel="stylesheet" type="text/css" />
 
+    <!-- Plugins css -->
+    <link rel="stylesheet"
+        href="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet"
+        href="<?php echo base_url(); ?>assets/plugins/datatables/responsive.bootstrap4.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet"
+        href="<?php echo base_url(); ?>assets/plugins/datatables/buttons.bootstrap4.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet"
+        href="<?php echo base_url(); ?>assets/plugins/datatables/select.bootstrap4.css" rel="stylesheet" type="text/css">
+
 </head>
 
 <!-- Begin page -->
@@ -116,7 +126,19 @@
 
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>admin/students">
-                                    <i class="mdi mdi-google-pages mr-2"></i>Students
+                                  <i class="nav-icon fas fa-users mr-2"></i>Students
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>admin/reports">
+                                  <i class="nav-icon fas fa-chart-pie mr-2"></i>Reports
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>admin/changepassword">
+                                    <i class="nav-icon fas fa-fingerprint mr-2"></i>Change Password
                                 </a>
                             </li>
 
