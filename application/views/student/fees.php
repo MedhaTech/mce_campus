@@ -185,15 +185,19 @@
                                 <tbody>
                                     <?php
                                     foreach ($fees as $fee) {
+                                        $college_fee_demand = $fee->college_fee_demand;
+                                        $college_fee_collection = $fee->college_fee_collection;
+                                        $college_fee_balance = number_format($fee->college_fee_demand - $fee->college_fee_collection, 2);
+                                        $college_pay_btn = ($college_fee_balance) ? anchor('', "PAY FEE", 'class="btn btn-danger btn-sm"') : null;
                                         echo "<tr>";
                                         echo "<td>" . $fee->academic_year . "</td>";
                                         echo "<td class='text-center'>" . $fee->year . "</td>";
                                         echo "<td class='text-right'>" . $fee->corpus_fee_demand . "</td>";
                                         echo "<td class='text-right'>0</td>";
                                         echo "<td class='text-right'>0</td>";
-                                        echo "<td class='text-right'>" . indian_number_format($fee->college_fee_demand) . "</td>";
-                                        echo "<td class='text-right'>0</td>";
-                                        echo "<td class='text-right'>0</td>";
+                                        echo "<td class='text-right'>" . indian_number_format($college_fee_demand) . "</td>";
+                                        echo "<td class='text-right'>" . indian_number_format($college_fee_collection) . "</td>";
+                                        echo "<td class='text-right'>" . indian_number_format($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
                                         echo "</tr>";
                                     }
                                     ?>
