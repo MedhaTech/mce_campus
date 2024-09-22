@@ -26,6 +26,7 @@ File: App Css
 19. Pricing
 */
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap");
+
 /* 1. Topbar */
 .topnav {
   background: #ffffff;
@@ -40,9 +41,14 @@ File: App Css
 }
 
 .topnav .navbar-nav .nav-link {
-  font-size: .9375rem;
+  font-size: .875rem;
   position: relative;
   padding: 1rem 1.3rem;
+}
+
+.topnav .nav-item .active {
+  /* color: #fff !important; */
+  color: #0e4b99 !important;
 }
 
 @media (min-width: 1200px) {
@@ -150,7 +156,7 @@ File: App Css
   right: 0;
   left: 0;
   z-index: 999;
-  background-color: #2f4050;
+  background-color: #0e4b99;
   padding: 0 calc(24px / 2);
 }
 
@@ -196,7 +202,7 @@ File: App Css
 }
 
 .page-title-box {
-  padding-bottom: 24px;
+  padding-bottom: 14px;
 }
 
 .page-title-box .breadcrumb {
@@ -239,7 +245,7 @@ File: App Css
   height: 36px;
   width: 36px;
   background-color: rgba(255, 255, 255, 0.5);
-  padding: 3px;
+  padding: 1px;
 }
 
 .noti-icon i {

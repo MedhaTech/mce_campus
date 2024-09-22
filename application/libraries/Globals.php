@@ -38,8 +38,7 @@ class Globals
 
     public function currentAcademicYear()
     {
-
-        $details = "2024-2025";
+        $details = "2024-25";
         return $details;
     }
 

@@ -42,6 +42,7 @@ class Student extends CI_Controller
 			foreach ($result as $row) {
 				$sess_array = array(
 					'id' => $row->id,
+					'usn' => $row->usn,
 					'student_name' => $row->student_name,
 					'flow' => $row->flow
 				);
@@ -63,7 +64,7 @@ class Student extends CI_Controller
 			$data['student_name'] = $student_session['student_name'];
 			$data['page_title'] = "Dashboard";
 			$data['menu'] = "dashboard";
- 
+
 			$this->student_template->show('student/dashboard', $data);
 		} else {
 			redirect('student', 'refresh');
@@ -75,13 +76,13 @@ class Student extends CI_Controller
 		if ($this->session->userdata('student_in')) {
 			$student_session = $this->session->userdata('student_in');
 			$data['id'] = $student_session['id'];
-			$student_id = $student_session['id'];
+			$data['usn'] = $student_session['usn'];
 			$data['student_name'] = $student_session['student_name'];
-			$data['page_title'] = "Profile";
-			$data['menu'] = "profile";
+			$data['page_title'] = "My Profile";
+			$data['menu'] = "my_profile";
 
-			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
- 
+			$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+
 			$this->student_template->show('student/profile', $data);
 		} else {
 			redirect('student', 'refresh');
@@ -106,7 +107,7 @@ class Student extends CI_Controller
 			$data['religion_option'] = array(" " => "Select Religion") + $this->globals->religion();
 			$data['caste_option'] = array(" " => "Select Caste") + $this->globals->caste();
 			$data['countries'] = $this->admin_model->getCountries();
-			$data['states1']= $this->admin_model->get_states();
+			$data['states1'] = $this->admin_model->get_states();
 			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
 
 			$this->load->library('form_validation');
@@ -193,6 +194,25 @@ class Student extends CI_Controller
 		}
 	}
 
+	function fees(): void
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$data['id'] = $student_session['id'];
+			$data['usn'] = $student_session['usn'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Fees";
+			$data['menu'] = "profile";
+
+			$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+			$data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
+
+			$this->student_template->show('student/fees', $data);
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
+
 	function changePassword()
 	{
 		if ($this->session->userdata('student_in')) {
@@ -200,18 +220,18 @@ class Student extends CI_Controller
 			$data['id'] = $student_session['id'];
 			$student_id = $student_session['id'];
 			$data['student_name'] = $student_session['student_name'];
-			$data['page_title'] = "Dashboard";
-			$data['menu'] = "dashboard";
+			$data['page_title'] = "Change Password";
+			$data['menu'] = "change_password";
 			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
 
 			// $this->form_validation->set_rules('oldPassword', 'Old Password', 'required');
 			$this->form_validation->set_rules('oldpassword', 'Old Password', 'required');
-			$this->form_validation->set_rules('newpassword', 'New Password', 'required');
+			$this->form_validation->set_rules('newpassword', 'New Password', 'required|min_length[8]|callback_check_password_strength');
 			$this->form_validation->set_rules('confirmpassword', 'Confirm Password', 'required|matches[newpassword]');
 
 			if ($this->form_validation->run() === FALSE) {
 
-				$data['action'] = 'student/changePassword/' . $data['id'];
+				$data['action'] = 'student/changePassword';
 				$this->student_template->show('student/changepassword', $data);
 			} else {
 				// $oldPassword = $this->input->post('oldPassword');
@@ -224,7 +244,7 @@ class Student extends CI_Controller
 					$this->session->set_flashdata('status', 'alert-warning');
 				} else {
 					$updateDetails = array('password' => md5($newpassword));
-					$result = $this->admin_model->changePassword($data['id'], $oldpassword, $updateDetails, 'admissions');
+					$result = $this->admin_model->changePassword($data['id'], $oldpassword, $updateDetails, 'students');
 					if ($result) {
 						$this->session->set_flashdata('message', 'Password udpated successfully...!');
 						$this->session->set_flashdata('status', 'alert-success');
@@ -237,6 +257,22 @@ class Student extends CI_Controller
 			}
 		} else {
 			redirect('student', 'refresh');
+		}
+	}
+
+	public function check_password_strength($password)
+	{
+		// Check for at least one uppercase, one lowercase, one number, and one special character
+		if (
+			preg_match('/[A-Z]/', $password) &&
+			preg_match('/[a-z]/', $password) &&
+			preg_match('/[0-9]/', $password) &&
+			preg_match('/[\W]/', $password)
+		) {
+			return TRUE;
+		} else {
+			$this->form_validation->set_message('check_password_strength', 'The {field} must contain at least one uppercase letter, one lowercase letter, one number, and one special character.');
+			return FALSE;
 		}
 	}
 
