@@ -50,8 +50,8 @@
                             <label for="inputEmail3" class="col-3 col-form-label">Joining Year</label>
                             <div class="col-9 col-form-label">
                                 <?php
-                                if ($details->academic_year != NULL) {
-                                    echo $details->academic_year;
+                                if ($details->admission_year != NULL) {
+                                    echo $details->admission_year;
                                 } else {
                                     echo "--";
                                 }
