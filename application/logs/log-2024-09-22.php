@@ -1816,3 +1816,9 @@ ERROR - 2024-09-22 19:25:27 --> 404 Page Not Found: Assets/js
 ERROR - 2024-09-22 19:26:45 --> 404 Page Not Found: Assets/js
 ERROR - 2024-09-22 19:27:04 --> 404 Page Not Found: Assets/js
 ERROR - 2024-09-22 19:27:52 --> 404 Page Not Found: Assets/js
+ERROR - 2024-09-22 23:11:20 --> Severity: Warning --> A non-numeric value encountered C:\xampp\htdocs\mce_campus\application\views\student\fees.php 190
+ERROR - 2024-09-22 23:11:20 --> Severity: Warning --> A non-numeric value encountered C:\xampp\htdocs\mce_campus\application\views\student\fees.php 190
+ERROR - 2024-09-22 23:14:09 --> Severity: Warning --> Undefined variable $187735 C:\xampp\htdocs\mce_campus\application\views\student\fees.php 200
+ERROR - 2024-09-22 20:30:37 --> 404 Page Not Found: Assets/js
+ERROR - 2024-09-22 20:31:29 --> 404 Page Not Found: Assets/js
+ERROR - 2024-09-22 20:31:31 --> 404 Page Not Found: Assets/js
