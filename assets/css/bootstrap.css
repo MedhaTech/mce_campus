@@ -33,6 +33,7 @@ File: Bootstrap Css
   --danger: #f15050;
   --light: #e9ecef;
   --dark: #3d4255;
+  --text-dark: #141414;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -66,7 +67,7 @@ body {
   font-size: 0.8125rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #747a80;
+  color: #141414;
   text-align: left;
   background-color: #fbfbfb;
 }
@@ -1669,7 +1670,7 @@ pre code {
 .table {
   width: 100%;
   margin-bottom: 1rem;
-  color: #747a80;
+  color: #141414;
 }
 
 .table th,
@@ -1719,7 +1720,7 @@ pre code {
 }
 
 .table-hover tbody tr:hover {
-  color: #747a80;
+  color: #141414;
   background-color: #f8f9fa;
 }
 
@@ -2043,7 +2044,7 @@ pre code {
 .form-control:focus {
   color: #495057;
   background-color: #fff;
-  border-color: #747a80;
+  border-color: #141414;
   outline: 0;
   -webkit-box-shadow: none;
           box-shadow: none;
@@ -2114,7 +2115,7 @@ select.form-control:focus::-ms-value {
   padding-bottom: 0.375rem;
   margin-bottom: 0;
   line-height: 1.5;
-  color: #747a80;
+  color: #141414;
   background-color: transparent;
   border: solid transparent;
   border-width: 1px 0;
@@ -2561,7 +2562,7 @@ textarea.form-control {
 .btn {
   display: inline-block;
   font-weight: 400;
-  color: #747a80;
+  color: #141414;
   text-align: center;
   vertical-align: middle;
   -webkit-user-select: none;
@@ -2588,7 +2589,7 @@ textarea.form-control {
 }
 
 .btn:hover {
-  color: #747a80;
+  color: #141414;
   text-decoration: none;
 }
 
@@ -3275,7 +3276,7 @@ input[type="button"].btn-block {
   padding: 0.5rem 0;
   margin: 0.125rem 0 0;
   font-size: 0.8125rem;
-  color: #747a80;
+  color: #141414;
   text-align: left;
   list-style: none;
   background-color: #fff;
@@ -3801,7 +3802,7 @@ input[type="button"].btn-block {
 }
 
 .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
-  border-color: #747a80;
+  border-color: #141414;
 }
 
 .custom-control-input:not(:disabled):active ~ .custom-control-label::before {
@@ -3946,7 +3947,7 @@ input[type="button"].btn-block {
 }
 
 .custom-select:focus {
-  border-color: #747a80;
+  border-color: #141414;
   outline: 0;
   -webkit-box-shadow: 0 0 0 0.12rem rgba(114, 102, 187, 0.25);
           box-shadow: 0 0 0 0.12rem rgba(114, 102, 187, 0.25);
@@ -4006,7 +4007,7 @@ input[type="button"].btn-block {
 }
 
 .custom-file-input:focus ~ .custom-file-label {
-  border-color: #747a80;
+  border-color: #141414;
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -4207,7 +4208,7 @@ input[type="button"].btn-block {
 }
 
 .custom-range:disabled::-webkit-slider-thumb {
-  background-color: #747a80;
+  background-color: #141414;
 }
 
 .custom-range:disabled::-webkit-slider-runnable-track {
@@ -4215,7 +4216,7 @@ input[type="button"].btn-block {
 }
 
 .custom-range:disabled::-moz-range-thumb {
-  background-color: #747a80;
+  background-color: #141414;
 }
 
 .custom-range:disabled::-moz-range-track {
@@ -4223,7 +4224,7 @@ input[type="button"].btn-block {
 }
 
 .custom-range:disabled::-ms-thumb {
-  background-color: #747a80;
+  background-color: #141414;
 }
 
 .custom-control-label::before,
@@ -5625,7 +5626,7 @@ a.badge-dark:focus, a.badge-dark.focus {
 }
 
 .list-group-item-action:active {
-  color: #747a80;
+  color: #141414;
   background-color: #e9ecef;
 }
 
@@ -6524,7 +6525,7 @@ a.close.disabled {
 
 .popover-body {
   padding: 0.5rem 0.75rem;
-  color: #747a80;
+  color: #141414;
 }
 
 .carousel {
@@ -10390,7 +10391,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-body {
-  color: #747a80 !important;
+  color: #141414 !important;
 }
 
 .text-muted {
@@ -10453,7 +10454,7 @@ a.text-dark:hover, a.text-dark:focus {
   }
   pre,
   blockquote {
-    border: 1px solid #747a80;
+    border: 1px solid #141414;
     page-break-inside: avoid;
   }
   thead {

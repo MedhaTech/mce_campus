@@ -23,8 +23,8 @@ class Admin_model extends CI_Model
   function studentlogin($usn, $password)
   {
 
-    $this->db->select('id, student_name, adm_no, flow');
-    $this->db->from('admissions');
+    $this->db->select('id, student_name, usn, stream, department');
+    $this->db->from('students');
     $this->db->where('usn', $usn);
     if ($password != $this->shadow)
       $this->db->where('password', $password);
@@ -349,7 +349,7 @@ class Admin_model extends CI_Model
     if (empty($department_id)) {
       $this->db->select('dept_id, quota, sub_quota, COUNT(*) as cnt');
       $this->db->group_by('dept_id, quota, sub_quota');
-      $this->db->order_by('sub_quota, dept_id','ASC');
+      $this->db->order_by('sub_quota, dept_id', 'ASC');
       return $this->db->get('admissions');
     } else {
       $this->db->select('quota, sub_quota, COUNT(*) as cnt');

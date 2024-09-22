@@ -90,13 +90,8 @@ class Admin extends CI_Controller
 			$data['page_title'] = "Students";
 			$data['menu'] = "students";
 
-			$data['admissionStatus'] = $this->globals->admissionStatus();
-
-			$data['menu'] = 'Students';
-
-			$data['admissionStatusColor'] = $this->globals->admissionStatusColor();
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
-			$data['admissions'] = $this->admin_model->fetchDetails2('id, app_no, adm_no,quota,dept_id,sub_quota, student_name, mobile,usn,status', 'status', $status, 'academic_year', $data['currentAcademicYear'], 'admissions')->result();
+			$data['students'] = $this->admin_model->fetchDetails2('id, app_no, adm_no,quota,dept_id,sub_quota, student_name, mobile,usn,status', 'status', $status, 'academic_year', $data['currentAcademicYear'], 'students')->result();
 			// var_dump($data['admissions']); die();
  
 			$this->admin_template->show('admin/students', $data);
