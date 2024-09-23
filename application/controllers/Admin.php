@@ -304,6 +304,64 @@ class Admin extends CI_Controller
 		}
 	}
 
+	public function profile()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Profile';
+			$data['menu'] = 'profileDetails';
+
+			$this->form_validation->set_rules('usn', 'USN', 'required');
+			if ($this->form_validation->run() === FALSE) {
+				$data['action'] = 'admin/profileDetails';
+				$this->admin_template->show('admin/profileDetails', $data);
+			} else {
+
+				$usn = $this->input->post('usn');
+				$details = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+				if ($details) {
+					$student_id = $details->id;
+					$encryptId = base64_encode($student_id);
+					redirect('admin/profileDetails/' . $encryptId, 'refresh');
+				} else {
+					redirect('admin/profileDetails', 'refresh');
+				}
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+	public function profileDetails()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Collect Fee';
+			$data['menu'] = 'profileDetail';
+			$encryptId = $this->input->post('usn');
+			$data['encryptId'] = $encryptId;
+			$student_id = $encryptId;
+			$data['stud_id'] = $student_id;
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($student_id, 'usn','students')->row();
+		//   var_dump($this->db->last_query());
+			
+			$this->admin_template->show('admin/profileDetails', $data);
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
 	function changepassword()
 	{
 		if ($this->session->userdata('logged_in')) {

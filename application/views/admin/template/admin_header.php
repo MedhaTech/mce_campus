@@ -41,6 +41,19 @@
                         </span>
                     </a>
 
+                    <?php echo form_open_multipart('admin/profileDetails/' , 'class="user"'); ?>
+                    <div class="input-group mt-3 ml-3">
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Enter USN"
+                            aria-label="Search" id="usn" name="usn" aria-describedby="basic-addon2"
+                            value="<?php echo (set_value('usn')) ? set_value('usn') : $usn; ?>">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search fa-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <?php echo form_close(); ?>
+
                     <button type="button"
                         class="btn btn-sm mr-2 font-size-16 d-lg-none header-item waves-effect waves-light"
                         data-toggle="collapse" data-target="#topnav-menu-content">
@@ -51,11 +64,11 @@
                 <div class="d-flex align-items-center">
 
                     <div class="dropdown d-inline-block ml-2">
-                        <button type="button" class="btn header-item noti-icon waves-effect waves-light"
+                        <!-- <button type="button" class="btn header-item noti-icon waves-effect waves-light"
                             id="page-header-search-dropdown" data-toggle="dropdown" aria-haspopup="true"
                             aria-expanded="false">
                             <i class="mdi mdi-magnify"></i>
-                        </button>
+                        </button> -->
                         <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
                             aria-labelledby="page-header-search-dropdown">
 
