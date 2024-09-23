@@ -452,8 +452,8 @@ class Admin_model extends CI_Model
   function set_session($email, $mobile)
   {
 
-    $this->db->select('id, student_name, adm_no, flow');
-    $this->db->from('admissions');
+    $this->db->select('id, student_name,usn');
+    $this->db->from('students');
     $this->db->where('email', $email);
 
     $this->db->where('mobile', $mobile);
@@ -835,5 +835,20 @@ class Admin_model extends CI_Model
     $this->db->where('department_id', $department_id);
     $this->db->update('comedk_seats', $data);
   }
+
+
+  public function get_total_amount($year, $usn, $payment_mode) {
+    
+    $this->db->select('SUM(amount) AS total_amount');
+    $this->db->from('transactions');
+    $this->db->where('year', $year);
+    $this->db->where('reg_no', $usn);
+    $this->db->where('payment_mode', $payment_mode);
+
+    $query = $this->db->get();
+    $result = $query->row();
+    return $result ? $result->total_amount : 0;
+}
+
 
 }

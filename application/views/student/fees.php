@@ -185,19 +185,60 @@
                                 <tbody>
                                     <?php
                                     foreach ($fees as $fee) {
+
+                                        $corpus_fee_demand = $fee->corpus_fee_demand;
+                                        $corpus_fee_balance= $corpus_fee_demand - $this->admin_model->get_total_amount($student->year,$student->usn,1);
+
+                                        if($corpus_fee_balance>0)
+                                        {
+                                            $corpus_pay_btn ='<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
+                                            <input type="hidden" name="usn" id="usn" value="' . htmlspecialchars($student->usn) . '">
+                                            <input type="hidden" name="name" id="name" value="' . htmlspecialchars($student->student_name) . '">
+                                            <input type="hidden" name="email" id="email" value="' . htmlspecialchars($student->email) . '">
+                                            <input type="hidden" name="aided_unaided" id="aided_unaided" value="' . htmlspecialchars($student->sub_quota) . '">
+                                            <input type="hidden" name="mobile" id="mobile" value="' . htmlspecialchars($student->student_number) . '">
+                                            <input type="hidden" name="amount" id="amount" value="' . htmlspecialchars($corpus_fee_balance) . '">
+                                             <input type="hidden" name="year" id="year" value="' . htmlspecialchars($student->year) . '">
+                                           <input type="hidden" name="payment_mode" id="payment_mode" value="1">
+                                            <button type="submit" class="btn btn-danger btn-sm" name="Update" id="Update">PAY FEE</button>
+                                        </form>';
+                                        }
+                                        else
+                                        {
+                                            $corpus_pay_btn='';
+                                        }
                                         $college_fee_demand = $fee->college_fee_demand;
                                         $college_fee_collection = $fee->college_fee_collection;
-                                        $college_fee_balance = number_format($fee->college_fee_demand - $fee->college_fee_collection, 2);
-                                        $college_pay_btn = ($college_fee_balance) ? anchor('', "PAY FEE", 'class="btn btn-danger btn-sm"') : null;
+                                        $college_fee = number_format($fee->college_fee_demand - $fee->college_fee_collection, 2);
+                                        $college_fee_balance= $college_fee - $this->admin_model->get_total_amount($student->year,$student->usn,0);
+                                        
+                                        if($college_fee_balance>0)
+                                        {
+                                            $college_pay_btn ='<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
+                                            <input type="hidden" name="usn" id="usn" value="' . htmlspecialchars($student->usn) . '">
+                                            <input type="hidden" name="name" id="name" value="' . htmlspecialchars($student->student_name) . '">
+                                            <input type="hidden" name="email" id="email" value="' . htmlspecialchars($student->email) . '">
+                                            <input type="hidden" name="aided_unaided" id="aided_unaided" value="' . htmlspecialchars($student->sub_quota) . '">
+                                            <input type="hidden" name="mobile" id="mobile" value="' . htmlspecialchars($student->student_number) . '">
+                                            <input type="hidden" name="amount" id="amount" value="' . htmlspecialchars($college_fee) . '">
+                                           <input type="hidden" name="payment_mode" id="payment_mode" value="0">
+                                            <button type="submit" class="btn btn-danger btn-sm" name="Update" id="Update">PAY FEE</button>
+                                        </form>';
+                                        }
+                                        else
+                                        {
+                                            $college_pay_btn='';
+                                        }
+                                        // $college_pay_btn = ($college_fee_balance) ? anchor('', "PAY FEE", 'class="btn btn-danger btn-sm"') : null;
                                         echo "<tr>";
                                         echo "<td>" . $fee->academic_year . "</td>";
                                         echo "<td class='text-center'>" . $fee->year . "</td>";
                                         echo "<td class='text-right'>" . $fee->corpus_fee_demand . "</td>";
                                         echo "<td class='text-right'>0</td>";
-                                        echo "<td class='text-right'>0</td>";
+                                        echo "<td class='text-right'>" . indian_number_format($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
                                         echo "<td class='text-right'>" . indian_number_format($college_fee_demand) . "</td>";
                                         echo "<td class='text-right'>" . indian_number_format($college_fee_collection) . "</td>";
-                                        echo "<td class='text-right'>" . indian_number_format($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
+                                        echo "<td class='text-right'>" . indian_number_format($college_fee) . '  ' . $college_pay_btn . "</td>";
                                         echo "</tr>";
                                     }
                                     ?>
