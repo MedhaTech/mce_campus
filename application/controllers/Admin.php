@@ -71,7 +71,7 @@ class Admin extends CI_Controller
 			$data['enquiryStatus'] = $this->globals->enquiryStatus();
 			$data['enquiryStatusColor'] = $this->globals->enquiryStatusColor();
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
- 
+
 			$this->admin_template->show('admin/dashboard', $data);
 		} else {
 			redirect('admin', 'refresh');
@@ -93,7 +93,7 @@ class Admin extends CI_Controller
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
 			$data['students'] = $this->admin_model->fetchDetails2('id, app_no, adm_no,quota,dept_id,sub_quota, student_name, mobile,usn,status', 'status', $status, 'academic_year', $data['currentAcademicYear'], 'students')->result();
 			// var_dump($data['admissions']); die();
- 
+
 			$this->admin_template->show('admin/students', $data);
 		} else {
 			redirect('admin', 'refresh');
@@ -115,6 +115,115 @@ class Admin extends CI_Controller
 			$this->admin_template->show('admin/reports', $data);
 		} else {
 			redirect('admin', 'refresh');
+		}
+	}
+
+	public function fee_details()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Fee Details Report';
+			$data['menu'] = 'reports';
+
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['academicYears'] = array("" => "Select") + $this->globals->academicYears();
+			$data['quota_options'] = array("0" => "All") + $this->globals->quota();
+			$data['department_options'] = array("0" => "All") + $this->departments();
+
+
+			$this->admin_template->show('admin/report_fee_details', $data);
+
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+	public function fee_details_report()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Fee Details Report';
+			$data['menu'] = 'reports';
+
+			$academic_year = $this->input->post('academic_year');
+			$department = $this->input->post('department');
+			$quota = $this->input->post('quota');
+			$year = $this->input->post('year');
+
+			$results = $this->admin_model->get_fee_details($academic_year, $department, $quota, $year)->result();
+			if ($results) {
+				$table_setup = array('table_open' => '<table class="table table-bordered" border="1" id="example2" >');
+				$this->table->set_template($table_setup);
+				$print_fields = array('SL. No.', 'STUDENT NAME', 'USN', 'College Code', 'EMAIL', 'Gender', 'AADHAR NUMBER', 'Quota', 'Sub Quota', 'Category Allotted', 'Category Claimed', 'Caste', 'Sub caste', 'Father Number', 'Student Number', 'State', 'Country', 'Stream', 'Department', 'Year', 'TOTAL UNIVERSITY OTHER FEE', 'COLLEGE OTHER FEE','EXAM FEE', 'TUITION FEE', 'College fee demand', 'College fee collection', 'COLLEGE FEE BALANCE', 'RECEIPT-No & Date', 'ONLINE PAYMENT DETAILS', 'REMARKS', 'Comments', 'Corpus fee demand', 'Corpus fee collection', 'CORPUS FEE Balance', 'RECEIPT-No & Date', 'ONLINE PAYMENT DETAILS', 'REMARKS', 'Comments');
+				$this->table->set_heading($print_fields);
+				$i = 1;
+				foreach ($results as $results1) {
+					$result_array = array(
+						$i++,
+						$results1->student_name,
+						$results1->usn,
+						$results1->college_code,
+						$results1->email,
+						$results1->gender,
+						$results1->aadhar_number,
+						$results1->quota,
+						$results1->sub_quota,
+						$results1->category_allotted,
+						$results1->category_claimed,
+						$results1->caste,
+						$results1->sub_caste,
+						$results1->father_number,
+						$results1->student_number,
+						$results1->state,
+						$results1->country,
+						$results1->stream,
+						$results1->department,
+						$results1->year,
+						$results1->total_university_other_fee,
+						$results1->college_other_fees,
+						$results1->exam_fee,
+						$results1->tuition_fee,
+						$results1->college_fee_demand,
+						$results1->college_fee_collection,
+						$results1->balance,
+						$results1->college_receipts,
+						$results1->college_payments,
+						$results1->college_remarks,
+						$results1->college_comments,
+						$results1->corpus_fee_demand,
+						$results1->corpus_fee_collection,
+						$results1->corpus_balance,
+						$results1->corpus_receipts,
+						$results1->corpus_payments,
+						$results1->corpus_remarks,
+						$results1->corpus_comments
+					);
+					$this->table->add_row($result_array);
+				}
+				$details = $this->table->generate();
+
+
+			} else {
+				$details = 'No student details found';
+			}
+			$response = array(
+				'op' => 'ok',
+				'file' => "data:application/vnd.ms-excel;base64," . base64_encode($details)
+			);
+			die(json_encode($response));
+
+		} else {
+			redirect('admin/timeout');
 		}
 	}
 
@@ -206,7 +315,7 @@ class Admin extends CI_Controller
 
 			$data['page_title'] = 'Change Password';
 			$data['menu'] = 'changepassword';
-			
+
 			$this->form_validation->set_rules('oldpassword', 'Old Password', 'required');
 			$this->form_validation->set_rules('newpassword', 'New Password', 'required');
 			$this->form_validation->set_rules('confirmpassword', 'Confirm Password', 'required|matches[newpassword]');
@@ -241,7 +350,7 @@ class Admin extends CI_Controller
 		}
 	}
 
-	function courses()
+	function departments()
 	{
 		if ($this->session->userdata('logged_in')) {
 			$session_data = $this->session->userdata('logged_in');

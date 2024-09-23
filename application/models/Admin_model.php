@@ -251,6 +251,22 @@ class Admin_model extends CI_Model
     return $this->db->get($tableName);
   }
 
+  function get_fee_details($academic_year, $department, $quota, $year)
+  {
+    $this->db->select('students.*, fee_master.*');
+    $this->db->join('fee_master', 'fee_master.usn = students.usn');
+    if ($department)
+      $this->db->where('students.department_id', $department);
+    if ($quota)
+      $this->db->where('students.quota', $quota);
+    if ($year)
+      $this->db->where('fee_master.year', $year);
+    $this->db->where('fee_master.academic_year', $academic_year);
+    return $this->db->get('students');
+
+    return $this->db->get('students');
+  }
+
   function getEnquiries_per($academic_year)
   {
     $this->db->where('academic_year', $academic_year);
