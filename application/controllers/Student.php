@@ -366,9 +366,9 @@ class Student extends CI_Controller
 			curl_close($response);
 			$result_decoded = JWT::decode($response, $midkey, 'HS256');
 			$result_array = (array) $result_decoded;
-			print_r($result_array);
+			// print_r($result_array);
 			$message = "Billdesk create order response decoded - " . json_encode($result_array) . "\n";
-			print_r($message);
+			// print_r($message);
 			$this->logger->write('billdesk', 'debug', $message);
 			
 			if ($result_decoded->status == 'ACTIVE') {
