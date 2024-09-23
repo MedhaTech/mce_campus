@@ -15,15 +15,15 @@
     <link href="<?php echo base_url(); ?>assets/css/theme.min.css" rel="stylesheet" type="text/css" />
 
     <!-- Plugins css -->
-    <link rel="stylesheet"
-        href="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.bootstrap4.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet"
-        href="<?php echo base_url(); ?>assets/plugins/datatables/responsive.bootstrap4.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet"
-        href="<?php echo base_url(); ?>assets/plugins/datatables/buttons.bootstrap4.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet"
-        href="<?php echo base_url(); ?>assets/plugins/datatables/select.bootstrap4.css" rel="stylesheet" type="text/css">
-
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.bootstrap4.css"
+        rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datatables/responsive.bootstrap4.css"
+        rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datatables/buttons.bootstrap4.css"
+        rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datatables/select.bootstrap4.css"
+        rel="stylesheet" type="text/css">
+        <script src="<?php echo base_url(); ?>assets/js/jquery.min.js"></script>
 </head>
 
 <!-- Begin page -->
@@ -80,7 +80,7 @@
                             id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true"
                             aria-expanded="false">
                             <img class="rounded-circle header-profile-user"
-                                src="<?php echo base_url(); ?>assets/images/users/avatar-3.jpg" alt="Header Avatar">
+                                src="<?php echo base_url(); ?>assets/images/avatar.png" alt="Avatar">
                             <span class="d-none d-sm-inline-block ml-1">Welcome <?= $full_name; ?></span>
                             <i class="mdi mdi-chevron-down d-none d-sm-inline-block"></i>
                         </button>
@@ -126,13 +126,13 @@
 
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>admin/students">
-                                  <i class="nav-icon fas fa-users mr-2"></i>Students
+                                    <i class="nav-icon fas fa-users mr-2"></i>Students
                                 </a>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link" href="<?php echo base_url(); ?>admin/reports">
-                                  <i class="nav-icon fas fa-chart-pie mr-2"></i>Reports
+                                <a class="nav-link" href="<?php echo base_url(); ?>admin/fee_details">
+                                    <i class="nav-icon fas fa-list mr-2"></i>Fee Reports
                                 </a>
                             </li>
 

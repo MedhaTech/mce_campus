@@ -251,6 +251,22 @@ class Admin_model extends CI_Model
     return $this->db->get($tableName);
   }
 
+  function get_fee_details($academic_year, $department, $quota, $year)
+  {
+    $this->db->select('students.*, fee_master.*');
+    $this->db->join('fee_master', 'fee_master.usn = students.usn');
+    if ($department)
+      $this->db->where('students.department_id', $department);
+    if ($quota)
+      $this->db->where('students.quota', $quota);
+    if ($year)
+      $this->db->where('fee_master.year', $year);
+    $this->db->where('fee_master.academic_year', $academic_year);
+    return $this->db->get('students');
+
+    return $this->db->get('students');
+  }
+
   function getEnquiries_per($academic_year)
   {
     $this->db->where('academic_year', $academic_year);
@@ -452,8 +468,8 @@ class Admin_model extends CI_Model
   function set_session($email, $mobile)
   {
 
-    $this->db->select('id, student_name, adm_no, flow');
-    $this->db->from('admissions');
+    $this->db->select('id, student_name,usn');
+    $this->db->from('students');
     $this->db->where('email', $email);
 
     $this->db->where('mobile', $mobile);
@@ -835,5 +851,20 @@ class Admin_model extends CI_Model
     $this->db->where('department_id', $department_id);
     $this->db->update('comedk_seats', $data);
   }
+
+
+  public function get_total_amount($year, $usn, $payment_mode) {
+    
+    $this->db->select('SUM(amount) AS total_amount');
+    $this->db->from('transactions');
+    $this->db->where('year', $year);
+    $this->db->where('reg_no', $usn);
+    $this->db->where('payment_mode', $payment_mode);
+
+    $query = $this->db->get();
+    $result = $query->row();
+    return $result ? $result->total_amount : 0;
+}
+
 
 }

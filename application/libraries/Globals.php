@@ -6,7 +6,7 @@ class Globals
 
     public function userTypes()
     {
-        return array("1" => "Super Admin", "2" => "Chairman", "3" => "Principal/Director", '4' => "Dean SA", '5' => "Admission Staff", '6' => "Accounts Admin", '7' => "Accounts Staff", '8'=>"COE");
+        return array("1" => "Super Admin", "2" => "Chairman", "3" => "Principal/Director", '4' => "Dean SA", '5' => "Admission Staff", '6' => "Accounts Admin", '7' => "Accounts Staff", '8' => "COE");
     }
 
     public function enquiryStatus()
@@ -32,7 +32,7 @@ class Globals
     public function transactionTypes()
     {
 
-        return array("1" => "Cash", "2"=>"DD", "3"=>"Online Payment", "4"=>"Online Transfer");
+        return array("1" => "Cash", "2" => "DD", "3" => "Online Payment", "4" => "Online Transfer");
 
     }
 
@@ -42,16 +42,15 @@ class Globals
         return $details;
     }
 
-    public function academicYear()
+    public function academicYears()
     {
-
-        $details = array();
-        // for($i = 2020; $i <= date('Y'); $i++){
-        for ($i = 2024; $i < 2025; $i++) {
-            $iNext = $i + 1;
-            $details[$i . '-' . $iNext] = $i . '-' . $iNext;
-        }
-        return $details;
+        return array(
+            "2024-25" => "2024-25",
+            "2023-24" => "2023-24",
+            "2022-23" => "2022-23",
+            "2021-22" => "2021-22",
+            "2020-21" => "2020-21"
+        );
     }
     public function courses()
     {
@@ -91,18 +90,18 @@ class Globals
             "GTTC" => "GT&TC"
         );
     }
-    
+
     public function quota()
     {
         return array(
             "KEA-CET(GOVT)" => "KEA-CET(GOVT)",
+            "KEA-SNQ" => "KEA-SNQ",
             "COMED-K" => "COMED-K",
             "MGMT" => "MGMT",
-            "KEA-SNQ" => "KEA-SNQ",
+            "MGMT-COMEDK" => "MGMT-COMEDK",
             "J&K (Non Karnataka)" => "J&K (Non Karnataka)",
             "GOI (Non Karnataka)" => "GOI (Non Karnataka)",
             "KEA-CET(LATERAL)" => "KEA-CET(LATERAL)",
-            "MGMT-COMEDK" => "MGMT-COMEDK",
             "MGMT-LATERAL" => "MGMT-LATERAL",
         );
     }
@@ -110,7 +109,7 @@ class Globals
     public function sub_quota()
     {
         return array(
-           
+
             "Aided" => "Aided",
             "UnAided" => "UnAided"
         );
@@ -137,213 +136,215 @@ class Globals
     public function category()
     {
         return array(
-            '1G'=>'1G',
-            '1GH'=>'1GH',
-            '1GHR'=>'1GHR',
-            '1GK'=>'1GK',
-            '1GR'=>'1GR',
-            '1H'=>'1H',
-            '1K'=>'1K',
-            '1R'=>'1R',
-            '2A'=>'2A',
-            '2AG'=>'2AG',
-            '2AGH'=>'2AGH',
-            '2AGK'=>'2AGK',
-            '2AGR'=>'2AGR',
-            '2AGRH'=>'2AGRH',
-            '2AGRK'=>'2AGRK',
-            '2AH'=>'2AH',
-            '2AK'=>'2AK',
-            '2AR'=>'2AR',
-            '2ARH'=>'2ARH',
-            '2B'=>'2B',
-            '2BG'=>'2BG',
-            '2BGK'=>'2BGK',
-            '2BGRK'=>'2BGRK',
-            '2BK'=>'2BK',
-            '2BR'=>'2BR',
-            '2GHR'=>'2GHR',
-            '3A'=>'3A',
-            '3AG'=>'3AG',
-            '3AGK'=>'3AGK',
-            '3AGR'=>'3AGR',
-            '3AGRK'=>'3AGRK',
-            '3AH'=>'3AH',
-            '3AR'=>'3AR',
-            '3B'=>'3B',
-            '3BG'=>'3BG',
-            '3BGH'=>'3BGH',
-            '3BGK'=>'3BGK',
-            '3BGRK'=>'3BGRK',
-            '3BH'=>'3BH',
-            '3BK'=>'3BK',
-            '3BR'=>'3BR',
-            '3BRK'=>'3BRK',
-            '3GHR'=>'3GHR',
-            'AGL'=>'AGL',
+            '1G' => '1G',
+            '1GH' => '1GH',
+            '1GHR' => '1GHR',
+            '1GK' => '1GK',
+            '1GR' => '1GR',
+            '1H' => '1H',
+            '1K' => '1K',
+            '1R' => '1R',
+            '2A' => '2A',
+            '2AG' => '2AG',
+            '2AGH' => '2AGH',
+            '2AGK' => '2AGK',
+            '2AGR' => '2AGR',
+            '2AGRH' => '2AGRH',
+            '2AGRK' => '2AGRK',
+            '2AH' => '2AH',
+            '2AK' => '2AK',
+            '2AR' => '2AR',
+            '2ARH' => '2ARH',
+            '2B' => '2B',
+            '2BG' => '2BG',
+            '2BGK' => '2BGK',
+            '2BGRK' => '2BGRK',
+            '2BK' => '2BK',
+            '2BR' => '2BR',
+            '2GHR' => '2GHR',
+            '3A' => '3A',
+            '3AG' => '3AG',
+            '3AGK' => '3AGK',
+            '3AGR' => '3AGR',
+            '3AGRK' => '3AGRK',
+            '3AH' => '3AH',
+            '3AR' => '3AR',
+            '3B' => '3B',
+            '3BG' => '3BG',
+            '3BGH' => '3BGH',
+            '3BGK' => '3BGK',
+            '3BGRK' => '3BGRK',
+            '3BH' => '3BH',
+            '3BK' => '3BK',
+            '3BR' => '3BR',
+            '3BRK' => '3BRK',
+            '3GHR' => '3GHR',
+            'AGL' => 'AGL',
             // 'COMED-K'=>'COMED-K',
-            'D'=>'D',
-            'GAH'=>'GAH',
-            'GM'=>'GM',
-            'GMH'=>'GMH',
-            'GMK'=>'GMK',
-            'GMR'=>'GMR',
-            'GMRH'=>'GMRH',
-            'GMRK'=>'GMRK',
+            'D' => 'D',
+            'GAH' => 'GAH',
+            'GM' => 'GM',
+            'GMH' => 'GMH',
+            'GMK' => 'GMK',
+            'GMR' => 'GMR',
+            'GMRH' => 'GMRH',
+            'GMRK' => 'GMRK',
             // 'GOI'=>'GOI',
-            'IG'=>'IG',
+            'IG' => 'IG',
             // 'J&K'=>'J&K',
             // 'NAIDU'=>'NAIDU',
-            'NCC'=>'NCC',
-            'NKR'=>'NKR',
-            'NRI'=>'NRI',
-            'OBC'=>'OBC',
-            'PH'=>'PH',
-            'SC'=>'SC',
-            'SCG'=>'SCG',
-            'SCGK'=>'SCGK',
-            'SCGR'=>'SCGR',
-            'SCGRH'=>'SCGRH',
-            'SCGRK'=>'SCGRK',
-            'SCH'=>'SCH',
-            'SCK'=>'SCK',
-            'SCR'=>'SCR',
-            'SCRH'=>'SCRH',
-            'SG'=>'SG',
-            'SNQ'=>'SNQ',
-            'SPO'=>'SPO',
-            'SPORTS'=>'SPORTS',
-            'ST'=>'ST',
-            'STG'=>'STG',
-            'STGH'=>'STGH',
-            'STGRK'=>'STGRK',
-            'STH'=>'STH',
-            'STK'=>'STK',
-            'STR'=>'STR',
-            'XD'=>'XD',
+            'NCC' => 'NCC',
+            'NKR' => 'NKR',
+            'NRI' => 'NRI',
+            'OBC' => 'OBC',
+            'PH' => 'PH',
+            'SC' => 'SC',
+            'SCG' => 'SCG',
+            'SCGK' => 'SCGK',
+            'SCGR' => 'SCGR',
+            'SCGRH' => 'SCGRH',
+            'SCGRK' => 'SCGRK',
+            'SCH' => 'SCH',
+            'SCK' => 'SCK',
+            'SCR' => 'SCR',
+            'SCRH' => 'SCRH',
+            'SG' => 'SG',
+            'SNQ' => 'SNQ',
+            'SPO' => 'SPO',
+            'SPORTS' => 'SPORTS',
+            'ST' => 'ST',
+            'STG' => 'STG',
+            'STGH' => 'STGH',
+            'STGRK' => 'STGRK',
+            'STH' => 'STH',
+            'STK' => 'STK',
+            'STR' => 'STR',
+            'XD' => 'XD',
         );
     }
 
     public function category_claimed()
     {
         return array(
-            '1G'=>'1G',
-            '1GH'=>'1GH',
-            '1GHR'=>'1GHR',
-            '1GK'=>'1GK',
-            '1GR'=>'1GR',
-            '1H'=>'1H',
-            '1K'=>'1K',
-            '1R'=>'1R',
-            '2A'=>'2A',
-            '2AG'=>'2AG',
-            '2AGH'=>'2AGH',
-            '2AGK'=>'2AGK',
-            '2AGR'=>'2AGR',
-            '2AGRH'=>'2AGRH',
-            '2AGRK'=>'2AGRK',
-            '2AH'=>'2AH',
-            '2AK'=>'2AK',
-            '2AR'=>'2AR',
-            '2ARH'=>'2ARH',
-            '2B'=>'2B',
-            '2BG'=>'2BG',
-            '2BGK'=>'2BGK',
-            '2BGRK'=>'2BGRK',
-            '2BK'=>'2BK',
-            '2BR'=>'2BR',
-            '2GHR'=>'2GHR',
-            '3A'=>'3A',
-            '3AG'=>'3AG',
-            '3AGK'=>'3AGK',
-            '3AGR'=>'3AGR',
-            '3AGRK'=>'3AGRK',
-            '3AH'=>'3AH',
-            '3AR'=>'3AR',
-            '3B'=>'3B',
-            '3BG'=>'3BG',
-            '3BGH'=>'3BGH',
-            '3BGK'=>'3BGK',
-            '3BGRK'=>'3BGRK',
-            '3BH'=>'3BH',
-            '3BK'=>'3BK',
-            '3BR'=>'3BR',
-            '3BRK'=>'3BRK',
-            '3GHR'=>'3GHR',
-            'GAH'=>'GAH',
-            'GM'=>'GM',
-            'GMH'=>'GMH',
-            'GMK'=>'GMK',
-            'GMR'=>'GMR',
-            'GMRH'=>'GMRH',
-            'GMRK'=>'GMRK',   
-            'IG'=>'IG',
-            'SC'=>'SC',
-            'SCG'=>'SCG',
-            'SCGK'=>'SCGK',
-            'SCGR'=>'SCGR',
-            'SCGRH'=>'SCGRH',
-            'SCGRK'=>'SCGRK',
-            'SCH'=>'SCH',
-            'SCK'=>'SCK',
-            'SCR'=>'SCR',
-            'SCRH'=>'SCRH',
-            'ST'=>'ST',
-            'STG'=>'STG',
-            'STGH'=>'STGH',
-            'STGRK'=>'STGRK',
-            'STH'=>'STH',
-            'STK'=>'STK',
-            'STR'=>'STR',
-           
+            '1G' => '1G',
+            '1GH' => '1GH',
+            '1GHR' => '1GHR',
+            '1GK' => '1GK',
+            '1GR' => '1GR',
+            '1H' => '1H',
+            '1K' => '1K',
+            '1R' => '1R',
+            '2A' => '2A',
+            '2AG' => '2AG',
+            '2AGH' => '2AGH',
+            '2AGK' => '2AGK',
+            '2AGR' => '2AGR',
+            '2AGRH' => '2AGRH',
+            '2AGRK' => '2AGRK',
+            '2AH' => '2AH',
+            '2AK' => '2AK',
+            '2AR' => '2AR',
+            '2ARH' => '2ARH',
+            '2B' => '2B',
+            '2BG' => '2BG',
+            '2BGK' => '2BGK',
+            '2BGRK' => '2BGRK',
+            '2BK' => '2BK',
+            '2BR' => '2BR',
+            '2GHR' => '2GHR',
+            '3A' => '3A',
+            '3AG' => '3AG',
+            '3AGK' => '3AGK',
+            '3AGR' => '3AGR',
+            '3AGRK' => '3AGRK',
+            '3AH' => '3AH',
+            '3AR' => '3AR',
+            '3B' => '3B',
+            '3BG' => '3BG',
+            '3BGH' => '3BGH',
+            '3BGK' => '3BGK',
+            '3BGRK' => '3BGRK',
+            '3BH' => '3BH',
+            '3BK' => '3BK',
+            '3BR' => '3BR',
+            '3BRK' => '3BRK',
+            '3GHR' => '3GHR',
+            'GAH' => 'GAH',
+            'GM' => 'GM',
+            'GMH' => 'GMH',
+            'GMK' => 'GMK',
+            'GMR' => 'GMR',
+            'GMRH' => 'GMRH',
+            'GMRK' => 'GMRK',
+            'IG' => 'IG',
+            'SC' => 'SC',
+            'SCG' => 'SCG',
+            'SCGK' => 'SCGK',
+            'SCGR' => 'SCGR',
+            'SCGRH' => 'SCGRH',
+            'SCGRK' => 'SCGRK',
+            'SCH' => 'SCH',
+            'SCK' => 'SCK',
+            'SCR' => 'SCR',
+            'SCRH' => 'SCRH',
+            'ST' => 'ST',
+            'STG' => 'STG',
+            'STGH' => 'STGH',
+            'STGRK' => 'STGRK',
+            'STH' => 'STH',
+            'STK' => 'STK',
+            'STR' => 'STR',
+
         );
     }
 
 
-    public function states(){
+    public function states()
+    {
         return array(
-        "AP" => "Andhra Pradesh",
-        "AR" => "Arunachal Pradesh",
-        "AS" => "Assam",
-        "BR" => "Bihar",
-        "CT" => "Chhattisgarh",
-        "GA" => "Gujarat",
-        "HR" => "Haryana",
-        "HP" => "Himachal Pradesh",
-        "JK" => "Jammu and Kashmir",
-        "GA" => "Goa",
-        "JH" => "Jharkhand",
-        "KA" => "Karnataka",
-        "KL" => "Kerala",
-        "MP" => "Madhya Pradesh",
-        "MH" => "Maharashtra",
-        "MN" => "Manipur",
-        "ML" => "Meghalaya",
-        "MZ" => "Mizoram",
-        "NL" => "Nagaland",
-        "OR" => "Odisha",
-        "PB" => "Punjab",
-        "RJ" => "Rajasthan",
-        "SK" => "Sikkim",
-        "TN" => "Tamil Nadu",
-        "TG" => "Telangana",
-        "TR" => "Tripura",
-        "UT" => "Uttarakhand",
-        "UP" => "Uttar Pradesh",
-        "WB" => "West Bengal",
-        "AN" => "Andaman and Nicobar Islands",
-        "CH" => "Chandigarh",
-        "DN" => "Dadra and Nagar Haveli",
-        "DD" => "Daman and Diu",
-        "DL" => "Delhi",
-        "LD" => "Lakshadweep",
-        "PY" => "Puducherry");
+            "AP" => "Andhra Pradesh",
+            "AR" => "Arunachal Pradesh",
+            "AS" => "Assam",
+            "BR" => "Bihar",
+            "CT" => "Chhattisgarh",
+            "GA" => "Gujarat",
+            "HR" => "Haryana",
+            "HP" => "Himachal Pradesh",
+            "JK" => "Jammu and Kashmir",
+            "GA" => "Goa",
+            "JH" => "Jharkhand",
+            "KA" => "Karnataka",
+            "KL" => "Kerala",
+            "MP" => "Madhya Pradesh",
+            "MH" => "Maharashtra",
+            "MN" => "Manipur",
+            "ML" => "Meghalaya",
+            "MZ" => "Mizoram",
+            "NL" => "Nagaland",
+            "OR" => "Odisha",
+            "PB" => "Punjab",
+            "RJ" => "Rajasthan",
+            "SK" => "Sikkim",
+            "TN" => "Tamil Nadu",
+            "TG" => "Telangana",
+            "TR" => "Tripura",
+            "UT" => "Uttarakhand",
+            "UP" => "Uttar Pradesh",
+            "WB" => "West Bengal",
+            "AN" => "Andaman and Nicobar Islands",
+            "CH" => "Chandigarh",
+            "DN" => "Dadra and Nagar Haveli",
+            "DD" => "Daman and Diu",
+            "DL" => "Delhi",
+            "LD" => "Lakshadweep",
+            "PY" => "Puducherry"
+        );
     }
 
     public function medium_of_instruction()
     {
         return array(
-           
+
             "English" => "English",
             "Kannada" => "Kannada",
             "Hindi" => "Hindi"
@@ -353,7 +354,7 @@ class Globals
     public function religion()
     {
         return array(
-           
+
             "Hindu" => "Hindu",
             "Islam" => "Islam",
             "Christian" => "Christian",
@@ -367,7 +368,7 @@ class Globals
     public function sslcsubjects()
     {
         return array(
-           
+
             "Sanskrit" => "Sanskrit",
             "English" => "English",
             "Kannada" => "Kannada",
@@ -386,7 +387,7 @@ class Globals
     public function pucsubjects()
     {
         return array(
-           
+
             "Sanskrit" => "Sanskrit",
             "English" => "English",
             "Kannada" => "Kannada",
@@ -408,7 +409,7 @@ class Globals
     public function caste()
     {
         return array(
-           
+
             "24 mane telugu shetty" => "24 mane telugu shetty",
             "2BGK" => "2BGK",
             "3AGRK" => "3AGRK",
@@ -607,7 +608,7 @@ class Globals
             "DAS VOKKALIGA" => "DAS VOKKALIGA",
             "DASA BANAJIGA" => "DASA BANAJIGA",
             "DASARA BALAJIGA" => "DASARA BALAJIGA",
-            "DASARA BALIJA" => "DASARA BALIJA",   
+            "DASARA BALIJA" => "DASARA BALIJA",
             "DASARA BANAJIGA" => "DASARA BANAJIGA",
             "DASARI" => "DASARI",
             "DASARU" => "DASARU",
@@ -616,7 +617,7 @@ class Globals
             "DAVERI" => "DAVERI",
             "DEEVAR" => "DEEVAR",
             "DERIA" => "DERIA",
-            "DESHA BHANDARI" => "DESHA BHANDARI",                                                                                     
+            "DESHA BHANDARI" => "DESHA BHANDARI",
             "DEVADASI" => "DEVADASI",
             "DEVADIGA" => "DEVADIGA",
             "DEVALI" => "DEVALI",
@@ -760,7 +761,7 @@ class Globals
             "HALEER" => "HALEER",
             "HALEPAIKARU" => "HALEPAIKARU",
             "HALLIKAR" => "HALLIKAR",
-            "HALLIKAR VOKKALIGA" => "HALLIKAR VOKKALIGA",   
+            "HALLIKAR VOKKALIGA" => "HALLIKAR VOKKALIGA",
             "HALPATI" => "HALPATI",
             "HALSAR" => "HALSAR",
             "HALUMATHA" => "HALUMATHA",
@@ -841,7 +842,7 @@ class Globals
             "KADU KURUBA" => "KADU KURUBA",
             "KAHAR" => "KAHAR",
             "KAIKADI" => "KAIKADI",
-            "KAIKOLAN " => "KAIKOLAN", 
+            "KAIKOLAN " => "KAIKOLAN",
             "KAKKAYYA" => "KAKKAYYA",
             "KALAL" => "KALAL",
             "KALAL KHATIK" => "KALAL KHATIK",
@@ -1286,7 +1287,7 @@ class Globals
             "SAKAJAVADU" => "SAKAJAVADU",
             "SAKALA" => "SAKALA",
             "SALAPARU" => "SALAPARU",
-            "SALE " => "SALE" ,
+            "SALE " => "SALE",
             "SAMAGAR" => "SAMAGAR",
             "SAMERAYA" => "SAMERAYA",
             "SANIYAAR" => "SANIYAAR",
@@ -1410,7 +1411,7 @@ class Globals
             "UPPERA" => "UPPERA",
             "UPPINA KOLAGA  " => "UPPINA KOLAGA",
             "UPPU NADAR " => "UPPU NADAR",
-            "UPPUNADOR " => "UPPUNADOR", 
+            "UPPUNADOR " => "UPPUNADOR",
             "URALI" => "URALI",
             "URS NAYAKA" => "URS NAYAKA",
             "USHTAMA " => "USHTAMA",

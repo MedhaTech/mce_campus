@@ -194,8 +194,8 @@ class Student extends CI_Controller
 			$data['student_name'] = $student_session['student_name'];
 			$data['page_title'] = "Fees";
 			$data['menu'] = "profile";
-
-			$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+			$data['action'] = "student/pay_now";
+			$data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
 			$data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
 
 			$this->student_template->show('student/fees', $data);
@@ -212,41 +212,61 @@ class Student extends CI_Controller
 			$data['student_name'] = $student_session['student_name'];
 			$data['id'] = $student_session['id'];
 			require_once APPPATH . 'libraries/Jwt.php';
-			$acc_type = $this->input->post('type');
+			$acc_type = $this->input->post('payment_mode');
+			$aided_unaided = $this->input->post('aided_unaided');
 
-			$acc_type = 0;
+
 			if ($acc_type == 0) {
-				$mid = "CNBMLNDEGC";
+
+				if ($aided_unaided == 'Aided') {
+
+					$mid = "CNBMLNDAID";
+				$clientid = "cnbmlndaid";
+				$midkey = "hbjUTwdjLDwzsFErRVCE0y0skHic1z2B";
+				$returnurl = base_url() . 'student/callbackaided';
+				$page = 'student/payment_aided';
+
+				} else {
+
+					$mid = "CNBMLNDEGC";
 				$clientid = "cnbmlndegc";
 				$midkey = "WHjXW5WHk27mr50KetSh75vyapmO14IT";
 				$returnurl = base_url() . 'student/callback';
 				$page = 'student/payment';
+
+				}
+
+				$payment_mode=0;
+				
 			} else {
 				$mid = "CNBMLNDTRT";
 				$clientid = "cnbmlndtrt";
 				$midkey = "k2ieff4ugn8Ehv31tUhXTRoHK2MEBrdJ";
 				$returnurl = base_url() . 'student/callbackcorpus';
 				$page = 'student/payment_corpus';
+				$payment_mode=1;
 			}
 
 			$this->load->library('logger');
 			$insert = array(
-				// 'amount' => number_format((float)$this->input->post('amount'), 2, '.', ''),
-				'amount' => '100.00',
-				'reg_no' => "2024058",
-				'aided_unaided' => "Aided",
-				'mobile' => "9035761122",
-				'reference_no' => "2024058",
+				'amount' => number_format((float)$this->input->post('amount'), 2, '.', ''),
+				// 'amount' => '100.00',
+				'reg_no' => $this->input->post('usn'),
+				'year' => $this->input->post('year'),
+				'aided_unaided' => $this->input->post('aided_unaided'),
+				'mobile' => $this->input->post('mobile'),
+				'reference_no' => $this->input->post('usn') . time(),
 				'transaction_type' => '3',
 				'academic_year' => "2024-2025",
 				'admissions_id' => "60",
 				'reference_date' => date('Y-m-d'),
 				'payment_id' => "61",
+				'payment_mode' => $payment_mode,
 				'transaction_status' => '0',
 				'created_on' => date('Y-m-d h:i:s')
 			);
 
-			// $result = $this->admin_model->insertDetails('transactions', $insert);
+			$result = $this->admin_model->insertDetails('transactions', $insert);
 
 			$headers = array(
 				"alg" => "HS256",
@@ -275,8 +295,8 @@ class Student extends CI_Controller
 				"additional_info3" => $this->input->post('email'),
 				"additional_info4" => $insert['mobile'],
 				"additional_info5" => "Fee Payment",
-				"additional_info6" => $this->input->post('type'),
-				"additional_info7" => $this->input->post('pay_id')
+				"additional_info6" => $this->input->post('payment_mode'),
+				"additional_info7" => $this->input->post('aided_unaided')
 			);
 			$payload['itemcode']           = 'DIRECT';
 			$payload['device']             =  array(
@@ -322,11 +342,11 @@ class Student extends CI_Controller
 			curl_close($response);
 			$result_decoded = JWT::decode($response, $midkey, 'HS256');
 			$result_array = (array) $result_decoded;
-			print_r($result_array);
+			// print_r($result_array);
 			$message = "Billdesk create order response decoded - " . json_encode($result_array) . "\n";
-			print_r($message);
+			// print_r($message);
 			$this->logger->write('billdesk', 'debug', $message);
-			die;
+			
 			if ($result_decoded->status == 'ACTIVE') {
 				$transactionid = $result_array['links'][1]->parameters->bdorderid;
 				$authtoken = $result_array['links'][1]->headers->authorization;
@@ -341,8 +361,276 @@ class Student extends CI_Controller
 				$message = "Billdesk create order status - " . $status;
 				$this->logger->write('billdesk', 'debug', $message);
 				$this->session->set_flashdata('process', 'Sorry, something went wrong. Please try again later.');
-				redirect('student/fee_details', 'refresh');
+				redirect('student/fees', 'refresh');
 			}
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
+
+	public function set_session($usn, $mobile)
+	{
+		//Field validation succeeded.  Validate against database
+		$usn = $this->input->post('usn');
+
+		//query the database
+		$result = $this->admin_model->set_session($usn, $mobile);
+		if ($result) {
+			$sess_array = array();
+			foreach ($result as $row) {
+				$sess_array = array(
+					'id' => $row->id,
+					'student_name' => $row->student_name
+					
+				);
+				$this->session->set_userdata('student_in', $sess_array);
+			}
+			return TRUE;
+		} else {
+
+			return false;
+		}
+	}
+
+	public function callbackaided()
+	{
+		require_once APPPATH . 'libraries/Jwt.php';
+		$this->load->library('logger');
+		$message = "BillDesk Response - " . json_encode($_POST) . "\n";
+		$this->logger->write('billdesk', 'debug', $message);
+		$tx = "";
+		if (!empty($_POST)) {
+			$tx_array = $_POST;
+			if (isset($tx_array['transaction_response'])) {
+				$tx = $tx_array['transaction_response'];
+			}
+
+
+			if (!empty($tx)) {
+				$response_decoded = JWT::decode($tx, "hbjUTwdjLDwzsFErRVCE0y0skHic1z2B", 'HS256');
+				$response_array = (array) $response_decoded;
+				$response_json =  json_encode($response_array);
+				$message = "BillDesk callback Response decode - " . $response_json . "\n";
+				$this->logger->write('billdesk', 'debug', $message);
+
+				if ($response_array['auth_status'] == '0300') {
+					$status = 'pass';
+				} else if ($response_array['auth_status'] == '0002') {
+					$status = 'unknown';
+				} else {
+					$status = 'fail';
+				}
+
+
+
+				$return['amount']	    = (int)$response_array['amount'];
+				$return['order_id']	    = $response_array['orderid'];
+				$return['status']		= $status;
+				$return['pgresponse']	= $response_json;
+				$return['pgid']	        = $response_array['transactionid'];
+
+				$updateDetails = array(
+					'transaction_date' => $response_array['transaction_date'],
+					'transaction_id' => $response_array['transactionid'],
+					'txn_response' => $response_json,
+
+				);
+				if ($response_array['transaction_error_type'] == 'success') {
+					$cnt_number = $this->getReceiptNo();
+					$receipt_no = $cnt_number;
+					$updateDetails['receipt_no'] = $receipt_no;
+					$updateDetails['transaction_status'] = '1';
+					$updateDetails1['status'] = '1';
+				} else if ($response_array['transaction_error_type'] == 'payment_processing_error') {
+					$updateDetails['transaction_status'] = '2';
+					$updateDetails1['status'] = '2';
+				} else {
+					$updateDetails['transaction_status'] = '0';
+					$updateDetails1['status'] = '0';
+				}
+
+				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
+
+				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
+			
+				$payment = ['orderid' => $response_array['orderid']];
+				$this->session->set_userdata('payment', $payment);
+
+				redirect('student/payment_status', 'refresh');
+			} else {
+				$status = 'fail';
+				$return['status']		= $status;
+				redirect('student', 'refresh');
+			}
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
+
+	public function callback()
+	{
+		require_once APPPATH . 'libraries/Jwt.php';
+		$this->load->library('logger');
+		$message = "BillDesk Response - " . json_encode($_POST) . "\n";
+		$this->logger->write('billdesk', 'debug', $message);
+		$tx = "";
+		if (!empty($_POST)) {
+			$tx_array = $_POST;
+			if (isset($tx_array['transaction_response'])) {
+				$tx = $tx_array['transaction_response'];
+			}
+
+
+			if (!empty($tx)) {
+				$response_decoded = JWT::decode($tx, "WHjXW5WHk27mr50KetSh75vyapmO14IT", 'HS256');
+				$response_array = (array) $response_decoded;
+				$response_json =  json_encode($response_array);
+				$message = "BillDesk callback Response decode - " . $response_json . "\n";
+				$this->logger->write('billdesk', 'debug', $message);
+
+				if ($response_array['auth_status'] == '0300') {
+					$status = 'pass';
+				} else if ($response_array['auth_status'] == '0002') {
+					$status = 'unknown';
+				} else {
+					$status = 'fail';
+				}
+
+
+
+				$return['amount']	    = (int)$response_array['amount'];
+				$return['order_id']	    = $response_array['orderid'];
+				$return['status']		= $status;
+				$return['pgresponse']	= $response_json;
+				$return['pgid']	        = $response_array['transactionid'];
+
+				$updateDetails = array(
+					'transaction_date' => $response_array['transaction_date'],
+					'transaction_id' => $response_array['transactionid'],
+					'txn_response' => $response_json,
+
+				);
+				if ($response_array['transaction_error_type'] == 'success') {
+					$cnt_number = $this->getReceiptNo();
+					$receipt_no = $cnt_number;
+					$updateDetails['receipt_no'] = $receipt_no;
+					$updateDetails['transaction_status'] = '1';
+					$updateDetails1['status'] = '1';
+				} else if ($response_array['transaction_error_type'] == 'payment_processing_error') {
+					$updateDetails['transaction_status'] = '2';
+					$updateDetails1['status'] = '2';
+				} else {
+					$updateDetails['transaction_status'] = '0';
+					$updateDetails1['status'] = '0';
+				}
+
+				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
+
+				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
+			
+				$payment = ['orderid' => $response_array['orderid']];
+				$this->session->set_userdata('payment', $payment);
+
+				redirect('student/payment_status', 'refresh');
+			} else {
+				$status = 'fail';
+				$return['status']		= $status;
+				redirect('student', 'refresh');
+			}
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
+
+	public function callbackcorpus()
+	{
+		require_once APPPATH . 'libraries/Jwt.php';
+		$this->load->library('logger');
+		$message = "BillDesk Response - " . json_encode($_POST) . "\n";
+		$this->logger->write('billdesk', 'debug', $message);
+		$tx = "";
+		if (!empty($_POST)) {
+			$tx_array = $_POST;
+			if (isset($tx_array['transaction_response'])) {
+				$tx = $tx_array['transaction_response'];
+			}
+
+
+			if (!empty($tx)) {
+				$response_decoded = JWT::decode($tx, "k2ieff4ugn8Ehv31tUhXTRoHK2MEBrdJ", 'HS256');
+				$response_array = (array) $response_decoded;
+				$response_json =  json_encode($response_array);
+				$message = "BillDesk callback Response decode - " . $response_json . "\n";
+				$this->logger->write('billdesk', 'debug', $message);
+
+				if ($response_array['auth_status'] == '0300') {
+					$status = 'pass';
+				} else if ($response_array['auth_status'] == '0002') {
+					$status = 'unknown';
+				} else {
+					$status = 'fail';
+				}
+
+
+
+				$return['amount']	    = (int)$response_array['amount'];
+				$return['order_id']	    = $response_array['orderid'];
+				$return['status']		= $status;
+				$return['pgresponse']	= $response_json;
+				$return['pgid']	        = $response_array['transactionid'];
+
+				$updateDetails = array(
+					'transaction_date' => $response_array['transaction_date'],
+					'transaction_id' => $response_array['transactionid'],
+					'txn_response' => $response_json,
+
+				);
+				if ($response_array['transaction_error_type'] == 'success') {
+					$cnt_number = $this->getReceiptNo();
+					$receipt_no = $cnt_number;
+					$updateDetails['receipt_no'] = $receipt_no;
+					$updateDetails['transaction_status'] = '1';
+					$updateDetails1['status'] = '1';
+				} else if ($response_array['transaction_error_type'] == 'payment_processing_error') {
+					$updateDetails['transaction_status'] = '2';
+					$updateDetails1['status'] = '2';
+				} else {
+					$updateDetails['transaction_status'] = '0';
+					$updateDetails1['status'] = '0';
+				}
+
+				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
+
+				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
+				
+
+				$payment = ['orderid' => $response_array['orderid']];
+				$this->session->set_userdata('payment', $payment);
+
+				redirect('student/payment_status', 'refresh');
+			} else {
+				$status = 'fail';
+				$return['status']		= $status;
+				redirect('student', 'refresh');
+			}
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
+	function payment_status()
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$data['id'] = $student_session['id'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Payment Status";
+			$data['menu'] = "payment";
+			$payment_session = $this->session->userdata('payment');
+
+			$orderid = $payment_session['orderid'];
+			$data['orderdetails'] = $this->admin_model->getDetailsbyfield($orderid, 'reference_no', 'transactions')->row();
+
+			$this->student_template->show('student/payment_status', $data);
 		} else {
 			redirect('student', 'refresh');
 		}
