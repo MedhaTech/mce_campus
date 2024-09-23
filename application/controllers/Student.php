@@ -290,7 +290,7 @@ class Student extends CI_Controller
 				'created_on' => date('Y-m-d h:i:s')
 			);
 
-			// $result = $this->admin_model->insertDetails('transactions', $insert);
+			$result = $this->admin_model->insertDetails('transactions', $insert);
 
 			$headers = array(
 				"alg" => "HS256",
@@ -370,7 +370,7 @@ class Student extends CI_Controller
 			$message = "Billdesk create order response decoded - " . json_encode($result_array) . "\n";
 			print_r($message);
 			$this->logger->write('billdesk', 'debug', $message);
-			die;
+			
 			if ($result_decoded->status == 'ACTIVE') {
 				$transactionid = $result_array['links'][1]->parameters->bdorderid;
 				$authtoken = $result_array['links'][1]->headers->authorization;
@@ -385,7 +385,7 @@ class Student extends CI_Controller
 				$message = "Billdesk create order status - " . $status;
 				$this->logger->write('billdesk', 'debug', $message);
 				$this->session->set_flashdata('process', 'Sorry, something went wrong. Please try again later.');
-				redirect('student/fee_details', 'refresh');
+				redirect('student/fees', 'refresh');
 			}
 		} else {
 			redirect('student', 'refresh');
