@@ -198,7 +198,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="float-right position-relative">
-                            <a href="#" class="btn btn-info btn-sm">
+                            <a href="personaldetails" class="btn btn-info btn-sm">
                                 <i class="fa fa-edit"></i> Edit
                             </a>
                         </div>

@@ -119,78 +119,54 @@ class Student extends CI_Controller
 			$data['menu'] = "personaldetails";
 			$data['userTypes'] = $this->globals->userTypes();
 			$data['states'] = array(" " => "Select State") + $this->globals->states();
-			$data['religion_option'] = array(" " => "Select Religion") + $this->globals->religion();
-			$data['caste_option'] = array(" " => "Select Caste") + $this->globals->caste();
 			$data['countries'] = $this->admin_model->getCountries();
 			$data['states1'] = $this->admin_model->get_states();
-			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
+			$data['admissionDetails'] = $this->admin_model->getDetails('students', $data['id'])->row();
+			// var_dump($data['admissionDetails']); die();
 
 			$this->load->library('form_validation');
 
 			$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 			// $data['admissions'] = $this->admin_model->get_details_by_id($id, 'id', 'admissions');
 
-			$this->form_validation->set_rules('student_name', 'Student Name', 'required');
-			$this->form_validation->set_rules('mobile', 'Mobile', 'required');
-			$this->form_validation->set_rules('email', 'Email Id', 'required');
-			$this->form_validation->set_rules('aadhaar', 'Aadhar Number', 'required');
-			$this->form_validation->set_rules('date_of_birth', 'Date of Birth', 'required');
+			$this->form_validation->set_rules('student_number', 'Student Number', 'required|regex_match[/^[0-9]{10}$/]');
+			$this->form_validation->set_rules('father_number', 'Father Number', 'required|regex_match[/^[0-9]{10}$/]');
+			$this->form_validation->set_rules('state', 'State', 'required');
+			$this->form_validation->set_rules('country', 'Country', 'required');
+			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
 			$this->form_validation->set_rules('gender', 'Gender', 'required');
-			$this->form_validation->set_rules('sports', 'Sports', 'required');
-			$this->form_validation->set_rules('blood_group', 'Blood Group', 'required');
-			$this->form_validation->set_rules('place_of_birth', 'Place of Birth', 'required');
-			$this->form_validation->set_rules('country_of_birth', '	Country of Birth', 'required');
-			$this->form_validation->set_rules('nationality', 'Nationality', 'required');
-			$this->form_validation->set_rules('religion', 'Religion', 'required');
-			$this->form_validation->set_rules('caste', 'Caste', 'required');
-			$this->form_validation->set_rules('current_address', 'Current Address', 'required');
-			$this->form_validation->set_rules('present_address', 'Present Address', 'required');
+			$this->form_validation->set_rules('aadhar_number', 'Aadhar Number', 'required');
+			$this->form_validation->set_rules('date_of_birth', 'Date of Birth', 'required');
 
 			if ($this->form_validation->run() === FALSE) {
 
 				$data['action'] = 'student/personaldetails/' . $data['id'];
 
-				$personalDetails = $this->admin_model->getDetails('admissions', $data['id'])->row();
+				$personalDetails = $this->admin_model->getDetails('students', $data['id'])->row();
 
-				$data['student_name'] = $personalDetails->student_name;
-				$data['mobile'] = $personalDetails->mobile;
+				$data['student_number'] = $personalDetails->student_number;
+				$data['father_number'] = $personalDetails->father_number;
+				$data['state'] = $personalDetails->state;
+				$data['country'] = $personalDetails->country;
 				$data['email'] = $personalDetails->email;
-				$data['aadhaar'] = $personalDetails->aadhaar;
-				$data['date_of_birth'] = $personalDetails->date_of_birth;
 				$data['gender'] = $personalDetails->gender;
-				$data['sports'] = $personalDetails->sports;
-				$data['blood_group'] = $personalDetails->blood_group;
-				$data['place_of_birth'] = $personalDetails->place_of_birth;
-				$data['country_of_birth'] = $personalDetails->country_of_birth;
-				$data['nationality'] = $personalDetails->nationality;
-				$data['religion'] = $personalDetails->religion;
-				$data['caste'] = $personalDetails->caste;
-				$data['mother_tongue'] = $personalDetails->mother_tongue;
-				$data['current_address'] = $personalDetails->current_address;
-				$data['present_address'] = $personalDetails->present_address;
+				$data['aadhar_number'] = $personalDetails->aadhar_number;
+				$data['date_of_birth'] = $personalDetails->date_of_birth;
 				$this->student_template->show('student/personal_details', $data);
 			} else {
 				$updateDetails = array(
-					'student_name' => $this->input->post('student_name'),
-					'mobile' => $this->input->post('mobile'),
+					'student_number' => $this->input->post('student_number'),
+					'father_number' => $this->input->post('father_number'),
+					'state' => $this->input->post('state'),
+					'country' => $this->input->post('country'),
 					'email' => $this->input->post('email'),
-					'aadhaar' => $this->input->post('aadhaar'),
-					'date_of_birth' => $this->input->post('date_of_birth'),
 					'gender' => $this->input->post('gender'),
-					'sports' => $this->input->post('sports'),
-					'blood_group' => $this->input->post('blood_group'),
-					'place_of_birth' => $this->input->post('place_of_birth'),
-					'country_of_birth' => $this->input->post('country_of_birth'),
-					'nationality' => $this->input->post('nationality'),
-					'religion' => $this->input->post('religion'),
-					'caste' => $this->input->post('caste'),
-					'mother_tongue' => $this->input->post('mother_tongue'),
-					'current_address' => $this->input->post('current_address'),
-					'present_address' => $this->input->post('present_address'),
+					'aadhar_number' => $this->input->post('aadhar_number'),
+					'date_of_birth' => $this->input->post('date_of_birth'),
 				);
 				// print_r($updateDetails);
 				// die();
-				$result = $this->admin_model->updateDetails($data['id'], $updateDetails, 'admissions');
+				$result = $this->admin_model->updateDetails($data['id'], $updateDetails, 'students');
 
 				// var_dump($this->db->last_query());
 				// die();
