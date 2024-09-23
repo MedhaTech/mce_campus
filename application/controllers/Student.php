@@ -248,7 +248,7 @@ class Student extends CI_Controller
 				$clientid = "cnbmlndaid";
 				$midkey = "hbjUTwdjLDwzsFErRVCE0y0skHic1z2B";
 				$returnurl = base_url() . 'student/callbackaided';
-				$page = 'student/payment';
+				$page = 'student/payment_aided';
 
 				} else {
 
