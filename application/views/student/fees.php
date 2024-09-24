@@ -226,14 +226,14 @@
                                         }
                                         // $college_pay_btn = ($college_fee_balance) ? anchor('', "PAY FEE", 'class="btn btn-danger btn-sm"') : null;
                                         echo "<tr>";
-                                        echo "<td>" . $fee->academic_year . "</td>";
+                                        echo "<td class='text-center'>" . $fee->academic_year . "</td>";
                                         echo "<td class='text-center'>" . $fee->year . "</td>";
-                                        echo "<td class='text-right'>" . $fee->corpus_fee_demand . "</td>";
-                                        echo "<td class='text-right'>" . $fee->corpus_fee_collection . "</td>";
-                                        echo "<td class='text-right'>" . indian_number_format($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
-                                        echo "<td class='text-right'>" . indian_number_format($college_fee_demand) . "</td>";
-                                        echo "<td class='text-right'>" . indian_number_format($college_fee_collection) . "</td>";
-                                        echo "<td class='text-right'>" . indian_number_format($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
+                                        echo "<td class='text-center'>" . $fee->corpus_fee_demand . "</td>";
+                                        echo "<td class='text-center'>" . $fee->corpus_fee_collection . "</td>";
+                                        echo "<td class='text-center'>" . indian_number_format($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
+                                        echo "<td class='text-center'>" . indian_number_format($college_fee_demand) . "</td>";
+                                        echo "<td class='text-center'>" . indian_number_format($college_fee_collection) . "</td>";
+                                        echo "<td class='text-center'>" . indian_number_format($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
                                         echo "</tr>";
                                     }
                                     ?>
@@ -314,7 +314,7 @@
                                     // $transactionDetails1->receipt_no,
                                     ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
                                     $trans,
-                                    number_format($transactionDetails1->amount, 0),
+                                    number_format($transactionDetails1->amount, 2),
                                     $transaction_status
                                 );
                                 $this->table->add_row($result_array);

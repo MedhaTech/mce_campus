@@ -61,13 +61,13 @@
                       <h3 class="card-title">
                           <?= $page_title; ?>
                       </h3>
-                      <div class="card-tools">
+                      <!-- <div class="card-tools">
                           <ul class="nav nav-pills ml-auto">
                               <li class="nav-item">
                                   <?php echo anchor('student/dashboard', '<i class="fas fa-tachometer-alt"></i> Dashboard ', 'class="btn btn-dark btn-sm"'); ?>
                               </li>
                           </ul>
-                      </div>
+                      </div> -->
                   </div>
                   <div class="card-body">
 
