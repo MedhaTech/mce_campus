@@ -187,47 +187,42 @@
                                     foreach ($fees as $fee) {
 
                                         $corpus_fee_demand = $fee->corpus_fee_demand;
-                                        $corpus_fee_balance= $corpus_fee_demand - $this->admin_model->get_total_amount($student->year,$student->usn,1);
+                                        $corpus_fee_balance = $corpus_fee_demand - $this->admin_model->get_total_amount($fee->year, $student->usn, 1);
 
-                                        if($corpus_fee_balance>0)
-                                        {
-                                            $corpus_pay_btn ='<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
+                                        if ($corpus_fee_balance > 0) {
+                                            $corpus_pay_btn = '<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
                                             <input type="hidden" name="usn" id="usn" value="' . htmlspecialchars($student->usn) . '">
                                             <input type="hidden" name="name" id="name" value="' . htmlspecialchars($student->student_name) . '">
                                             <input type="hidden" name="email" id="email" value="' . htmlspecialchars($student->email) . '">
                                             <input type="hidden" name="aided_unaided" id="aided_unaided" value="' . htmlspecialchars($student->sub_quota) . '">
                                             <input type="hidden" name="mobile" id="mobile" value="' . htmlspecialchars($student->student_number) . '">
                                             <input type="hidden" name="amount" id="amount" value="' . htmlspecialchars($corpus_fee_balance) . '">
-                                             <input type="hidden" name="year" id="year" value="' . htmlspecialchars($student->year) . '">
+                                             <input type="hidden" name="year" id="year" value="' . htmlspecialchars($fee->year) . '">
                                            <input type="hidden" name="payment_mode" id="payment_mode" value="1">
                                             <button type="submit" class="btn btn-danger btn-sm" name="Update" id="Update">PAY FEE</button>
                                         </form>';
-                                        }
-                                        else
-                                        {
-                                            $corpus_pay_btn='';
+                                        } else {
+                                            $corpus_pay_btn = '';
                                         }
                                         $college_fee_demand = $fee->college_fee_demand;
                                         $college_fee_collection = $fee->college_fee_collection;
                                         $college_fee = $fee->college_fee_demand - $fee->college_fee_collection;
-                                        $college_fee_balance= $college_fee - $this->admin_model->get_total_amount($student->year,$student->usn,0);
-                                        
-                                        if($college_fee_balance>0)
-                                        {
-                                            $college_pay_btn ='<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
+                                        $college_fee_balance = $college_fee - $this->admin_model->get_total_amount($fee->year, $student->usn, 0);
+
+                                        if ($college_fee_balance > 0) {
+                                            $college_pay_btn = '<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
                                             <input type="hidden" name="usn" id="usn" value="' . htmlspecialchars($student->usn) . '">
                                             <input type="hidden" name="name" id="name" value="' . htmlspecialchars($student->student_name) . '">
                                             <input type="hidden" name="email" id="email" value="' . htmlspecialchars($student->email) . '">
                                             <input type="hidden" name="aided_unaided" id="aided_unaided" value="' . htmlspecialchars($student->sub_quota) . '">
                                             <input type="hidden" name="mobile" id="mobile" value="' . htmlspecialchars($student->student_number) . '">
                                             <input type="hidden" name="amount" id="amount" value="' . htmlspecialchars($college_fee) . '">
+                                             <input type="hidden" name="year" id="year" value="' . htmlspecialchars($fee->year) . '">
                                            <input type="hidden" name="payment_mode" id="payment_mode" value="0">
                                             <button type="submit" class="btn btn-danger btn-sm" name="Update" id="Update">PAY FEE</button>
                                         </form>';
-                                        }
-                                        else
-                                        {
-                                            $college_pay_btn='';
+                                        } else {
+                                            $college_pay_btn = '';
                                         }
                                         // $college_pay_btn = ($college_fee_balance) ? anchor('', "PAY FEE", 'class="btn btn-danger btn-sm"') : null;
                                         echo "<tr>";
@@ -238,13 +233,100 @@
                                         echo "<td class='text-right'>" . indian_number_format($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
                                         echo "<td class='text-right'>" . indian_number_format($college_fee_demand) . "</td>";
                                         echo "<td class='text-right'>" . indian_number_format($college_fee_collection) . "</td>";
-                                        echo "<td class='text-right'>" . indian_number_format($college_fee) . '  ' . $college_pay_btn . "</td>";
+                                        echo "<td class='text-right'>" . indian_number_format($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
                                         echo "</tr>";
                                     }
                                     ?>
                                 </tbody>
                             </table>
+
+
                         </div>
+                    </div> <!-- end card body-->
+                </div> <!-- end card -->
+            </div><!-- end col-->
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <?php $rec = 0;   // to update Admisison Date
+                        //   print_r($transactionDetails);
+                        if ($transactionDetails) {
+                            $rec = 0;
+                            $table_setup = array('table_open' => '<table class="table table-hover font14">');
+                            $this->table->set_template($table_setup);
+                            $print_fields = array('S.No', 'Receipt', 'Date', 'Mode of Payment', 'Amount');
+                            $this->table->set_heading($print_fields);
+
+                            $transactionTypes = array("1" => "Cash", "2" => "DD", "3" => "Online Payment", "4" => "Online Transfer");
+
+                            $i = 1;
+                            $total = 0;
+                            foreach ($transactionDetails as $transactionDetails1) {
+
+                                $trans = null;
+                                // if ($transactionDetails1->transaction_type == 1) {
+                                //     $trans = $transactionTypes[$transactionDetails1->transaction_type];
+                                // }
+                                // if ($transactionDetails1->transaction_type == 2) {
+                                //     $trans = $transactionTypes[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->reference_date)) . ' <br> Bank: ' . $transactionDetails1->bank_name;
+                                // }
+                                // if ($transactionDetails1->transaction_type == 3) {
+                                //     $trans = $transactionTypes[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->reference_date));
+                                // }
+
+                                if ($transactionDetails1->transaction_type == 1) {
+                                    $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                                    $receiptprint = $transactionDetails1->receipt_no;
+                                }
+                                if ($transactionDetails1->transaction_type == 2) {
+                                    $receiptprint = $transactionDetails1->receipt_no;
+                                    $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date)) . ' <br> Bank: ' . $transactionDetails1->bank_name;
+                                }
+                                if ($transactionDetails1->transaction_type == 3) {
+                                    $receiptprint = $transactionDetails1->receipt_no;
+                                    $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                                }
+                                if ($transactionDetails1->transaction_type == 4) {
+                                    $receiptprint = $transactionDetails1->receipt_no;
+                                    $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                                }
+                                if ($transactionDetails1->transaction_type == 5) {
+                                    $receiptprint = $transactionDetails1->receipt_no;
+                                    $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                                }
+
+
+                                // if($transactionDetails1->transaction_status == 1){
+                                //     $transaction_status = "<span class='text-success'>Verified</span>";
+                                // }else if($transactionDetails1->transaction_status == 2){
+                                //     $transaction_status = "<span class='text-danger'>Cancelled</span><br><span class='text-dark'>".nl2br($transactionDetails1->remarks)."</span>";
+                                // }else{
+
+                                //     $transaction_status = "<span class='text-warning'>Processing</span> <br>".anchor('admin/approvePayment/'.$transactionDetails1->id,'Approve','class="btn btn-info btn-sm"').' '.anchor('admin/deletePayment/'.$transactionDetails1->id.'/'.$transactionDetails1->admissions_id,'Delete','class="btn btn-danger btn-sm"');
+                                // }
+
+                                $result_array = array(
+                                    $i++,
+                                    ($transactionDetails1->receipt_no) ? anchor('student/downloadReceipt/' . $transactionDetails1->reg_no . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-",
+                                    // $transactionDetails1->receipt_no,
+                                    ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
+                                    $trans,
+                                    number_format($transactionDetails1->amount, 0),
+                                    $transaction_status
+                                );
+                                $this->table->add_row($result_array);
+                            }
+
+                            echo $this->table->generate();
+                        } else {
+                            $rec = 1;
+                            echo "<h6 class='text-left'> No transaction details found..! </h6>";
+                        }
+                        ?>
+
                     </div> <!-- end card body-->
                 </div> <!-- end card -->
             </div><!-- end col-->

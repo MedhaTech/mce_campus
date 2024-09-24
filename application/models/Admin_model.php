@@ -472,7 +472,7 @@ class Admin_model extends CI_Model
     $this->db->from('students');
     $this->db->where('email', $email);
 
-    $this->db->where('mobile', $mobile);
+    $this->db->where('student_number', $mobile);
     //$this -> db -> where('status', '2');
     $this->db->limit(1);
     $query = $this->db->get();
@@ -482,11 +482,27 @@ class Admin_model extends CI_Model
       return false;
     }
   }
-  public function getReceiptsCountNew()
+  public function getReceiptsCountNew($aided,$mode)
   {
     $this->db->select('COUNT(id) as cnt');
     $this->db->where('receipt_no != ""');
     $this->db->where('transaction_status', '1');
+    if($mode==1)
+    {
+      $this->db->where('payment_mode', '1');
+    }
+    else
+    {
+      if($aided=="Aided")
+      {
+        $this->db->where('aided_unaided', 'Aided');
+      }
+      else
+      {
+        $this->db->where('aided_unaided', 'UnAided');
+      }
+
+    }
     return $this->db->get('transactions');
   }
 
@@ -860,6 +876,7 @@ class Admin_model extends CI_Model
     $this->db->where('year', $year);
     $this->db->where('reg_no', $usn);
     $this->db->where('payment_mode', $payment_mode);
+    $this->db->where('transaction_status', '1');
 
     $query = $this->db->get();
     $result = $query->row();

@@ -195,6 +195,8 @@ class Student extends CI_Controller
 			$data['page_title'] = "Fees";
 			$data['menu'] = "profile";
 			$data['action'] = "student/pay_now";
+			$data['voucher_types'] = $this->globals->voucher_types();
+			$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($data['usn'], 'reg_no', 'transactions')->result();
 			$data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
 			$data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
 
@@ -436,7 +438,7 @@ class Student extends CI_Controller
 
 				);
 				if ($response_array['transaction_error_type'] == 'success') {
-					$cnt_number = $this->getReceiptNo();
+					$cnt_number = $this->getReceiptNo($response_array['orderid']);
 					$receipt_no = $cnt_number;
 					$updateDetails['receipt_no'] = $receipt_no;
 					$updateDetails['transaction_status'] = '1';
@@ -511,7 +513,7 @@ class Student extends CI_Controller
 
 				);
 				if ($response_array['transaction_error_type'] == 'success') {
-					$cnt_number = $this->getReceiptNo();
+					$cnt_number = $this->getReceiptNo($response_array['orderid']);
 					$receipt_no = $cnt_number;
 					$updateDetails['receipt_no'] = $receipt_no;
 					$updateDetails['transaction_status'] = '1';
@@ -586,7 +588,7 @@ class Student extends CI_Controller
 
 				);
 				if ($response_array['transaction_error_type'] == 'success') {
-					$cnt_number = $this->getReceiptNo();
+					$cnt_number = $this->getReceiptNo($response_array['orderid']);
 					$receipt_no = $cnt_number;
 					$updateDetails['receipt_no'] = $receipt_no;
 					$updateDetails['transaction_status'] = '1';
@@ -707,4 +709,229 @@ class Student extends CI_Controller
 		session_destroy();
 		redirect('student', 'refresh');
 	}
+
+	function downloadReceipt($usn, $transaction_id)
+	{
+		if ($this->session->userdata('student_in')) {
+			$sess = $this->session->userdata('student_logs');
+			$data['id'] = $session_data['id'];
+			$data['name'] = $sess['name'];
+			// $data['mobile'] = $sess['mobile'];
+
+			$data['page_title'] = 'Download Receipt';
+			$data['menu'] = 'studnet';
+
+			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$transactionDetails = $this->admin_model->getDetails('transactions', $transaction_id)->row();
+			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$paid_amount = $this->admin_model->paidfee('reg_no', $usn, 'transaction_status', '1', 'transactions');
+			$studentfeeDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
+
+
+			$fees = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
+			$balance_amount = $fees->final_fee - $paid_amount;
+			$voucherDetails = $this->admin_model->getDetails('payment_structure', $transactionDetails->payment_id)->row();
+			$feeDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
+			$this->load->library('fpdf'); // Load library
+			ini_set("session.auto_start", 0);
+			ini_set('memory_limit', '-1');
+			define('FPDF_FONTPATH', 'plugins/font');
+
+
+		
+
+			$pdf = new FPDF();
+			$pdf->AddPage('P', 'A4'); // 'P' for portrait orientation, 'A4' for A4 size (210x297 mm)
+
+			// Set margins
+			$pdf->SetMargins(20, 20, 20);
+
+			$pdf->SetFont('Arial', 'B', 9);
+
+			// Centered header
+			// $cellWidth = 40;
+			// $cellHeight = 5;
+			$pdf->SetFont('Arial', '', 9);
+			if ($transactionDetails->payment_mode == 0) {
+
+				$collegeName = "MALNAD COLLEGE OF ENGINEERING";
+				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
+				$collegeName2 = "Under the auspices of the MTES (R),";
+				$collegeName3 = "PB NO. 21,SALAGAME ROAD HASSAN, KARNATAKA";
+				$contactInfo = "FEES RECEIPT - ".$admissionDetails->sub_quota;
+				$tableData[] = ['Tution Fee', $transactionDetails->amount];
+			} else {
+
+				$collegeName = "MALNAD TECHNICAL EDUCATION SOCIETY (R)";
+				$collegeName1 = "REGD NO. S .2080/589 Dtd 22.01.1959";
+				$collegeName2 = "BESIDE MCE GANAPATHI TEMPLE ,MG ROAD,VIDYANAGAR,HASSAN-573202";
+				$collegeName3 = "STATE-KARNATAKA";
+				$contactInfo = "CORPUS FUND RECEIPT";
+				$tableData[] = ['Corpus Fund', $transactionDetails->amount];
+			}
+
+
+
+
+			$pdf->SetFont('Arial', 'B', 12);
+			$pdf->Cell(0, 2, $collegeName, 0, 1, 'C');
+
+
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->Cell(160, 8, $collegeName1, 0, 1, 'C');
+
+
+			$pdf->Cell(161, 1, $collegeName2, 0, 1, 'C');
+			$pdf->SetFont('Arial', '', 8);
+			$pdf->Cell(160, 7, $collegeName3, 0, 1, 'C');
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(160, 7, $contactInfo, 0, 1, 'C');
+
+			$pageWidth = $pdf->GetPageWidth();
+			$xPos = ($pageWidth - $cellWidth) / 2;
+			// // Amount Paid Box
+
+			// Transaction Details Table
+			$pdf->Ln(3);
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->SetTextColor(33, 33, 33);
+			$rowHeight = 7;
+			$cellWidth1 = 80; // Width for the label column
+			$cellWidth2 = 70; // Width for the value column
+			$pdf->SetX(10);
+			// $pdf->Cell($cellWidth1 + $cellWidth2, $rowHeight, 'TRANSACTION DETAILS:', 0, 1, 'L');
+			$boxWidth = 188;
+			$boxHeight = 8;
+			$boxXPos = ($pageWidth - $boxWidth) / 2;
+			$pdf->SetX($boxXPos);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->Rect($boxXPos, $pdf->GetY(), $boxWidth, $boxHeight, 'F');
+			$pdf->SetX($boxXPos + 2);
+			$pdf->Cell($boxWidth, $boxHeight, 'STUDENT DETAILS', 0, 1, 'L');
+			$pdf->SetFont('Arial', '', 11);
+			$pdf->SetTextColor(0, 1, 0);
+
+			function printStudent($pdf, $label, $value, $startY, $rowHeight, $cellWidth1, $cellWidth2)
+			{
+				$pdf->SetXY(13, $startY);
+				$pdf->Cell($cellWidth1, $rowHeight, $label, 0, 0, 'L', false);
+				$pdf->Cell(10, $rowHeight, ':', 0, 0, 'L', false);
+				$pdf->Cell($cellWidth2, $rowHeight, $value, 0, 1, 'L', false);
+			}
+			$pdf->Ln(2);
+
+			printStudent($pdf, "USN ", $admissionDetails->usn, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Student Name ", $admissionDetails->student_name, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Email ID ", $admissionDetails->email, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Mobile Number ", $admissionDetails->student_number, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Category Claimed ", $admissionDetails->category_claimed, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Quota ", $admissionDetails->quota, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "College Code ", $admissionDetails->college_code, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Gender ", $admissionDetails->gender, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Year ", $feeDetails->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Ug ", 'Ug - ' . $admissionDetails->department, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			// printStudent($pdf, "Pg :", '', $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			$pdf->Ln(4);
+
+			// Student Details Table
+
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->SetX(10);
+			$boxWidth = 188;
+			$boxHeight = 8;
+			$boxXPos = ($pageWidth - $boxWidth) / 2;
+			$pdf->SetX($boxXPos);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->Rect($boxXPos, $pdf->GetY(), $boxWidth, $boxHeight, 'F');
+			$pdf->SetX($boxXPos + 2);
+			$pdf->Cell($boxWidth, $boxHeight, 'PAYMENT DESCRIPTION', 0, 1, 'L');
+			$pdf->Ln(1);
+			$pdf->SetFont('Arial', '', 11);
+			$pdf->SetTextColor(0, 0, 0);
+
+			function printRow($pdf, $label, $value, $startY, $rowHeight, $cellWidth1, $cellWidth2)
+			{
+				$pdf->SetXY(13, $startY);
+				$pdf->Cell($cellWidth1, $rowHeight, $label, 0, 0, 'L', false);
+				$pdf->Cell(10, $rowHeight, ':', 0, 0, 'L', false);
+				$pdf->Cell($cellWidth2, $rowHeight, $value, 0, 1, 'L', false);
+				$pdf->Ln(1);
+			}
+
+			printRow($pdf, "Fee Receipt Number ", $transactionDetails->receipt_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printRow($pdf, "Transaction Status ", 'Successful', $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printRow($pdf, "Transaction Date-Time ", date('d-m-Y', strtotime($transactionDetails->transaction_date)), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printRow($pdf, "Transaction ID ", $transactionDetails->transaction_id, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printRow($pdf, "Payment Ref No ", $transactionDetails->reference_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			if ($voucherDetails->type == 0) {
+				foreach ($tableData as $row) {
+
+					printRow($pdf, $row[0], number_format($row[1], 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+				}
+			}
+			printRow($pdf, "Amount In Rupees :", number_format($transactionDetails->amount, 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			$pdf->Ln(1);
+
+			// // Amount in Words Heading
+			$pdf->Ln(4);
+			$pdf->SetX(13);
+			$pdf->SetFont('Arial', 'B', 12);
+			$pdf->Cell(0, $cellHeight, 'Amount In Words:' . convert_number_to_words($transactionDetails->amount) . ' Only', 0, 1, 'L');
+
+			// Note and Receipt Date
+			$cellWidth = $pdf->GetPageWidth() - 20;
+			$rowHeight = 10;
+			$pdf->Ln(60);
+			$pdf->SetFont('Arial', '', 8);
+			$pdf->SetTextColor(0, 0, 0);
+			$pdf->SetX(12);
+			$pdf->Cell($cellWidth, $rowHeight, 'NOTE: THIS IS A COMPUTER GENERATED RECEIPT AND DOES NOT REQUIRED SIGNATURE.', 0, 1, 'L');
+			$pdf->SetX(12);
+			$pdf->Cell($cellWidth, $rowHeight, 'RECEIPT GENERATED DATE & TIME : ' . date('F j, Y h:i:s A'), 0, 1, 'L');
+
+			// $pdf->Output();
+			$fileName = $admissionDetails->student_name . '-Receipt.pdf';
+			$pdf->output($fileName, 'D');
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
+
+	public function getReceiptNo($reference)
+	{
+
+		$details = $this->admin_model->getDetailsbyfield($reference, 'reference_no', 'transactions')->row();
+		$cnt = $this->admin_model->getReceiptsCountNew($details->aided_unaided,$details->payment_mode)->row()->cnt;
+		$cnt_number = $cnt + 1;
+		$strlen = strlen(($cnt_number));
+		if ($strlen == 1) {
+			$cnt_number = "000" . $cnt_number;
+		}
+		if ($strlen == 2) {
+			$cnt_number = "00" . $cnt_number;
+		}
+		if ($strlen == 3) {
+			$cnt_number = "0" . $cnt_number;
+		}
+		if($details->payment_mode==1)
+		{
+		  $prev="MTES/2024-25/";
+		}
+		else
+		{
+		  if($details->aided_unaided=="Aided")
+		  {
+			$prev="MCE/2024-25/A/";
+		  }
+		  else
+		  {
+			$prev="MCE/2024-25/UA/";
+		  }
+	
+		}
+
+		return $prev.$cnt_number;
+	}
+
+
 }
