@@ -1,513 +1,220 @@
 <!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-    <section class="content-header">
-        <div class="container-fluid">
+<div class="page-content">
 
-            <div class="card m-2 shadow card-info">
-                <div class="card-header ">
-                    <h3 class="card-title">
-                        Admission Details
-                    </h3>
-                    <div class="card-tools">
-                        <ul class="nav nav-pills ml-auto">
+    <div class="container-fluid pb-5">
 
-                        </ul>
+        <div class="card m-2 shadow card-info">
+            <div class="card-header ">
+                <h3 class="card-title">
+                    Admission Details
+                </h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
+
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="form-label">Student Name</label><br>
+                            <?= $admissionDetails->student_name; ?>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="form-label">Mobile</label><br>
+                            <?= $admissionDetails->student_number; ?>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="form-label">Email</label><br>
+                            <?= $admissionDetails->email; ?>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="form-label">Department</label><br>
+                            <?= $admissionDetails->department; ?>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="form-label">Quota</label><br>
+                            <?= $admissionDetails->quota; ?>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="form-label">Sub Quota</label><br>
+                            <?= $admissionDetails->sub_quota; ?>
+                        </div>
                     </div>
                 </div>
-                <div class="card-body">
 
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">Student Name</label><br>
-                                <?= $admissionDetails->student_name; ?>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">Mobile</label><br>
-                                <?= $admissionDetails->mobile; ?>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">Email</label><br>
-                                <?= $admissionDetails->email; ?>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">Aadhaar Number</label><br>
-                                <?= $admissionDetails->aadhaar; ?>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">Department</label><br>
-                                <?= $this->admin_model->get_dept_by_id($admissionDetails->dept_id)["department_name"]; ?>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label class="form-label">Quota</label><br>
-                                <?= $admissionDetails->quota; ?>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+        </div>
 
+        <div class="card m-2 shadow card-info">
+            <div class="card-header">
+                <h3 class="card-title">Student Fee Details</h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
 
-
-
-
-
+                    </ul>
                 </div>
             </div>
 
-            <div class="card m-2 shadow card-info">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+
+
+                            <div class="table-responsive">
+                                <table class="table table-striped mb-60">
+                                    <thead class="thead-light text-center align-middle">
+                                        <tr class="text-center">
+                                            <th rowspan="2" width="11%" class="align-middle">ACADEMIC YEAR</th>
+                                            <th rowspan="2" width="11%" class="align-middle">YEAR</th>
+                                            <th colspan="3" class="">CORPUS FEE (&#8377;)</th>
+                                            <th colspan="3" class="">COLLEGE FEE (&#8377;)</th>
+                                            <th></th>
+                                        </tr>
+                                        <tr class="text-center">
+                                            <th width="13%">DEMAND</th>
+                                            <th width="13%">COLLECTION</th>
+                                            <th width="13%">BALANCE</th>
+                                            <th width="13%">DEMAND</th>
+                                            <th width="13%">COLLECTION</th>
+                                            <th width="13%">BALANCE</th>
+                                            <th width="13%"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        foreach ($fees as $fee) {
+
+                                            // print_r($fee);
+                                            $corpus_fee_demand = $fee->corpus_fee_demand;
+                                            $corpus_fee_collection = $fee->corpus_fee_collection;
+                                            $collection_amount = $this->admin_model->get_total_amount($fee->year, $usn, 1);
+                                            $paid_amount = $corpus_fee_collection + $collection_amount;
+                                            $corpus_fee_balance = $corpus_fee_demand - $paid_amount;
+
+
+
+                                            $college_fee_demand = $fee->college_fee_demand;
+                                            $college_fee_collection = $fee->college_fee_collection;
+                                            $college_collection_amount = $this->admin_model->get_total_amount($fee->year, $usn, 0);
+                                            // var_dump($this->db->last_query());
+                                            // $college_fee = $fee->college_fee_demand - $fee->college_fee_collection;
+                                            $college_paid_fee = $college_fee_collection + $college_collection_amount;
+                                            // $college_fee_balance = $college_fee - $this->admin_model->get_total_amount($fee->year, $student->usn, 0);
+                                            $college_fee_balance = $college_fee_demand - $college_paid_fee;
+
+
+                                            $voucher_btn = ($college_fee_balance || $corpus_fee_balance) ? anchor('admin/new_voucher/' . $encryptId . '/' . $fee->id, "Create Voucher", 'class="btn btn-danger btn-sm"') : null;
+                                            echo "<tr>";
+                                            echo "<td class='text-center'>" . $fee->academic_year . "</td>";
+                                            echo "<td class='text-center'>" . $fee->year . "</td>";
+                                            echo "<td class='text-center'>" . formatIndianCurrency($fee->corpus_fee_demand) . "</td>";
+                                            echo "<td class='text-center'>" . formatIndianCurrency($paid_amount) . "</td>";
+                                            echo "<td class='text-center'>" . formatIndianCurrency($corpus_fee_balance)  . "</td>";
+                                            echo "<td class='text-center'>" . formatIndianCurrency($college_fee_demand) . "</td>";
+                                            echo "<td class='text-center'>" . formatIndianCurrency($college_paid_fee) . "</td>";
+                                            echo "<td class='text-center'>" . formatIndianCurrency($college_fee_balance)  . "</td>";
+                                            echo "<td class='text-center'>" . $voucher_btn  . "</td>";
+                                            echo "</tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div> <!-- end card body-->
+
+                    </div> <!-- end card -->
+
+                </div><!-- end col-->
+            </div>
+
+        </div>
+
+        <div class="card m-2 shadow card-info">
                 <div class="card-header">
-                    <h3 class="card-title">Student Fee Details</h3>
-                    <div class="card-tools">
-                        <ul class="nav nav-pills ml-auto">
-                         
-                        </ul>
-                    </div>
+                    <h3 class="card-title">Voucher Details</h3>
+               
                 </div>
                 <div class="card-body">
-                    <?php // print_r($fees); 
-                    ?>
-                    <div class="row">
-                        <!-- <div class="col-2">
-                              <div class="form-group">
-                                  <label class="form-label">Total College Fee + Corpus Fund - Concession Fee (Rs.)</label>
-                                  <h4><?php echo number_format($fees->total_college_fee, 2) . ' + ' . number_format($fees->corpus_fund, 2) . ' - ' . number_format($studentDetails->concession_fee, 2); ?>
-                                  </h4>
-                              </div>
-                          </div> -->
-                        <div class="col-md-2 col-sm-12">
-                            <div class="form-group">
-                                <label class="form-label">College Fee</label>
-                                <h4><?php echo number_format($fees->total_college_fee, 2); ?>
-                                </h4>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-12">
-                            <div class="form-group">
-                                <label class="form-label">Corpus Fund</label>
-                                <h4><?php echo number_format($fees->corpus_fund, 2); ?>
-                                </h4>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-12">
-                            <div class="form-group">
-                                <label class="form-label">Concession Fee</label>
-                                <h4><?php echo number_format($fees->consession_amount, 2); ?>
-                                </h4>
-                            </div>
-                        </div>
-                        <!-- <div class="col-2">
-                              <div class="form-group">
-                                  <label class="form-label">Total College Fee + Corpus Fund - Concession Fee
-                                      (Rs.)</label>
-                                  <h4><?php echo number_format($fees->total_college_fee, 0) . ' + ' . number_format($fees->corpus_fund, 0) . ' - ' . number_format($studentDetails->concession_fee, 0); ?>
-                                  </h4>
-                              </div>
-                          </div> -->
-                        <div class="col-md-2 col-sm-12">
-                            <div class="form-group">
-                                <label class="form-label">Total Fee (Rs.)</label>
-                                <h4 class="text-primary"><?php echo number_format($fees->final_fee, 2); ?>
-                                </h4>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-12">
-                            <div class="form-group">
-                                <label class="form-label">Paid Fee (Rs.)</label>
-                                <h4 class="text-success"><?php echo number_format($paid_amount, 2); ?></h4>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-sm-12">
-                            <div class="form-group">
-                                <label class="form-label">Balance Fee (Rs.)</label>
-                                <h4 class="text-danger">
-                                    <?php $balance_amount = $fees->final_fee - $paid_amount;
-                                    echo number_format($balance_amount, 2); ?>
-                                </h4>
-                                <!-- <?php echo anchor('', 'Pay Balance Fee', 'class="btn btn-danger btn-sm"'); ?> -->
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
+                <?php $rec = 0;   // to update Admisison Date
+
+                if ($paymentDetail) {
+                    $rec = 0;
+                    $table_setup = array('table_open' => '<table class="table table-hover font14">');
+                    $this->table->set_template($table_setup);
+                    $print_fields = array('S.No', 'Voucher', 'Amount', 'Voucher Type', 'Date',  'Status', 'Action');
+                    $this->table->set_heading($print_fields);
+
+                    $statusTypes = array("0" => "Not Paid", "1" => "Paid", "2" => "Failed", "3" => "Processing");
+
+                    $i = 1;
+                    $total = 0;
+                    foreach ($paymentDetail as $paymentDetails1) {
+
+                        if ($paymentDetails1->voucher_type == 3) {
+                            $url = '-';
+                            $button = '-';
+                        } else {
+                            if ($paymentDetails1->voucher_type == 1 ||  $paymentDetails1->voucher_type == 5) {
+                                $url = anchor('admin/cashvoucher/' . $encryptId . '/' . $paymentDetails1->id, "TF24-25/" . $paymentDetails1->id);
+                            }
+                            if ($paymentDetails1->voucher_type == 2) {
+                                $url = anchor('admin/voucherletter/' . $encryptId . '/' . $paymentDetails1->id, "TF24-25/" . $paymentDetails1->id);
+                            }
+                            if ($paymentDetails1->voucher_type == 4) {
+                                $url = anchor('admin/onlinevoucher/' . $encryptId . '/' . $paymentDetails1->id, "TF24-25/" . $paymentDetails1->id);
+                            }
+
+
+                            if ($paymentDetails1->status != 1) {
+                                $button = anchor('admin/mark_paid/' . $encryptId . '/' . $paymentDetails1->id, "Mark as paid", 'class="btn btn-success btn-sm"');
+                            } else {
+                                $button = '-';
+                            }
+                        }
+
+
+
+
+                        $result_array = array(
+                            $i++,
+                            $url,
+                            number_format($paymentDetails1->final_fee, 2),
+                            $voucher_types[$paymentDetails1->voucher_type],
+                            $paymentDetails1->requested_on,
+                            $statusTypes[$paymentDetails1->status],
+                            $button
+
+
+                        );
+                        $this->table->add_row($result_array);
+                    }
+
+                    echo $this->table->generate();
+                } else {
+                    $rec = 1;
+                    echo "<h6 class='text-left'> No voucher details found..! </h6>";
+                }
+                ?>
+
             </div>
-
-        
-
-
-        </div>
-
-
-    </section>
-    <!-- /.content -->
-</div>
-
-<div class="modal fade" id="student_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content tx-14">
-            <div class="modal-header">
-                <h6 class="modal-title text-bold" id="exampleModalLabel">
-                    <?= $enquiryDetails->student_name; ?> Details</h6>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post" id="insert_form">
-
-
-
-                    <div class="form-row">
-                        <div class="col">
-                            <div class="form-group">
-                                <label class="form-label">Total College Fee</label>
-                                <input type="text" class="form-control" id="total_college_fee"
-                                    name="total_college_fee" placeholder="Total College fee" readonly value="<?php echo $fees->total_college_fee; ?>">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label class="form-label">Corpus Fund</label>
-                                <input type="text" class="form-control" id="corpus_fund" name="corpus_fund"
-                                    placeholder="Corpus Fund" readonly value="<?php echo $fees->corpus_fund; ?>">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label class="form-label">Total Fee</label>
-                                <input type="text" class="form-control" id="total_tution_fee"
-                                    name="total_tution_fee" placeholder="Total Fee" readonly value="<?php echo $fees->final_fee; ?>">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-
-                        <div class="col">
-                            <div class="form-group">
-                                <label class="form-label">Concession Type</label>
-                                <?php $concession_type_options = array("" => "Select", "Sports Quota" => "Sports Quota", "Management Quota" => "Management Quota");
-                                echo form_dropdown('concession_type', $concession_type_options, '', 'class="form-control input-xs" id="concession_type"'); ?>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label class="form-label">Concession Amount (if any)</label>
-                                <input type="text" class="form-control" id="concession_fee"
-                                    name="concession_fee" placeholder="Enter Concession Fee" value="<?php echo $fees->consession_amount; ?>">
-                            </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group">
-                                <label class="form-label">Final Fee</label>
-                                <input type="text" class="form-control" id="final_amount" name="final_amount"
-                                    placeholder="Payable Fee" readonly value="<?php echo $fees->final_fee; ?>">
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="form-row">
-                        <div class="col">
-                            <div class="form-group">
-                                <label class="form-label">Remarks</label>
-                                <input type="text" class="form-control" id="remarks" name="remarks"
-                                    placeholder="Enter remarks" value="">
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col">
-                            <button type="button" class="btn btn-secondary btn-sm tx-13"
-                                data-dismiss="modal">Close</button>
-                        </div>
-                        <div class="col text-right">
-                            <input type="submit" name="insert" id="insert" value="Update Concession"
-                                class="btn btn-danger btn-sm" />
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
     </div>
 </div>
-
-<script>
-    $(document).ready(function() {
-        var base_url = '<?php echo base_url(); ?>';
-
-        $("#cash_details").hide();
-        $("#cheque_dd_details").hide();
-        $("#online_payment_details").hide();
-
-        $('input[type=radio][name=mode_of_payment]').change(function() {
-            if (this.value == "Cash") {
-                $("#cash_details").show();
-                $("#cheque_dd_details").hide();
-                $("#online_payment_details").hide();
-            }
-            if (this.value == "ChequeDD") {
-                $("#cash_details").hide();
-                $("#cheque_dd_details").show();
-                $("#online_payment_details").hide();
-            }
-            if (this.value == "OnlinePayment") {
-                $("#cash_details").hide();
-                $("#cheque_dd_details").hide();
-                $("#online_payment_details").show();
-            }
-
-            $('#cash_amount').keypress(function(e) {
-                var a = [];
-                var k = e.which;
-                for (i = 48; i < 58; i++)
-                    a.push(i);
-
-                if (!(a.indexOf(k) >= 0)) {
-                    e.preventDefault();
-                    $(".error").css("display", "inline");
-                } else {
-                    $(".error").css("display", "none");
-                }
-
-                setTimeout(function() {
-                    $('.error').fadeOut('slow');
-                }, 2000);
-
-            });
-
-            $('#cheque_dd_amount').keypress(function(e) {
-                var a = [];
-                var k = e.which;
-                for (i = 48; i < 58; i++)
-                    a.push(i);
-
-                if (!(a.indexOf(k) >= 0)) {
-                    e.preventDefault();
-                    $(".error").css("display", "inline");
-                } else {
-                    $(".error").css("display", "none");
-                }
-
-                setTimeout(function() {
-                    $('.error').fadeOut('slow');
-                }, 2000);
-
-            });
-
-            $('#transaction_amount').keypress(function(e) {
-                var a = [];
-                var k = e.which;
-                for (i = 48; i < 58; i++)
-                    a.push(i);
-
-                if (!(a.indexOf(k) >= 0)) {
-                    e.preventDefault();
-                    $(".error").css("display", "inline");
-                } else {
-                    $(".error").css("display", "none");
-                }
-
-                setTimeout(function() {
-                    $('.error').fadeOut('slow');
-                }, 2000);
-
-            });
-        });
-
-
-
-        $("#edit_concession").click(function() {
-            event.preventDefault();
-            $('#student_modal').modal('show');
-        });
-
-
-        $("#concession_fee").change(function() {
-            event.preventDefault();
-            var final_amount = finalAmount();
-            $('#final_amount').val(finalAmount);
-            var final_amount = collegeAmount();
-            $('#final_amount').val(final_amount);
-        });
-
-        $("#corpus_fee").change(function() {
-            event.preventDefault();
-            var final_amount = finalAmount();
-            $('#final_amount').val(finalAmount);
-        });
-
-        function finalAmount() {
-            var total_college_fee = $("#total_college_fee").val();
-            var corpus_fund = $("#corpus_fund").val();
-            var total_tution_fee = $("#total_tution_fee").val();
-            var concession_fee = $("#concession_fee").val();
-
-            var final_amount = parseInt(total_tution_fee) + parseInt(concession_fee);
-            return final_amount;
-        }
-
-        function collegeAmount() {
-            var total_tution_fee = $("#total_tution_fee").val();
-            var concession_fee = $("#concession_fee").val();
-
-            var total_college_fee = parseInt(total_tution_fee) - parseInt(concession_fee);
-
-            return total_college_fee;
-        }
-        $("#insert").click(function() {
-            event.preventDefault();
-            var id = '<?php echo $encryptId; ?>';
-
-
-            var corpus = $("#corpus_fee").val();
-            var remarks = $("#remarks").val();
-            var total_tution_fee = $("#total_tution_fee").val();
-            var total_college_fee = $("#total_college_fee").val();
-
-            var concession_type = $("#concession_type").val();
-            var concession_fee = $("#concession_fee").val();
-            var final_amount = $('#final_amount').val();
-
-            $.ajax({
-                'type': 'POST',
-                'url': base_url + 'admin/updateConcession',
-                'data': {
-
-                    "id": id,
-                    "total_college_fee": total_college_fee,
-                    "total_tution_fee": total_tution_fee,
-
-                    "concession_type": concession_type,
-                    "concession_fee": concession_fee,
-                    "remarks": remarks,
-                    "final_amount": final_amount
-                },
-                'dataType': 'text',
-                'cache': false,
-                'beforeSend': function() {
-                    $('#insert').val("Inserting...");
-                    $("#insert").attr("disabled", true);
-                },
-                'success': function(data) {
-                    $('#insert').val("Inserted");
-                    $('#student_modal').modal('hide');
-                    var url = base_url + 'admin/paymentDetail/' + id
-                    window.location.replace(url);
-                }
-            });
-
-        });
-
-    });
-</script>
-<script>
-    $(document).ready(function() {
-
-
-        // Function to update final fee based on selected checkboxes
-        function updateFinalFee() {
-            var sum = 0;
-            var corpusFundChecked = false;
-
-            // Iterate over each checkbox that needs to be considered
-            $('input[type="checkbox"]').each(function() {
-                if ($(this).prop('checked')) {
-                    var inputId = $(this).attr('id').replace('_checkbox', '');
-                    var inputValue = parseFloat($('#' + inputId).val());
-
-                    if ($(this).attr('id') === 'corpus_fund_checkbox') {
-                        // If corpus_fund_checkbox is checked, uncheck all others
-                        corpusFundChecked = true;
-                        sum = inputValue; // Set sum to only the corpus fund value
-                    } else {
-                        // Add value to sum only if it's not corpus_fund_checkbox
-                        sum += inputValue;
-                    }
-                }
-            });
-
-            // Update the final_fee input with the calculated sum
-            $('#final_fee').val(sum.toFixed(2));
-
-            // If corpus_fund_checkbox is checked, uncheck all other checkboxes
-            if (corpusFundChecked) {
-                $('input[type="checkbox"]').each(function() {
-                    if ($(this).attr('id') !== 'corpus_fund_checkbox' && $(this).prop('checked')) {
-                        $(this).prop('checked', false);
-                    }
-                });
-            }
-        }
-        $('#selectAllCheckbox').change(function() {
-            // Check if the master checkbox is checked
-            var isChecked = $(this).is(':checked');
-
-            // Select or deselect all checkboxes that are not disabled and not with the ID 'corpus_fund_checkbox'
-            $('input[type="checkbox"]:not(:disabled):not(#corpus_fund_checkbox)').prop('checked', isChecked);
-        });
-        // Attach change event listener to relevant checkboxes
-        $('input[type="checkbox"]').change(function() {
-            updateFinalFee(); // Update the final fee whenever a checkbox changes
-        });
-
-        // Initialize final fee on page load
-        updateFinalFee();
-    });
-</script>
-<script>
-    $(document).ready(function() {
-        // Listen for form submission
-        $('form').submit(function(event) {
-            // Prevent the default form submission
-            event.preventDefault();
-
-            // Array to store selected checkbox values
-            var selectedFees = [];
-
-            // Iterate over each checked checkbox
-            $('input[name="fees[]"]:checked').each(function() {
-                // Get the value of the checkbox (e.g., 'e_learning_fee')
-                var feeValue = $(this).val();
-
-                // Find the corresponding text field value based on feeValue
-                var textFieldValue = $('#' + feeValue).val();
-
-                // Prepare data for submission
-                selectedFees.push({
-                    name: $(this).attr('id'),
-                    value: feeValue,
-                    textFieldValue: textFieldValue
-                });
-            });
-            var finalFee = $('#final_fee').val();
-
-            // Add final fee and selectedFees array as hidden input fields to the form
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'final_fee',
-                value: finalFee
-            }).appendTo('form');
-
-            // Add selectedFees array as a hidden input field to the form
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'selected_fees',
-                value: JSON.stringify(selectedFees)
-            }).appendTo('form');
-
-            // Submit the form programmatically
-            this.submit();
-        });
-    });
-</script>

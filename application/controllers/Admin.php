@@ -484,18 +484,18 @@ class Admin extends CI_Controller
 			$data['menu'] = 'payments';
 			$data['encryptId'] = $encryptId;
 			$usn = base64_decode($encryptId);
-			$data['usn'] = $student_id;
+			$data['usn'] = $usn;
 			$data['voucher_types'] = $this->globals->voucher_types();
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
 			$data['admissionDetails'] = $this->admin_model->getDetails('students', $usn)->row();
 			
-			$data['paymentDetail'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'payment_structure')->result();
+			$data['paymentDetail'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'payment_structure1')->result();
 			$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'reg_no', 'transactions')->result();
 			$data['paid_amount'] = $this->admin_model->paidfee('reg_no', $usn, 'transaction_status', '1', 'transactions');
 			$admissionSingle = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
 			$data['fee_structure'] = $this->admin_model->getFee($admissionSingle->dept_id, $admissionSingle->quota, $admissionSingle->sub_quota)->row();
 
-			$data['fees'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
+			$data['fees'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->result();
 
 
 			$this->admin_template->show('admin/paymentDetail', $data);
@@ -503,4 +503,704 @@ class Admin extends CI_Controller
 			redirect('admin/timeout');
 		}
 	}
+	function new_voucher($encryptId,$feemaster_id)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+			$data['page_title'] = "New Voucher Request";
+			$data['menu'] = "payments";
+			$usn = base64_decode($encryptId);
+			$admissionSingle = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+
+			$data['fee_structure'] = $this->admin_model->getDetails('fee_master', $feemaster_id)->row();
+			$data['usn'] = $usn;
+			$data['encryptId'] = $encryptId;
+			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$this->form_validation->set_rules('voucher_type', 'Voucher Type', 'required');
+
+			$this->form_validation->set_rules('final_fee', 'Total Amount', 'numeric|required');
+			if ($this->form_validation->run() === FALSE) {
+				$data['action'] = 'admin/new_voucher/' . $encryptId.'/'.$feemaster_id;
+				$this->admin_template->show('admin/new_voucher', $data);
+			} else {
+
+
+				$selectedFees = $this->input->post('selected_fees');
+
+				$finalFee = $this->input->post('final_fee');
+				$selectedFeesArray = json_decode($selectedFees, true);
+
+				// Debugging - Output selected fees array (adjust as needed)
+				$updateDetails['type'] = 0;
+				foreach ($selectedFeesArray as $selected) {
+					$field = $newName = preg_replace('/_checkbox$/', '', $selected['name']);
+
+					$updateDetails[$field] = $selected['newvalue'];
+
+					if ($field == 'corpus_fee_demand') {
+						$updateDetails['type'] = 1;
+					}
+				}
+				$updateDetails['voucher_type'] = $this->input->post('voucher_type');
+				if ($updateDetails['voucher_type'] == 5 || $updateDetails['voucher_type'] == 2) {
+
+					$updateDetails['dd_bank'] = $this->input->post('dd_bank');
+					$updateDetails['dd_number'] = $this->input->post('dd_number');
+					if ($this->input->post('dd_date') == '') {
+						$updateDetails['dd_date'] = '';
+					} else {
+						$updateDetails['dd_date'] = date('Y-m-d', strtotime($this->input->post('dd_date')));
+					}
+				}
+				if ($updateDetails['voucher_type'] == 3) {
+					$updateDetails['offline'] = 0;
+				} else {
+					$updateDetails['offline'] = 1;
+				}
+
+
+				$updateDetails['year'] = $this->input->post('year');
+				$updateDetails['usn'] = $usn;
+				$updateDetails['mobile'] = $data['admissionDetails']->student_number;;
+				$updateDetails['final_fee'] = $this->input->post('final_fee');
+				$updateDetails['requested_by'] = $data['full_name'];
+				$updateDetails['requested_on'] = date('Y-m-d h:i:s');
+
+				// var_dump($updateDetails);
+
+				$result = $this->admin_model->insertDetails('payment_structure1', $updateDetails);
+
+
+				if ($result) {
+					$this->session->set_flashdata('message', 'New Payment Details are added successfully...!');
+					$this->session->set_flashdata('status', 'alert-success');
+				} else {
+					$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
+					$this->session->set_flashdata('status', 'alert-warning');
+				}
+
+				redirect('admin/paymentDetail/' . $encryptId, 'refresh');
+			}
+		} else {
+			redirect('admin', 'refresh');
+		}
+	}
+
+	function mark_paid($encryptId, $id)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Payments Details';
+			$data['menu'] = 'payments';
+			$usn = base64_decode($encryptId);
+			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $id)->row();
+			$data['voucherDetails'] = $this->admin_model->getDetails('payment_structure1', $id)->row();
+
+
+			$this->form_validation->set_rules('transaction_date', 'Paid Date', 'required');
+			$this->form_validation->set_rules('receipt_no', 'Receipt Number(Tally)', 'required');
+
+			if ($this->form_validation->run() === FALSE) {
+				$data['action'] = 'admin/mark_paid/' . $encryptId . '/' . $id;
+				$this->admin_template->show('admin/mark_paid', $data);
+			} else {
+
+				$receipt_no = $this->input->post('receipt_no');
+				$transaction_date = $this->input->post('transaction_date');
+				$remarks = $this->input->post('remarks');
+
+				if ($voucherDetails->voucher_type == 2 || $voucherDetails->voucher_type == 5) {
+					$bank_name = $this->input->post('dd_bank');
+					$reference_date = $this->input->post('dd_date');
+					$reference_no = $this->input->post('dd_number');
+				} else {
+					$bank_name = '';
+					$reference_date = '';
+					$reference_no = '';
+				}
+				if ($voucherDetails->type == 1) {
+					$payment_mode = 1;
+				} else {
+					$payment_mode = 0;
+				}
+
+				$insert = array(
+					'amount' => $voucherDetails->final_fee,
+					'reg_no' => $voucherDetails->usn,
+					'aided_unaided' => $admissionDetails->sub_quota,
+
+					'receipt_no' => $receipt_no,
+					'transaction_date' => $transaction_date,
+					'transaction_type' => $voucherDetails->voucher_type,
+					'bank_name' => $bank_name,
+					'reference_no' => $reference_no,
+					'reference_date' => $reference_date,
+					'payment_mode' => $payment_mode,
+
+
+					'mobile' => $voucherDetails->mobile,
+
+					'remarks' => $remarks,
+					'academic_year' => "2024-2025",
+					'year' => $voucherDetails->year,
+
+					'payment_id' => $voucherDetails->id,
+					'transaction_status' => '1',
+					'created_on' => date('Y-m-d h:i:s')
+				);
+
+				$result = $this->admin_model->insertDetails('transactions', $insert);
+				$updateDetails1['status'] = '1';
+				$result1 = $this->admin_model->updateDetailsbyfield('id', $id, $updateDetails1, 'payment_structure1');
+
+
+				if ($result) {
+					$this->session->set_flashdata('message', 'New Payment Details are added successfully...!');
+					$this->session->set_flashdata('status', 'alert-success');
+				} else {
+					$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
+					$this->session->set_flashdata('status', 'alert-warning');
+				}
+
+				redirect('admin/paymentDetail/' . $encryptId, 'refresh');
+			}
+		} else {
+			redirect('admin', 'refresh');
+		}
+	}
+	public function cashvoucher($encryptId, $transaction_id)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Admission Details';
+			$data['menu'] = 'admissions';
+			$usn = base64_decode($encryptId);
+			$admission_id = $usn;
+			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $admission_id)->row();
+
+			$admissionDetails =$this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $transaction_id)->row();
+		
+
+			$this->load->library('fpdf'); // Load library
+			ini_set("session.auto_start", 0);
+			ini_set('memory_limit', '-1');
+			define('FPDF_FONTPATH', 'plugins/font');
+			$pdf = new FPDF();
+
+			$collegeName = "MALNAD COLLEGE OF ENGINEERING";
+			$collegeName1 = "Autonomous Institute Affiliated to the VTU";
+			$collegeName2 = "Under the auspices of the MTES (R),";
+			$collegeName3 = "PB NO. 21";
+			$contactInfo1 = "SALAGAME ROAD HASSAN";
+			$contactInfo2 = "State Name : Karnataka";
+			$affiliation = "ACKNOWLEDGEMENT";
+			$contactInfo = "UG (AY-2024-2025)";
+
+			$issuedOn = "Date : " . date("d-m-Y ");
+			$programe = "PROGRAM : B.E";
+			$chellan = "Challan : TF24-25/" . $voucherDetails->id;
+			$dept = "Dept. :" . $admissionDetails->department;
+			$bcopy = "BANK COPY";
+			$copyData = array('S.A Copy', 'Office Copy');
+
+			// Define the data for the table
+			$tableData = [
+				['USN', $admissionDetails->usn],
+				['Name', $admissionDetails->student_name],
+				['Year', $voucherDetails->year],
+				['Quota', $admissionDetails->quota],
+				['College Code', $admissionDetails->college_code . ' - ' . $admissionDetails->sub_quota],
+				['Category', $admissionDetails->category_allotted]
+			];
+
+			if ($voucherDetails->voucher_type == 1) {
+				$tableData[] = ['Payment Mode', 'Cash'];
+			} elseif ($voucherDetails->voucher_type == 5) {
+				$tableData[] = ['Payment Mode', 'Bank DD'];
+				$tableData[] = ['DD. No.', $voucherDetails->dd_number];
+				$tableData[] = ['DD. Date', date('d-m-Y', strtotime($voucherDetails->dd_date))];
+				$tableData[] = ['Bank Name', $voucherDetails->dd_bank];
+			}
+
+			$fees = [
+				'E-Learning Fee' => $voucherDetails->e_learning_fee,
+				'Eligibility Fee' => $voucherDetails->eligibility_fee,
+				'E-Consortium Fee' => $voucherDetails->e_consortium_fee,
+				'Sport Fee' => $voucherDetails->sport_fee,
+				'Sports Development Fee' => $voucherDetails->sports_development_fee,
+				'Career Guidance Counseling Fee' => $voucherDetails->career_guidance_counseling_fee,
+				'University Development Fund' => $voucherDetails->university_development_fund,
+				'Promotion of Indian Cultural Fee' => $voucherDetails->promotion_of_indian_cultural_activities_fee,
+				'Teachers Development Fee' => $voucherDetails->teachers_development_fee,
+				'Student Development Fee' => $voucherDetails->student_development_fee,
+				'Indian Red Cross Membership Fee' => $voucherDetails->indian_red_cross_membership_fee,
+				'Women Cell Fee' => $voucherDetails->women_cell_fee,
+				'NSS Fee' => $voucherDetails->nss_fee,
+				'University Registration Fee' => $voucherDetails->university_registration_fee
+			];
+
+			$university = 0;
+			foreach ($fees as $feeName => $feeValue) {
+				if ($feeValue > 0) {
+					$university += $feeValue;
+				}
+			}
+			if ($university > 0) {
+				$tableData[] = ["University Other Fee", $university];
+			}
+			if ($voucherDetails->admission_fee > 0) {
+				$tableData[] = ['Admission Fee', $voucherDetails->admission_fee];
+			}
+			if ($voucherDetails->processing_fee_paid_at_kea > 0) {
+				$tableData[] = ['Processing Fee Paid at KEA', $voucherDetails->processing_fee_paid_at_kea];
+			}
+			if ($voucherDetails->tution_fee > 0) {
+				$tableData[] = ['Tution Fee', $voucherDetails->tution_fee];
+			}
+			if ($voucherDetails->college_other_fee > 0) {
+				$tableData[] = ['College Other Fee', $voucherDetails->college_other_fee];
+			}
+
+			// Create a function to generate a single copy
+			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy)
+			{
+				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
+				$collegeName2 = "Under the auspices of the MTES (R),";
+				$collegeName3 = "PB NO. 21";
+				$contactInfo1 = "SALAGAME ROAD HASSAN";
+				$contactInfo2 = "State Name : Karnataka";
+				$contactInfo = "UG (AY-2024-2025)";
+				$pdf->Rect($x - 2, $y, 90, 200); // Increase the size of each copy
+				$pdf->SetXY($x, $y);
+				$pdf->SetFont('Arial', 'B', 10);
+				$pdf->Cell(85, 5, $collegeName, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 9);
+				$pdf->Cell(85, 4, $collegeName1, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 9);
+				$pdf->Cell(85, 4, $collegeName2, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 9);
+				$pdf->Cell(85, 4, $collegeName3, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 8);
+				$pdf->Cell(85, 4, $contactInfo1, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->Cell(85, 4, $contactInfo2, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', 'B', 8);
+				$pdf->Cell(85, 5, $affiliation, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 7);
+				$pdf->Cell(85, 5, $contactInfo, 0, 1, 'C');
+
+				// Draw a line
+				$pdf->SetLineWidth(0.2);
+				$pdf->Line($x, $y + 30, $x + 87, $y + 30);
+				$pdf->Ln(5);
+				$pdf->SetLineWidth(0.2);
+				$pdf->Line($x, $y + 35, $x + 87, $y + 35);
+				$pdf->Ln(5);
+				$pdf->SetFont('Arial', '', 8);
+				$pdf->SetXY($x, $y + 40);
+				$pdf->Cell(85, 5, $issuedOn, 0, 0, 'L');
+				$pdf->SetXY($x, $y + 40);
+				$pdf->Cell(85, 5, $programe, 0, 1, 'R');
+				$pdf->SetXY($x, $y + 45);
+				$pdf->Cell(85, 5, $chellan, 0, 0, 'L');
+				$pdf->SetXY($x, $y + 45);
+				$pdf->Cell(85, 5, $dept, 0, 1, 'R');
+				$pdf->SetXY($x, $y + 50);
+				$pdf->SetFont('Arial', '', 8);
+				$pdf->MultiCell(85, 5, "");
+
+				$tableY = $pdf->GetY(); // Get current Y position for the table
+				foreach ($tableData as $row) {
+					$pdf->SetXY($x, $tableY);
+					$pdf->Cell(42.5, 7, $row[0], 1, 0, 'C');
+					$pdf->Cell(42.5, 7, $row[1], 1, 1, 'C');
+					$tableY += 7; // Move Y position down for the next row
+				}
+				$pdf->SetFont('Arial', 'B', 7);
+				$pdf->SetXY($x, $tableY);
+				$pdf->Cell(42.5, 5, "TOTAL", 1, 0, 'C');
+				$pdf->Cell(42.5, 5, $voucherDetails->final_fee, 1, 1, 'C');
+				$tableY += 8;
+				$pdf->SetFont('Arial', '', 8);
+				$pdf->SetXY($x, $tableY);
+				$pdf->MultiCell(85, 5, "Amount (In Words) : " . convert_number_to_words($voucherDetails->final_fee) . " Only");
+				$pdf->SetXY($x, $tableY + 25);
+				$pdf->Cell(42.5, 5, ' ', 0, 0, 'L');
+				$pdf->Cell(42.5, 5, "Signature of Remitter", 0, 1, 'R');
+				$pdf->SetXY($x, $tableY + 60);
+				$pdf->SetFont('Arial', '', 8);
+				$pdf->Cell(85, 5, $copy, 0, 1, 'C');
+			}
+
+			// Add page and set margins
+			$pdf->AddPage('P', 'A4'); // 'L' for landscape orientation, 'A4' for A4 size (210x297 mm)
+			$pdf->SetMargins(10, 10, 10);
+
+			// Generate two copies horizontally
+			$startX = 10;
+			$startY = 10;
+			$spacingX = 100; // Adjust this spacing to fit the copies horizontally
+			$spacingY = 120; // Adjust this spacing to fit the copies vertically
+
+			for ($i = 0; $i < 2; $i++) {
+				generateCopy($i, $pdf, $startX + ($i * $spacingX), $startY, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copyData[$i]);
+			}
+
+			// $pdf->Output();
+			$fileName = $admissionDetails->student_name . '- Voucher.pdf';
+			$pdf->output($fileName, 'D');
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+	public function voucherletter($encryptId, $id)
+	{
+
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Admission Details';
+			$data['menu'] = 'admissions';
+			$usn = base64_decode($encryptId);
+			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $id)->row();
+			
+
+
+			$this->load->library('fpdf'); // Load library
+			ini_set("session.auto_start", 0);
+			ini_set('memory_limit', '-1');
+			define('FPDF_FONTPATH', 'plugins/font');
+			$pdf = new FPDF();
+
+
+
+			$collegeName = "MALNAD COLLEGE OF ENGINEERING";
+			$collegeName1 = "Autonomous Institute Affiliated to the VTU";
+			$collegeName2 = "Under the auspices of the MTES (R),";
+			$collegeName3 = "PB NO. 21";
+			$contactInfo1 = "SALAGAME ROAD HASSAN";
+			$contactInfo2 = "State Name : Karnataka";
+			$affiliation = "FEE RECEIPT";
+			$contactInfo = "UG (AY-2024-2025)";
+
+			$issuedOn = "Date : " . date("m-d-Y ");
+			$programe = "PROGRAM : B.E";
+			$chellan = "Challan : TF24-25/" . $voucherDetails->id;
+			$dept = "Dept. :" . $admissionDetails->department;
+			$bcopy = "BANK COPY";
+			$copyData = array('Bank Copy', 'Office Copy', 'S.A Copy', 'Student Copy');
+			// Define the data for the table
+			if ($voucherDetails->dd_date == '0000-00-00') {
+				$dddate = '';
+			} else {
+				$dddate = date('d-m-Y', strtotime($voucherDetails->dd_date));
+			}
+
+
+			$tableData = [
+				['Admission No.', $admissionDetails->adm_no],
+				['Name', $admissionDetails->student_name],
+				['Year', $voucherDetails->year],
+				['Quota', $admissionDetails->quota],
+				['College Code', $admissionDetails->college_code . ' - ' . $admissionDetails->sub_quota],
+				['Category', $admissionDetails->category_allotted],
+				['DD No.', $voucherDetails->dd_number],
+				['DD Date', $dddate],
+				['Bank Name', $voucherDetails->dd_bank]
+			];
+
+			$fees = [
+				'E-Learning Fee' => $voucherDetails->e_learning_fee,
+				'Eligibility Fee' => $voucherDetails->eligibility_fee,
+				'E-Consortium Fee' => $voucherDetails->e_consortium_fee,
+				'Sport Fee' => $voucherDetails->sport_fee,
+				'Sports Development Fee' => $voucherDetails->sports_development_fee,
+				'Career Guidance Counseling Fee' => $voucherDetails->career_guidance_counseling_fee,
+				'University Development Fund' => $voucherDetails->university_development_fund,
+				'Promotion of Indian Cultural Fee' => $voucherDetails->promotion_of_indian_cultural_activities_fee,
+				'Teachers Development Fee' => $voucherDetails->teachers_development_fee,
+				'Student Development Fee' => $voucherDetails->student_development_fee,
+				'Indian Red Cross Membership Fee' => $voucherDetails->indian_red_cross_membership_fee,
+				'Women Cell Fee' => $voucherDetails->women_cell_fee,
+				'NSS Fee' => $voucherDetails->nss_fee,
+				'University Registration Fee' => $voucherDetails->university_registration_fee
+			];
+
+			$university = 0;
+			foreach ($fees as $feeName => $feeValue) {
+				if ($feeValue > 0) {
+					$university += $feeValue;
+				}
+			}
+			if ($university > 0) {
+				$tableData[] = ["University Other Fee", number_format($university, 2)];
+			}
+			if ($voucherDetails->admission_fee > 0) {
+				$tableData[] = ['Admission Fee', number_format($voucherDetails->admission_fee, 2)];
+			}
+			if ($voucherDetails->processing_fee_paid_at_kea > 0) {
+				$tableData[] = ['Processing Fee Paid at KEA', number_format($voucherDetails->processing_fee_paid_at_kea, 2)];
+			}
+			if ($voucherDetails->tution_fee > 0) {
+				$tableData[] = ['Tution Fee', number_format($voucherDetails->tution_fee, 2)];
+			}
+			if ($voucherDetails->college_other_fee > 0) {
+				$tableData[] = ['College Other Fee', number_format($voucherDetails->college_other_fee, 2)];
+			}
+
+			// Create a function to generate a single copy
+			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy)
+			{
+				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
+				$collegeName2 = "Under the auspices of the MTES (R),";
+				$collegeName3 = "";
+				$contactInfo1 = "PB NO. 21,SALAGAME ROAD HASSAN, KARNATAKA";
+				$contactInfo2 = "";
+				$contactInfo = "UG (AY-2024-2025)";
+				$pdf->Rect($x - 2, $y, 69, 90 + 70);
+				$pdf->SetXY($x, $y);
+				$pdf->SetFont('Arial', 'B', 8);
+				$pdf->Cell(65, 6, $collegeName, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 7);
+				$pdf->Cell(65, 3, $collegeName1, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 7);
+				$pdf->Cell(65, 4, $collegeName2, 0, 1, 'C');
+				// $pdf->SetX($x);
+				// $pdf->SetFont('Arial', '', 7);
+				// $pdf->Cell(65, 3, $collegeName3, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 6);
+				$pdf->Cell(65, 3, $contactInfo1, 0, 1, 'C');
+				// $pdf->SetX($x);
+				// $pdf->Cell(65, 3, $contactInfo2, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', 'B', 7);
+				$pdf->Cell(65, 5, $affiliation, 0, 1, 'C');
+				$pdf->SetX($x);
+				$pdf->SetFont('Arial', '', 6);
+				$pdf->Cell(65, 4, $contactInfo, 0, 1, 'C');
+
+
+				// Draw a line
+				$pdf->SetLineWidth(0.2);
+				$pdf->Line($x, $y + 21, $x + 65, $y + 21);
+				$pdf->Ln(3);
+				$pdf->SetLineWidth(0.2);
+				$pdf->Line($x, $y + 25, $x + 65, $y + 25);
+				$pdf->Ln(3);
+				$pdf->SetFont('Arial', '', 7);
+				$pdf->SetXY($x, $y + 29);
+				$pdf->Cell(65, 4, $issuedOn, 0, 0, 'L');
+				$pdf->SetXY($x, $y + 29);
+				$pdf->Cell(65, 4, $programe, 0, 1, 'R');
+				$pdf->SetXY($x, $y + 34);
+				$pdf->Cell(65, 4, $chellan, 0, 0, 'L');
+				$pdf->SetXY($x, $y + 34);
+				$pdf->Cell(65, 4, $dept, 0, 1, 'R');
+				$pdf->SetXY($x, $y + 39);
+				$pdf->SetFont('Arial', '', 7);
+				$pdf->MultiCell(65, 4, "Paid into the credit of CANARA BANK M.C.E BRANCH,\nHASSAN -573202., CA A/C No. 14053070001574 of \nThe Principal Malnad College of Engineering, Hassan.");
+				$pdf->SetXY($x, $y + 52);
+				// $pdf->SetFont('Arial', '', 7);
+				// $pdf->MultiCell(65, 4, "Cash/D.D.No.________________________Dt________\n");
+				// $pdf->SetXY($x, $y + 56);
+				// $pdf->SetFont('Arial', '', 7);
+				// $pdf->MultiCell(65, 4, "Bank_________________________________________");
+				$pdf->SetFont('Arial', '', 7);
+				$pdf->MultiCell(65, 4, "");
+				$tableY = $pdf->GetY(); // Get current Y position for the table
+				foreach ($tableData as $row) {
+					$pdf->SetXY($x, $tableY);
+					$pdf->Cell(32.5, 5, $row[0], 1, 0, 'L');
+					$pdf->Cell(32.5, 5, $row[1], 1, 1, 'L');
+					$tableY += 5; // Move Y position down for the next row
+				}
+
+				$pdf->SetFont('Arial', 'B', 7);
+				$pdf->SetXY($x, $tableY + 3);
+				$pdf->Cell(32.5, 4, "TOTAL", 1, 0, 'L');
+				$pdf->Cell(32.5, 4, number_format($voucherDetails->final_fee, 2), 1, 1, 'L');
+				$tableY += 9;
+				$pdf->SetFont('Arial', '', 7.5);
+				$pdf->SetXY($x, $tableY);
+				$pdf->MultiCell(65, 4, "Amount (In Words) : Rs." . convert_number_to_words($voucherDetails->final_fee) . " Only");
+				$pdf->SetXY($x, $tableY + 14);
+				$pdf->Cell(32.5, 4, ' ', 0, 0, 'L');
+				$pdf->Cell(32.5, 4, "Signature of Remitter", 0, 1, 'R');
+				$pdf->SetXY($x, $tableY + 30);
+				$pdf->SetFont('Arial', '', 8);
+				$pdf->Cell(65, 4, $copy, 0, 1, 'C');
+			}
+
+			// Add page and set margins
+			$pdf->AddPage('L', 'A4'); // 'L' for landscape orientation, 'A4' for A4 size (210x297 mm)
+			$pdf->SetMargins(10, 10, 10);
+
+			// Generate four copies horizontally
+			$startX = 10;
+			$startY = 10;
+			$spacingX = 70; // Adjust this spacing to fit the copies horizontally
+
+			for ($i = 0; $i < 4; $i++) {
+				generateCopy($i, $pdf, $startX + ($i * $spacingX), $startY, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copyData[$i]);
+			}
+
+			// $pdf->Output();
+			$fileName = $admissionDetails->student_name . '-Voucher.pdf';
+			$pdf->output($fileName, 'D');
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+	public function onlinevoucher($encryptId, $id)
+	{
+
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Admission Details';
+			$data['menu'] = 'admissions';
+			$usn = base64_decode($encryptId);
+			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $id)->row();
+
+
+			$this->load->library('fpdf'); // Load library
+			ini_set("session.auto_start", 0);
+			ini_set('memory_limit', '-1');
+			define('FPDF_FONTPATH', 'plugins/font');
+			$pdf = new FPDF();
+
+			// College Information
+			$collegeName = "MALNAD COLLEGE OF ENGINEERING, HASSAN";
+			$affiliation = "";
+			$contactInfo = "Payment made by NEFT/RTGS/IMPS or any other online mode,";
+			$contactInfo1 = "Fill all the below mentioned data with Seal & Signature of the Payee Bank Officlal,";
+			$contactInfo2 = "and Upload to E Mail swdcb@mcehassan.ac.in,";
+			$contactInfo3 = "Submit the herd copy to Fees Section, Dean (SA) Office";
+			$issuedOn = "Date : " . date("m-d-Y ");
+			$programe = "PROGRAME : B.E";
+			$chellan = "Chellan : TF24-25/" . $voucherDetails->id;
+			$dept = "Dept. :" . $admissionDetails->department;
+			$scopy = "STUDENT COPY";
+			$bcopy = "BANK COPY";
+			$sacopy = "S.A COPY";
+			$ocopy = "OFFICE COPY";
+			// Define the data for the table
+			$tableData = [
+				['USN', $admissionDetails->usn],
+				['Name', $admissionDetails->student_name],
+				['Branch', 'B.E - ' . $admissionDetails->department],
+				['Year', $voucherDetails->year],
+				['Quota', $admissionDetails->quota],
+				['College Code', $admissionDetails->college_code . ' - ' . $admissionDetails->sub_quota],
+				['Category', $admissionDetails->category_allotted],
+				['Mobile No.', $admissionDetails->student_number],
+				['Email ID', $admissionDetails->email],
+				['Mode of Payment NEFT/RTGS/IMPS/UPI',],
+				['Fee paid in Rupees', $voucherDetails->final_fee],
+				['Date of Transaction', ''],
+				['UTR No. /PG Reference No.', ''],
+
+
+			];
+
+
+
+
+			///bank copy
+			$pdf->AddPage('P', 'A4'); // 'P' for portrait orientation, 'A4' for A4 size (210x297 mm)
+			$pdf->SetMargins(17, 20, 20);
+			$pdf->SetFont('Arial', 'B', 12);
+			$pdf->Cell(0, 10, $collegeName, 0, 1, 'C');
+			// $pdf->SetFont('Arial', 'B', 10);
+			// $pdf->Cell(0, 4, $affiliation, 0, 1, 'C');
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->Cell(0, 4, $contactInfo, 0, 1, 'C');
+			$pdf->Cell(0, 4, $contactInfo1, 0, 1, 'C');
+			$pdf->Cell(0, 4, $contactInfo2, 0, 1, 'C');
+			$pdf->Cell(0, 4, $contactInfo3, 0, 1, 'C');
+			$x1 = 17;  // Starting point x-coordinate
+			$y1 = 37;  // Starting point y-coordinate
+			$x2 = 198; // Ending point x-coordinate
+			$y2 = 37;  // Ending point y-coordinate
+
+
+			// Set line width
+			$pdf->SetLineWidth(0.5);
+
+			// Draw a line from (x1, y1) to (x2, y2)
+			$pdf->Line($x1, $y1, $x2, $y2);
+			$pdf->Ln(1);
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->Cell(0, 6, $issuedOn, 0, 0, 'L');
+			$pdf->Cell(0, 6, $programe, 0, 1, 'R');
+			$pdf->Cell(0, 6, $chellan, 0, 0, 'L');
+			$pdf->Cell(0, 6, $dept, 0, 1, 'R');
+
+			$pdf->SetFont('Arial', '', 10);
+
+
+
+			foreach ($tableData as $row) {
+				$pdf->Cell(90, 7, $row[0], 1, 0, 'C');
+				$pdf->Cell(90, 7, $row[1], 1, 1, 'C');
+			}
+
+			$pdf->Ln(1);
+			$pdf->SetFont('Arial', '', 10);
+
+			$pdf->Cell(0, 50, "Seal with signature of the Paid Bank", 0, 0, 'L');
+			$pdf->Cell(0, 50, "Signature of the Student", 0, 1, 'R');
+			$pdf->Ln(4);
+
+			$pdf->Ln(10);
+
+
+
+
+			// $pdf->output();
+			$fileName = $admissionDetails->student_name . '- Voucher.pdf';
+			$pdf->output($fileName, 'D');
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+
 }
