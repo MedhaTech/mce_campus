@@ -142,7 +142,11 @@
                                     <i class="nav-icon fas fa-users mr-2"></i>Students
                                 </a>
                             </li>
-
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>admin/payments">
+                                    <i class="nav-icon fas fa-list mr-2"></i>Collect Fee
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>admin/fee_details">
                                     <i class="nav-icon fas fa-list mr-2"></i>Fee Reports

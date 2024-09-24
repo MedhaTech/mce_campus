@@ -78,7 +78,7 @@ class Admin extends CI_Controller
 		}
 	}
 
-	function students()
+	function students($status='')
 	{
 		if ($this->session->userdata('logged_in')) {
 			$session_data = $this->session->userdata('logged_in');
@@ -91,8 +91,8 @@ class Admin extends CI_Controller
 			$data['menu'] = "students";
 
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
-			$data['students'] = $this->admin_model->fetchDetails2('id, app_no, adm_no,quota,dept_id,sub_quota, student_name, mobile,usn,status', 'status', $status, 'academic_year', $data['currentAcademicYear'], 'students')->result();
-			// var_dump($data['admissions']); die();
+			$data['students'] = $this->admin_model->fetchDetails1('id, quota,department,sub_quota, student_name, student_number,usn,status', 'status', $status, 'students')->result();
+			
 
 			$this->admin_template->show('admin/students', $data);
 		} else {
@@ -436,5 +436,71 @@ class Admin extends CI_Controller
 		$this->session->unset_userdata('logged_in');
 		session_destroy();
 		redirect('admin', 'refresh');
+	}
+
+	public function payments()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+
+
+			$data['page_title'] = 'New Payment';
+			$data['menu'] = 'payments';
+			// $data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
+
+			$this->form_validation->set_rules('usn', 'USN', 'required');
+			if ($this->form_validation->run() === FALSE) {
+				$data['action'] = 'admin/payments';
+				$this->admin_template->show('admin/payments', $data);
+			} else {
+
+				$usn = $this->input->post('usn');
+				
+					$encryptId = base64_encode($usn);
+					redirect('admin/paymentDetail/' . $encryptId, 'refresh');
+				
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+
+	public function paymentDetail($encryptId)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Collect Fee';
+			$data['menu'] = 'payments';
+			$data['encryptId'] = $encryptId;
+			$usn = base64_decode($encryptId);
+			$data['usn'] = $student_id;
+			$data['voucher_types'] = $this->globals->voucher_types();
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['admissionDetails'] = $this->admin_model->getDetails('students', $usn)->row();
+			
+			$data['paymentDetail'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'payment_structure')->result();
+			$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'reg_no', 'transactions')->result();
+			$data['paid_amount'] = $this->admin_model->paidfee('reg_no', $usn, 'transaction_status', '1', 'transactions');
+			$admissionSingle = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$data['fee_structure'] = $this->admin_model->getFee($admissionSingle->dept_id, $admissionSingle->quota, $admissionSingle->sub_quota)->row();
+
+			$data['fees'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
+
+
+			$this->admin_template->show('admin/paymentDetail', $data);
+		} else {
+			redirect('admin/timeout');
+		}
 	}
 }

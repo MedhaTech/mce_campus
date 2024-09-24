@@ -11,7 +11,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <?php
-                                    if (count($admissions)) {
+                                    if (count($students)) {
                                         // Table setup
                                         $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
                                         $this->table->set_template($table_setup);
@@ -21,7 +21,7 @@
                                         $this->table->set_heading($print_fields);
 
                                         $i = 1;
-                                        foreach ($admissions as $admissions1) {
+                                        foreach ($students as $admissions1) {
 
                                             // Encrypting ID
                                             $encryptId = base64_encode($admissions1->id);
