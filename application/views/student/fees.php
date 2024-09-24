@@ -167,7 +167,7 @@
                         <div class="table-responsive">
                             <table class="table table-striped mb-0">
                                 <thead class="thead-light text-center align-middle">
-                                <tr class="text-center">
+                                    <tr class="text-center">
                                         <th rowspan="2" width="11%" class="align-middle">ACADEMIC YEAR</th>
                                         <th rowspan="2" width="11%" class="align-middle">YEAR</th>
                                         <th colspan="3" class="">CORPUS FEE (&#8377;)</th>
@@ -191,7 +191,7 @@
                                         $corpus_fee_collection = $fee->corpus_fee_collection;
                                         $collection_amount = $this->admin_model->get_total_amount($fee->year, $student->usn, 1);
                                         $paid_amount = $corpus_fee_collection + $collection_amount;
-                                        $corpus_fee_balance = number_format($corpus_fee_demand - $paid_amount,2);
+                                        $corpus_fee_balance = $corpus_fee_demand - $paid_amount;
 
                                         if ($corpus_fee_balance > 0) {
                                             $corpus_pay_btn = '<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
@@ -215,7 +215,7 @@
                                         // $college_fee = $fee->college_fee_demand - $fee->college_fee_collection;
                                         $college_paid_fee = $college_fee_collection + $college_collection_amount;
                                         // $college_fee_balance = $college_fee - $this->admin_model->get_total_amount($fee->year, $student->usn, 0);
-                                        $college_fee_balance = number_format($college_fee_demand - $college_paid_fee,2);
+                                        $college_fee_balance = $college_fee_demand - $college_paid_fee;
 
                                         if ($college_fee_balance > 0) {
                                             $college_pay_btn = '<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
@@ -236,12 +236,12 @@
                                         echo "<tr>";
                                         echo "<td class='text-center'>" . $fee->academic_year . "</td>";
                                         echo "<td class='text-center'>" . $fee->year . "</td>";
-                                        echo "<td class='text-center'>" . indian_number_format($fee->corpus_fee_demand) . "</td>";
-                                        echo "<td class='text-center'>" . indian_number_format($fee->corpus_fee_collection) . "</td>";
-                                        echo "<td class='text-center'>" . indian_number_format($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
-                                        echo "<td class='text-center'>" . indian_number_format($college_fee_demand) . "</td>";
-                                        echo "<td class='text-center'>" . indian_number_format($college_fee_collection) . "</td>";
-                                        echo "<td class='text-center'>" . indian_number_format($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($fee->corpus_fee_demand) . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($fee->corpus_fee_collection) . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($college_fee_demand) . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($college_fee_collection) . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
                                         echo "</tr>";
                                     }
                                     ?>

@@ -55,3 +55,37 @@ if (!function_exists('indian_number_format')) {
         return $formatted_number;
     }
 }
+
+
+if (!function_exists('formatIndianCurrency')) {
+    /**
+     * Format number in Indian number system (Lakhs/Crores)
+     *
+     * @param float|int $num
+     * @return string
+     */
+    function formatIndianCurrency($number) {
+        $decimal = 2; // default decimal places
+        $number = number_format($number, $decimal, '.', ''); // ensures two decimal points
+    
+        // Splitting the number on decimal point
+        $numberParts = explode('.', $number);
+        
+        // Format the integer part with comma separation as per Indian number system
+        $integerPart = $numberParts[0];
+        $decimalPart = isset($numberParts[1]) ? $numberParts[1] : '00';
+    
+        // Formatting logic for Indian number system
+        $lastThreeDigits = substr($integerPart, -3);
+        $remainingDigits = substr($integerPart, 0, -3);
+        if($remainingDigits != '') {
+            $lastThreeDigits = ',' . $lastThreeDigits;
+        }
+        $formattedNumber = preg_replace('/\B(?=(\d{2})+(?!\d))/', ',', $remainingDigits) . $lastThreeDigits;
+        
+        // Concatenating the decimal part
+        return '₹' . $formattedNumber . '.' . $decimalPart;
+    }
+}
+
+ 
