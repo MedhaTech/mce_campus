@@ -265,7 +265,7 @@
                             $rec = 0;
                             $table_setup = array('table_open' => '<table class="table table-hover font14">');
                             $this->table->set_template($table_setup);
-                            $print_fields = array('S.No', 'Receipt', 'Date', 'Mode of Payment', 'Amount');
+                            $print_fields = array('S.No', 'Receipt', 'Date', 'Mode of Payment', 'Amount', 'Status');
                             $this->table->set_heading($print_fields);
 
                             $transactionTypes = array("1" => "Cash", "2" => "DD", "3" => "Online Payment", "4" => "Online Transfer");
@@ -307,26 +307,27 @@
                                 }
 
 
-                                if($transactionDetails1->transaction_status == 1){
+                                if ($transactionDetails1->transaction_status == 1) {
                                     $transaction_status = "<span class='text-success'>Verified</span>";
-                                }else if($transactionDetails1->transaction_status == 2){
+                                } else if ($transactionDetails1->transaction_status == 2) {
                                     $transaction_status = "<span class='text-danger'>Cancelled</span>";
                                     // $transaction_status = "<span class='text-danger'>Cancelled</span><br><span class='text-dark'>".nl2br($transactionDetails1->remarks)."</span>";
-                                }else{
+                                } else {
                                     $transaction_status = "<span class='text-warning'>Processing</span>";
                                     // $transaction_status = "<span class='text-warning'>Processing</span> <br>".anchor('admin/approvePayment/'.$transactionDetails1->id,'Approve','class="btn btn-info btn-sm"').' '.anchor('admin/deletePayment/'.$transactionDetails1->id.'/'.$transactionDetails1->admissions_id,'Delete','class="btn btn-danger btn-sm"');
                                 }
-                        
-                                $result_array = array(
-                                    $i++,
-                                    ($transactionDetails1->receipt_no) ? anchor('student/downloadReceipt/' . $transactionDetails1->reg_no . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-",
-                                        // $transactionDetails1->receipt_no,
-                                    ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
-                                    $trans,
-                                    number_format($transactionDetails1->amount, 2),
-                                    $transaction_status
-                                );
-                                $this->table->add_row($result_array);
+                                if ($transactionDetails1->transaction_status == 1) {
+                                    $result_array = array(
+                                        $i++,
+                                        ($transactionDetails1->receipt_no) ? anchor('student/downloadReceipt/' . $transactionDetails1->reg_no . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-",
+                                            // $transactionDetails1->receipt_no,
+                                        ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
+                                        $trans,
+                                        number_format($transactionDetails1->amount, 2),
+                                        $transaction_status
+                                    );
+                                    $this->table->add_row($result_array);
+                                }
                             }
 
                             echo $this->table->generate();
