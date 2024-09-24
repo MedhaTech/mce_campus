@@ -307,14 +307,15 @@
                                 }
 
 
-                                // if($transactionDetails1->transaction_status == 1){
-                                //     $transaction_status = "<span class='text-success'>Verified</span>";
-                                // }else if($transactionDetails1->transaction_status == 2){
-                                //     $transaction_status = "<span class='text-danger'>Cancelled</span><br><span class='text-dark'>".nl2br($transactionDetails1->remarks)."</span>";
-                                // }else{
-                        
-                                //     $transaction_status = "<span class='text-warning'>Processing</span> <br>".anchor('admin/approvePayment/'.$transactionDetails1->id,'Approve','class="btn btn-info btn-sm"').' '.anchor('admin/deletePayment/'.$transactionDetails1->id.'/'.$transactionDetails1->admissions_id,'Delete','class="btn btn-danger btn-sm"');
-                                // }
+                                if($transactionDetails1->transaction_status == 1){
+                                    $transaction_status = "<span class='text-success'>Verified</span>";
+                                }else if($transactionDetails1->transaction_status == 2){
+                                    $transaction_status = "<span class='text-danger'>Cancelled</span>";
+                                    // $transaction_status = "<span class='text-danger'>Cancelled</span><br><span class='text-dark'>".nl2br($transactionDetails1->remarks)."</span>";
+                                }else{
+                                    $transaction_status = "<span class='text-warning'>Processing</span>";
+                                    // $transaction_status = "<span class='text-warning'>Processing</span> <br>".anchor('admin/approvePayment/'.$transactionDetails1->id,'Approve','class="btn btn-info btn-sm"').' '.anchor('admin/deletePayment/'.$transactionDetails1->id.'/'.$transactionDetails1->admissions_id,'Delete','class="btn btn-danger btn-sm"');
+                                }
                         
                                 $result_array = array(
                                     $i++,

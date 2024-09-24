@@ -48,8 +48,8 @@ class Student extends CI_Controller
 	function check_database($password)
 	{
 		//Field validation succeeded.  Validate against database
-		$usn = $this->input->post('usn');
-
+		$usn = trim($this->input->post('usn'));
+		$password = trim($password);
 		//query the database
 		$result = $this->admin_model->studentlogin($usn, md5($password));
 		if ($result) {
@@ -223,35 +223,35 @@ class Student extends CI_Controller
 				if ($aided_unaided == 'Aided') {
 
 					$mid = "CNBMLNDAID";
-				$clientid = "cnbmlndaid";
-				$midkey = "hbjUTwdjLDwzsFErRVCE0y0skHic1z2B";
-				$returnurl = base_url() . 'student/callbackaided';
-				$page = 'student/payment_aided';
+					$clientid = "cnbmlndaid";
+					$midkey = "hbjUTwdjLDwzsFErRVCE0y0skHic1z2B";
+					$returnurl = base_url() . 'student/callbackaided';
+					$page = 'student/payment_aided';
 
 				} else {
 
 					$mid = "CNBMLNDEGC";
-				$clientid = "cnbmlndegc";
-				$midkey = "WHjXW5WHk27mr50KetSh75vyapmO14IT";
-				$returnurl = base_url() . 'student/callback';
-				$page = 'student/payment';
+					$clientid = "cnbmlndegc";
+					$midkey = "WHjXW5WHk27mr50KetSh75vyapmO14IT";
+					$returnurl = base_url() . 'student/callback';
+					$page = 'student/payment';
 
 				}
 
-				$payment_mode=0;
-				
+				$payment_mode = 0;
+
 			} else {
 				$mid = "CNBMLNDTRT";
 				$clientid = "cnbmlndtrt";
 				$midkey = "k2ieff4ugn8Ehv31tUhXTRoHK2MEBrdJ";
 				$returnurl = base_url() . 'student/callbackcorpus';
 				$page = 'student/payment_corpus';
-				$payment_mode=1;
+				$payment_mode = 1;
 			}
 
 			$this->load->library('logger');
 			$insert = array(
-				'amount' => number_format((float)$this->input->post('amount'), 2, '.', ''),
+				'amount' => number_format((float) $this->input->post('amount'), 2, '.', ''),
 				// 'amount' => '100.00',
 				'reg_no' => $this->input->post('usn'),
 				'year' => $this->input->post('year'),
@@ -279,19 +279,19 @@ class Student extends CI_Controller
 			$trace_id = rand(1000000000, 9999999999);
 			$servertime = time();
 			//    $config                         = $this->CI->config->item('billdesk');
-			$api_url                        = "https://api.billdesk.com/payments/ve1_2/orders/create";
-			$payload                        = array();
+			$api_url = "https://api.billdesk.com/payments/ve1_2/orders/create";
+			$payload = array();
 
 
-			$payload['orderid']             = $insert['reference_no'];
-			$payload['mercid']              = $mid;
-			$payload['order_date']          = date("c");
-			$payload['amount']              = $insert['amount'];
-			$payload['currency']            = '356';
+			$payload['orderid'] = $insert['reference_no'];
+			$payload['mercid'] = $mid;
+			$payload['order_date'] = date("c");
+			$payload['amount'] = $insert['amount'];
+			$payload['currency'] = '356';
 
-			$payload['ru'] 	           =  $returnurl; // Return URL
+			$payload['ru'] = $returnurl; // Return URL
 
-			$payload['additional_info']    =  array(
+			$payload['additional_info'] = array(
 				"additional_info1" => $insert['reg_no'],
 				"additional_info2" => $this->input->post('name'),
 				"additional_info3" => $this->input->post('email'),
@@ -300,11 +300,11 @@ class Student extends CI_Controller
 				"additional_info6" => $this->input->post('payment_mode'),
 				"additional_info7" => $this->input->post('aided_unaided')
 			);
-			$payload['itemcode']           = 'DIRECT';
-			$payload['device']             =  array(
+			$payload['itemcode'] = 'DIRECT';
+			$payload['device'] = array(
 				"init_channel" => "internet",
 				"ip" => $_SERVER['REMOTE_ADDR'],
-				"user_agent"    => $_SERVER['HTTP_USER_AGENT'],
+				"user_agent" => $_SERVER['HTTP_USER_AGENT'],
 				"accept_header" => "text/html",
 			);
 
@@ -348,7 +348,7 @@ class Student extends CI_Controller
 			$message = "Billdesk create order response decoded - " . json_encode($result_array) . "\n";
 			// print_r($message);
 			$this->logger->write('billdesk', 'debug', $message);
-			
+
 			if ($result_decoded->status == 'ACTIVE') {
 				$transactionid = $result_array['links'][1]->parameters->bdorderid;
 				$authtoken = $result_array['links'][1]->headers->authorization;
@@ -383,7 +383,7 @@ class Student extends CI_Controller
 				$sess_array = array(
 					'id' => $row->id,
 					'student_name' => $row->student_name
-					
+
 				);
 				$this->session->set_userdata('student_in', $sess_array);
 			}
@@ -411,7 +411,7 @@ class Student extends CI_Controller
 			if (!empty($tx)) {
 				$response_decoded = JWT::decode($tx, "hbjUTwdjLDwzsFErRVCE0y0skHic1z2B", 'HS256');
 				$response_array = (array) $response_decoded;
-				$response_json =  json_encode($response_array);
+				$response_json = json_encode($response_array);
 				$message = "BillDesk callback Response decode - " . $response_json . "\n";
 				$this->logger->write('billdesk', 'debug', $message);
 
@@ -425,11 +425,11 @@ class Student extends CI_Controller
 
 
 
-				$return['amount']	    = (int)$response_array['amount'];
-				$return['order_id']	    = $response_array['orderid'];
-				$return['status']		= $status;
-				$return['pgresponse']	= $response_json;
-				$return['pgid']	        = $response_array['transactionid'];
+				$return['amount'] = (int) $response_array['amount'];
+				$return['order_id'] = $response_array['orderid'];
+				$return['status'] = $status;
+				$return['pgresponse'] = $response_json;
+				$return['pgid'] = $response_array['transactionid'];
 
 				$updateDetails = array(
 					'transaction_date' => $response_array['transaction_date'],
@@ -454,14 +454,14 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-			
+
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
 
 				redirect('student/payment_status', 'refresh');
 			} else {
 				$status = 'fail';
-				$return['status']		= $status;
+				$return['status'] = $status;
 				redirect('student', 'refresh');
 			}
 		} else {
@@ -486,7 +486,7 @@ class Student extends CI_Controller
 			if (!empty($tx)) {
 				$response_decoded = JWT::decode($tx, "WHjXW5WHk27mr50KetSh75vyapmO14IT", 'HS256');
 				$response_array = (array) $response_decoded;
-				$response_json =  json_encode($response_array);
+				$response_json = json_encode($response_array);
 				$message = "BillDesk callback Response decode - " . $response_json . "\n";
 				$this->logger->write('billdesk', 'debug', $message);
 
@@ -500,11 +500,11 @@ class Student extends CI_Controller
 
 
 
-				$return['amount']	    = (int)$response_array['amount'];
-				$return['order_id']	    = $response_array['orderid'];
-				$return['status']		= $status;
-				$return['pgresponse']	= $response_json;
-				$return['pgid']	        = $response_array['transactionid'];
+				$return['amount'] = (int) $response_array['amount'];
+				$return['order_id'] = $response_array['orderid'];
+				$return['status'] = $status;
+				$return['pgresponse'] = $response_json;
+				$return['pgid'] = $response_array['transactionid'];
 
 				$updateDetails = array(
 					'transaction_date' => $response_array['transaction_date'],
@@ -529,14 +529,14 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-			
+
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
 
 				redirect('student/payment_status', 'refresh');
 			} else {
 				$status = 'fail';
-				$return['status']		= $status;
+				$return['status'] = $status;
 				redirect('student', 'refresh');
 			}
 		} else {
@@ -561,7 +561,7 @@ class Student extends CI_Controller
 			if (!empty($tx)) {
 				$response_decoded = JWT::decode($tx, "k2ieff4ugn8Ehv31tUhXTRoHK2MEBrdJ", 'HS256');
 				$response_array = (array) $response_decoded;
-				$response_json =  json_encode($response_array);
+				$response_json = json_encode($response_array);
 				$message = "BillDesk callback Response decode - " . $response_json . "\n";
 				$this->logger->write('billdesk', 'debug', $message);
 
@@ -575,11 +575,11 @@ class Student extends CI_Controller
 
 
 
-				$return['amount']	    = (int)$response_array['amount'];
-				$return['order_id']	    = $response_array['orderid'];
-				$return['status']		= $status;
-				$return['pgresponse']	= $response_json;
-				$return['pgid']	        = $response_array['transactionid'];
+				$return['amount'] = (int) $response_array['amount'];
+				$return['order_id'] = $response_array['orderid'];
+				$return['status'] = $status;
+				$return['pgresponse'] = $response_json;
+				$return['pgid'] = $response_array['transactionid'];
 
 				$updateDetails = array(
 					'transaction_date' => $response_array['transaction_date'],
@@ -604,7 +604,7 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-				
+
 
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
@@ -612,7 +612,7 @@ class Student extends CI_Controller
 				redirect('student/payment_status', 'refresh');
 			} else {
 				$status = 'fail';
-				$return['status']		= $status;
+				$return['status'] = $status;
 				redirect('student', 'refresh');
 			}
 		} else {
@@ -738,7 +738,7 @@ class Student extends CI_Controller
 			define('FPDF_FONTPATH', 'plugins/font');
 
 
-		
+
 
 			$pdf = new FPDF();
 			$pdf->AddPage('P', 'A4'); // 'P' for portrait orientation, 'A4' for A4 size (210x297 mm)
@@ -758,7 +758,7 @@ class Student extends CI_Controller
 				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
 				$collegeName2 = "Under the auspices of the MTES (R),";
 				$collegeName3 = "PB NO. 21,SALAGAME ROAD HASSAN, KARNATAKA";
-				$contactInfo = "FEES RECEIPT - ".$admissionDetails->sub_quota;
+				$contactInfo = "FEES RECEIPT - " . $admissionDetails->sub_quota;
 				$tableData[] = ['Tution Fee', $transactionDetails->amount];
 			} else {
 
@@ -901,7 +901,7 @@ class Student extends CI_Controller
 	{
 
 		$details = $this->admin_model->getDetailsbyfield($reference, 'reference_no', 'transactions')->row();
-		$cnt = $this->admin_model->getReceiptsCountNew($details->aided_unaided,$details->payment_mode)->row()->cnt;
+		$cnt = $this->admin_model->getReceiptsCountNew($details->aided_unaided, $details->payment_mode)->row()->cnt;
 		$cnt_number = $cnt + 1;
 		$strlen = strlen(($cnt_number));
 		if ($strlen == 1) {
@@ -913,24 +913,18 @@ class Student extends CI_Controller
 		if ($strlen == 3) {
 			$cnt_number = "0" . $cnt_number;
 		}
-		if($details->payment_mode==1)
-		{
-		  $prev="MTES/2024-25/";
-		}
-		else
-		{
-		  if($details->aided_unaided=="Aided")
-		  {
-			$prev="MCE/2024-25/A/";
-		  }
-		  else
-		  {
-			$prev="MCE/2024-25/UA/";
-		  }
-	
+		if ($details->payment_mode == 1) {
+			$prev = "MTES/2024-25/";
+		} else {
+			if ($details->aided_unaided == "Aided") {
+				$prev = "MCE/2024-25/A/";
+			} else {
+				$prev = "MCE/2024-25/UA/";
+			}
+
 		}
 
-		return $prev.$cnt_number;
+		return $prev . $cnt_number;
 	}
 
 
