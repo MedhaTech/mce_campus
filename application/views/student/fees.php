@@ -251,7 +251,9 @@
 
                         </div>
                     </div> <!-- end card body-->
+                    
                 </div> <!-- end card -->
+                <p><b>Note : FEE ONCE PAID WILL NOT BE REFUNDED UNDER ANY CIRCUMSTANCES-KINDLY VERIFY THE DATA ENTERED BEFORE FINAL SUBMISSION </b></p>
             </div><!-- end col-->
         </div>
 

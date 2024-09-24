@@ -15,7 +15,7 @@
                                         <h5>STUDENT ACCOUNT</h5>
                                     </div>
                                     <h1 class="h5 mb-1">Welcome Back!</h1>
-                                    <p class="text-muted mb-4">Enter your usn and password to access student panel.</p>
+                                    <p class="text-muted mb-4">Enter your usn and password to access student panel.<br>USN and password should be in capital letters.</p>
                                     <?php echo form_open($action, 'class="js-validation-signin" method="POST"'); ?>
                                     <?php echo '<span class="text-danger">' . validation_errors() . '</span>'; ?>
                                     <div class="input-group mb-3">

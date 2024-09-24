@@ -31,8 +31,8 @@
                                                 $i++,
                                                 $admissions1->usn,
                                                 $admissions1->student_name,
-                                                $admissions1->mobile,
-                                                $this->admin_model->get_dept_by_id($admissions1->dept_id)["department_name"],
+                                                $admissions1->student_number,
+                                                $admissions1->department,
                                                 $admissions1->quota,
                                                 $admissions1->sub_quota,
                                                 '<strong class="text-' . $admissionStatusColor[$admissions1->status] . '">' . $admissionStatus[$admissions1->status] . '</strong>'
