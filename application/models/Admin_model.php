@@ -501,7 +501,7 @@ class Admin_model extends CI_Model
       {
         $this->db->where('aided_unaided', 'UnAided');
       }
-
+      $this->db->where('payment_mode', '0');
     }
     return $this->db->get('transactions');
   }
