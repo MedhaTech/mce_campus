@@ -211,12 +211,10 @@ class Admin_model extends CI_Model
   }
   function getFee($course, $quota, $sub_quota)
   {
-    if ($quota == "MGMT") {
-      $this->db->where('department_id', $course);
-    }
+    
 
-    $this->db->where('quota', $quota);
-    $this->db->where('sub_quota', $sub_quota);
+    
+    $this->db->where('id', $sub_quota);
     return $this->db->get('fee_structure');
   }
 
@@ -734,12 +732,13 @@ class Admin_model extends CI_Model
     }
   }
 
-  public function checkFieldGreaterThanZero1($fee_structure_id, $field, $admission_id)
+  public function checkFieldGreaterThanZero1($fee_structure_id, $field, $usn,$year)
   {
     // Step 1: Retrieve the top 3 rows for the given admission_id
     $this->db->select($field);
-    $this->db->from('payment_structure');
-    $this->db->where('admission_id', $admission_id);
+    $this->db->from('payment_structure1');
+    $this->db->where('usn', $usn);
+    $this->db->where('year', $year);
     $this->db->where('status', 1);
     $query = $this->db->get();
 
@@ -751,7 +750,7 @@ class Admin_model extends CI_Model
 
       // Step 3: Retrieve the corresponding value from the fee_structure table
       $this->db->select($field);
-      $this->db->from('fee_structure');
+      $this->db->from('fee_master');
       $this->db->where('id', $fee_structure_id);
       $fee_query = $this->db->get();
 
@@ -771,12 +770,13 @@ class Admin_model extends CI_Model
     return 0;
   }
 
-  public function checkFieldGreaterThanZerovalue($fee_structure_id, $field, $admission_id)
+  public function checkFieldGreaterThanZerovalue($fee_master_id, $field, $usn,$year)
   {
     // Step 1: Retrieve the top 3 rows for the given admission_id
     $this->db->select($field);
-    $this->db->from('payment_structure');
-    $this->db->where('admission_id', $admission_id);
+    $this->db->from('payment_structure1');
+    $this->db->where('usn', $usn);
+    $this->db->where('year', $year);
     $this->db->where('status', 1);
     $query = $this->db->get();
 
@@ -788,8 +788,8 @@ class Admin_model extends CI_Model
 
       // Step 3: Retrieve the corresponding value from the fee_structure table
       $this->db->select($field);
-      $this->db->from('fee_structure');
-      $this->db->where('id', $fee_structure_id);
+      $this->db->from('fee_master');
+      $this->db->where('id', $fee_master_id);
       $fee_query = $this->db->get();
 
       // Check if there is a matching row in fee_structure

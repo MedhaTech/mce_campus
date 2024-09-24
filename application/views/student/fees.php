@@ -251,7 +251,7 @@
 
                         </div>
                     </div> <!-- end card body-->
-                    
+
                 </div> <!-- end card -->
                 <p><b>Note : FEE ONCE PAID WILL NOT BE REFUNDED UNDER ANY CIRCUMSTANCES-KINDLY VERIFY THE DATA ENTERED BEFORE FINAL SUBMISSION </b></p>
             </div><!-- end col-->
@@ -286,7 +286,7 @@
                                 // if ($transactionDetails1->transaction_type == 3) {
                                 //     $trans = $transactionTypes[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->reference_date));
                                 // }
-                        
+
                                 if ($transactionDetails1->transaction_type == 1) {
                                     $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
                                     $receiptprint = $transactionDetails1->receipt_no;
@@ -322,7 +322,7 @@
                                     $result_array = array(
                                         $i++,
                                         ($transactionDetails1->receipt_no) ? anchor('student/downloadReceipt/' . $transactionDetails1->reg_no . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-",
-                                            // $transactionDetails1->receipt_no,
+                                        // $transactionDetails1->receipt_no,
                                         ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
                                         $trans,
                                         number_format($transactionDetails1->amount, 2),
