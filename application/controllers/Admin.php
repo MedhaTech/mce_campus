@@ -1733,15 +1733,44 @@ class Admin extends CI_Controller
 				$res['status'] = 5;
 				$res['txn_id'] = $response_array['transactionid'];
 				$res['reason'] = 'success';
+				$cnt_number = $this->getReceiptNo($order_id);
+					$receipt_no = $cnt_number;
+					
+					
+				$updateDetails = array(
+					'transaction_date' => $response_array['transaction_date'],
+					'transaction_id' => $response_array['transactionid'],
+					'txn_response' => $response_json,
+					'receipt_no' => $receipt_no,
+					'transaction_status' => '1'
+
+				);
 			} else if ($response_array['auth_status'] == '0002') {
 				$res['status'] = 2;
 				$res['reason'] = 'pending';
+				$updateDetails = array(
+					'transaction_date' => $response_array['transaction_date'],
+					'transaction_id' => $response_array['transactionid'],
+					'txn_response' => $response_json,
+					
+					'transaction_status' => '0'
+
+				);
 			} else if ($response_array['auth_status'] == '0399') {
 				$res['status'] = 6;
 				$res['reason'] = 'fail';
-			}
+				$updateDetails = array(
+					'transaction_date' => $response_array['transaction_date'],
+					'transaction_id' => $response_array['transactionid'],
+					'txn_response' => $response_json,
+					
+					'transaction_status' => '2'
 
-			$res['amount'] = (int)$response_array['amount'];
+				);
+			}
+			print_r($updateDetails);
+			// $res['amount'] = (int)$response_array['amount'];
+			// $result = $this->admin_model->updateDetailsbyfield('reference_no', $order_id, $updateDetails, 'transactions');
 		}
 
 
