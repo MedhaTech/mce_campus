@@ -696,7 +696,7 @@ class Admin extends CI_Controller
 			$data['menu'] = 'admissions';
 			$usn = base64_decode($encryptId);
 			$admission_id = $usn;
-			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $admission_id)->row();
+			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
 
 			$admissionDetails =$this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
 			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $transaction_id)->row();
@@ -720,7 +720,7 @@ class Admin extends CI_Controller
 			$issuedOn = "Date : " . date("d-m-Y ");
 			$programe = "PROGRAM : B.E";
 			$chellan = "Challan : MCE24-25/" . $voucherDetails->id;
-			$dept = "Dept. :" . $admissionDetails->department;
+			$dept = "Dept. :" . $this->admin_model->get_department_short_code($admissionDetails->department_id);
 			$bcopy = "BANK COPY";
 			$copyData = array('S.A Copy', 'Office Copy');
 
@@ -918,7 +918,7 @@ class Admin extends CI_Controller
 			$issuedOn = "Date : " . date("m-d-Y ");
 			$programe = "PROGRAM : B.E";
 			$chellan = "Challan : MCE24-25/" . $voucherDetails->id;
-			$dept = "Dept. :" . $admissionDetails->department;
+			$dept = "Dept. :" . $this->admin_model->get_department_short_code($admissionDetails->department_id);
 			$bcopy = "BANK COPY";
 			$copyData = array('Bank Copy', 'Office Copy', 'S.A Copy', 'Student Copy');
 			// Define the data for the table
@@ -1119,7 +1119,7 @@ class Admin extends CI_Controller
 			$issuedOn = "Date : " . date("m-d-Y ");
 			$programe = "PROGRAME : B.E";
 			$chellan = "Chellan : MCE24-25/" . $voucherDetails->id;
-			$dept = "Dept. :" . $admissionDetails->department;
+			$dept = "Dept. :" . $this->admin_model->get_department_short_code($admissionDetails->department_id);
 			$scopy = "STUDENT COPY";
 			$bcopy = "BANK COPY";
 			$sacopy = "S.A COPY";
