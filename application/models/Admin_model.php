@@ -883,5 +883,19 @@ class Admin_model extends CI_Model
     return $result ? $result->total_amount : 0;
 }
 
+    public function get_department_short_code($department_id) {
+      $this->db->select('department_short_name');
+      $this->db->from('departments');
+      $this->db->where('department_id', $department_id);
+      
+      $query = $this->db->get();
+      
+      if ($query->num_rows() > 0) {
+          return $query->row()->department_short_name; 
+      }
+      
+      return null; 
+    }
+
 
 }
