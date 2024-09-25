@@ -262,7 +262,7 @@ class Student extends CI_Controller
 				'academic_year' => "2024-2025",
 				'admissions_id' => "60",
 				'reference_date' => date('Y-m-d'),
-				'payment_id' => "61",
+				'payment_id' => "0",
 				'payment_mode' => $payment_mode,
 				'transaction_status' => '0',
 				'created_on' => date('Y-m-d h:i:s')

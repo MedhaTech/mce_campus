@@ -78,7 +78,7 @@ class Admin extends CI_Controller
 		}
 	}
 
-	function students($status='')
+	function students($status = '')
 	{
 		if ($this->session->userdata('logged_in')) {
 			$session_data = $this->session->userdata('logged_in');
@@ -92,7 +92,7 @@ class Admin extends CI_Controller
 
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
 			$data['students'] = $this->admin_model->fetchDetails1('id, quota,department,sub_quota, student_name, student_number,usn,status', 'status', $status, 'students')->result();
-			
+
 
 			$this->admin_template->show('admin/students', $data);
 		} else {
@@ -137,7 +137,6 @@ class Admin extends CI_Controller
 
 
 			$this->admin_template->show('admin/report_fee_details', $data);
-
 		} else {
 			redirect('admin/timeout');
 		}
@@ -164,7 +163,7 @@ class Admin extends CI_Controller
 			if ($results) {
 				$table_setup = array('table_open' => '<table class="table table-bordered" border="1" id="example2" >');
 				$this->table->set_template($table_setup);
-				$print_fields = array('SL. No.', 'STUDENT NAME', 'USN', 'College Code', 'EMAIL', 'Gender', 'AADHAR NUMBER', 'Quota', 'Sub Quota', 'Category Allotted', 'Category Claimed', 'Caste', 'Sub caste', 'Father Number', 'Student Number', 'State', 'Country', 'Stream', 'Department', 'Year', 'TOTAL UNIVERSITY OTHER FEE', 'COLLEGE OTHER FEE','EXAM FEE', 'TUITION FEE', 'College fee demand', 'College fee collection', 'COLLEGE FEE BALANCE', 'RECEIPT-No & Date', 'ONLINE PAYMENT DETAILS', 'REMARKS', 'Comments', 'Corpus fee demand', 'Corpus fee collection', 'CORPUS FEE Balance', 'RECEIPT-No & Date', 'ONLINE PAYMENT DETAILS', 'REMARKS', 'Comments');
+				$print_fields = array('SL. No.', 'STUDENT NAME', 'USN', 'College Code', 'EMAIL', 'Gender', 'AADHAR NUMBER', 'Quota', 'Sub Quota', 'Category Allotted', 'Category Claimed', 'Caste', 'Sub caste', 'Father Number', 'Student Number', 'State', 'Country', 'Stream', 'Department', 'Year', 'TOTAL UNIVERSITY OTHER FEE', 'COLLEGE OTHER FEE', 'EXAM FEE', 'TUITION FEE', 'College fee demand', 'College fee collection', 'COLLEGE FEE BALANCE', 'RECEIPT-No & Date', 'ONLINE PAYMENT DETAILS', 'REMARKS', 'Comments', 'Corpus fee demand', 'Corpus fee collection', 'CORPUS FEE Balance', 'RECEIPT-No & Date', 'ONLINE PAYMENT DETAILS', 'REMARKS', 'Comments');
 				$this->table->set_heading($print_fields);
 				$i = 1;
 				foreach ($results as $results1) {
@@ -211,8 +210,6 @@ class Admin extends CI_Controller
 					$this->table->add_row($result_array);
 				}
 				$details = $this->table->generate();
-
-
 			} else {
 				$details = 'No student details found';
 			}
@@ -221,7 +218,6 @@ class Admin extends CI_Controller
 				'file' => "data:application/vnd.ms-excel;base64," . base64_encode($details)
 			);
 			die(json_encode($response));
-
 		} else {
 			redirect('admin/timeout');
 		}
@@ -353,9 +349,9 @@ class Admin extends CI_Controller
 			$student_id = $encryptId;
 			$data['stud_id'] = $student_id;
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
-			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($student_id, 'usn','students')->row();
-		//   var_dump($this->db->last_query());
-			
+			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($student_id, 'usn', 'students')->row();
+			//   var_dump($this->db->last_query());
+
 			$this->admin_template->show('admin/profileDetails', $data);
 		} else {
 			redirect('admin/timeout');
@@ -460,10 +456,9 @@ class Admin extends CI_Controller
 			} else {
 
 				$usn = $this->input->post('usn');
-				
-					$encryptId = base64_encode($usn);
-					redirect('admin/paymentDetail/' . $encryptId, 'refresh');
-				
+
+				$encryptId = base64_encode($usn);
+				redirect('admin/paymentDetail/' . $encryptId, 'refresh');
 			}
 		} else {
 			redirect('admin/timeout');
@@ -485,11 +480,11 @@ class Admin extends CI_Controller
 			$data['encryptId'] = $encryptId;
 			$usn = base64_decode($encryptId);
 			$data['usn'] = $usn;
-			
+
 			$data['voucher_types'] = $this->globals->voucher_types();
 			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
 			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
-			
+
 			$data['paymentDetail'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'payment_structure1')->result();
 			$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'reg_no', 'transactions')->result();
 			$data['paid_amount'] = $this->admin_model->paidfee('reg_no', $usn, 'transaction_status', '1', 'transactions');
@@ -503,7 +498,7 @@ class Admin extends CI_Controller
 			redirect('admin/timeout');
 		}
 	}
-	function new_voucher($encryptId,$feemaster_id)
+	function new_voucher($encryptId, $feemaster_id)
 	{
 		if ($this->session->userdata('logged_in')) {
 			$session_data = $this->session->userdata('logged_in');
@@ -524,7 +519,7 @@ class Admin extends CI_Controller
 
 			$this->form_validation->set_rules('final_fee', 'Total Amount', 'numeric|required');
 			if ($this->form_validation->run() === FALSE) {
-				$data['action'] = 'admin/new_voucher/' . $encryptId.'/'.$feemaster_id;
+				$data['action'] = 'admin/new_voucher/' . $encryptId . '/' . $feemaster_id;
 				$this->admin_template->show('admin/new_voucher', $data);
 			} else {
 
@@ -698,9 +693,9 @@ class Admin extends CI_Controller
 			$admission_id = $usn;
 			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
 
-			$admissionDetails =$this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
 			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $transaction_id)->row();
-		
+
 
 			$this->load->library('fpdf'); // Load library
 			ini_set("session.auto_start", 0);
@@ -895,7 +890,7 @@ class Admin extends CI_Controller
 			$usn = base64_decode($encryptId);
 			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
 			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $id)->row();
-			
+
 
 
 			$this->load->library('fpdf'); // Load library
@@ -915,7 +910,7 @@ class Admin extends CI_Controller
 			$affiliation = "FEE RECEIPT";
 			$contactInfo = "UG (AY-2024-2025)";
 
-			$issuedOn = "Date : " . date("m-d-Y ");
+			$issuedOn = "Date : " . date("d-m-Y ");
 			$programe = "PROGRAM : B.E";
 			$chellan = "Challan : MCE24-25/" . $voucherDetails->id;
 			$dept = "Dept. :" . $this->admin_model->get_department_short_code($admissionDetails->department_id);
@@ -1115,8 +1110,18 @@ class Admin extends CI_Controller
 			$contactInfo = "Payment made by NEFT/RTGS/IMPS or any other online mode,";
 			$contactInfo1 = "Fill all the below mentioned data with Seal & Signature of the Payee Bank Officlal,";
 			$contactInfo2 = "and Upload to E Mail swdcb@mcehassan.ac.in,";
-			$contactInfo3 = "Submit the herd copy to Fees Section, Dean (SA) Office";
-			$issuedOn = "Date : " . date("m-d-Y ");
+			$contactInfo3 = "Submit the hard copy to Fees Section, Dean (SA) Office";
+			if($admissionDetails->sub_quota=='Aided')
+			{
+				$contactInfo4 = "ACCOUNT NUMBER -  120030893500 IFSC -CNRB0011405";
+			}
+			else
+			{
+				$contactInfo4 = "UA ACCOUNT NUMBER -  14053070001574 IFSC -CNRB0011405";
+			}
+			
+
+			$issuedOn = "Date : " . date("d-m-Y ");
 			$programe = "PROGRAME : B.E";
 			$chellan = "Chellan : MCE24-25/" . $voucherDetails->id;
 			$dept = "Dept. :" . $this->admin_model->get_department_short_code($admissionDetails->department_id);
@@ -1158,10 +1163,11 @@ class Admin extends CI_Controller
 			$pdf->Cell(0, 4, $contactInfo1, 0, 1, 'C');
 			$pdf->Cell(0, 4, $contactInfo2, 0, 1, 'C');
 			$pdf->Cell(0, 4, $contactInfo3, 0, 1, 'C');
+			$pdf->Cell(0, 4, $contactInfo4, 0, 1, 'C');
 			$x1 = 17;  // Starting point x-coordinate
-			$y1 = 37;  // Starting point y-coordinate
+			$y1 = 41;  // Starting point y-coordinate
 			$x2 = 198; // Ending point x-coordinate
-			$y2 = 37;  // Ending point y-coordinate
+			$y2 = 41;  // Ending point y-coordinate
 
 
 			// Set line width
@@ -1216,7 +1222,7 @@ class Admin extends CI_Controller
 
 			$data['page_title'] = 'Fees Receipt';
 			$data['menu'] = 'feereceipt';
-			
+
 			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
 			$transactionDetails = $this->admin_model->getDetails('transactions', $transaction_id)->row();
 			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
@@ -1255,7 +1261,6 @@ class Admin extends CI_Controller
 				$collegeName2 = "Under the auspices of the MTES (R),";
 				$collegeName3 = "PB NO. 21,SALAGAME ROAD HASSAN, KARNATAKA";
 				$contactInfo = "FEES RECEIPT - " . $admissionDetails->sub_quota;
-				
 			} else {
 
 				$collegeName = "MALNAD TECHNICAL EDUCATION SOCIETY (R)";
@@ -1263,7 +1268,6 @@ class Admin extends CI_Controller
 				$collegeName2 = "BESIDE MCE GANAPATHI TEMPLE ,MG ROAD,VIDYANAGAR,HASSAN-573202";
 				$collegeName3 = "STATE-KARNATAKA";
 				$contactInfo = "CORPUS FUND RECEIPT";
-				
 			}
 
 			$fees = [
@@ -1430,4 +1434,96 @@ class Admin extends CI_Controller
 	}
 
 
+	public function getTransactionDetails($order_id)
+	{
+		require_once APPPATH . 'libraries/Jwt.php';
+		$this->load->library('logger');
+		$transact = $this->admin_model->getDetailsbyfield($order_id, 'reference_no', 'transactions')->row();
+
+		$billdesk_URL_retrive = "https://api.billdesk.com/payments/ve1_2/transactions/get";
+		$trace_id = rand(1000000000, 9999999999);
+		$servertime = time();
+
+		if ($transact->payment_mode == 0) {
+
+			if ($transact->aided_unaided == 'Aided') {
+				$headers = array("alg" => "HS256", "clientid" => "cnbmlndaid", "kid" => "HMAC");
+				$payload = array(
+					"mercid" => 'CNBMLNDAID',
+					"orderid" => $order_id,
+				);
+				$curl_payload = JWT::encode($payload, 'hbjUTwdjLDwzsFErRVCE0y0skHic1z2B', 'HS256', $headers);
+				$result_decoded = JWT::decode($response, 'hbjUTwdjLDwzsFErRVCE0y0skHic1z2B', 'HS256');
+			} else {
+
+				$headers = array("alg" => "HS256", "clientid" => "cnbmlndegc", "kid" => "HMAC");
+				$payload = array(
+					"mercid" => 'CNBMLNDEGC',
+					"orderid" => $order_id,
+				);
+				$curl_payload = JWT::encode($payload, 'WHjXW5WHk27mr50KetSh75vyapmO14IT', 'HS256', $headers);
+				$result_decoded = JWT::decode($response, 'WHjXW5WHk27mr50KetSh75vyapmO14IT', 'HS256');
+			}
+		} else {
+			$headers = array("alg" => "HS256", "clientid" => "cnbmlndtrt", "kid" => "HMAC");
+			$payload = array(
+				"mercid" => 'CNBMLNDTRT',
+				"orderid" => $order_id,
+			);
+			$curl_payload = JWT::encode($payload, 'k2ieff4ugn8Ehv31tUhXTRoHK2MEBrdJ', 'HS256', $headers);
+			$result_decoded = JWT::decode($response, 'k2ieff4ugn8Ehv31tUhXTRoHK2MEBrdJ', 'HS256');
+		}
+
+
+
+
+
+		$message = "BillDesk retrieve payload - " . $curl_payload . "\n";
+		$this->logger->write('billdesk', 'debug', $message);
+		$ch = curl_init($billdesk_URL_retrive);
+		$ch_headers = array(
+			"Content-Type: application/jose",
+			"accept: application/jose",
+			"BD-Traceid: $trace_id",
+			"BD-Timestamp: $servertime"
+		);
+
+		$message = "BillDesk retrieve curl header - " . json_encode($ch_headers) . "\n";
+		$this->logger->write('billdesk', 'debug', $message);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $ch_headers);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $curl_payload);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$response = curl_exec($ch);
+
+		$message = "Billdesk retrieve order response - " . $response;
+		$this->logger->write('billdesk', 'debug', $message);
+		curl_close($ch);
+
+		$response_array = (array) $result_decoded;
+		$message = "Billdesk retrieve order response decoded - " . json_encode($response_array);
+		$this->logger->write('billdesk', 'debug', $message);
+		$res['status'] = 3;
+		$res['reason'] = "UNKNOWN";
+
+		if ($response_array['transactionid']) {
+
+			if ($response_array['auth_status'] == '0300') {
+				$res['status'] = 5;
+				$res['txn_id'] = $response_array['transactionid'];
+				$res['reason'] = 'success';
+			} else if ($response_array['auth_status'] == '0002') {
+				$res['status'] = 2;
+				$res['reason'] = 'pending';
+			} else if ($response_array['auth_status'] == '0399') {
+				$res['status'] = 6;
+				$res['reason'] = 'fail';
+			}
+
+			$res['amount'] = (int)$response_array['amount'];
+		}
+
+
+		print_r($res);
+	}
 }
