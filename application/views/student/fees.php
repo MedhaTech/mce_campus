@@ -270,8 +270,8 @@
                             $print_fields = array('S.No', 'Receipt', 'Date', 'Mode of Payment', 'Amount', 'Status');
                             $this->table->set_heading($print_fields);
 
-                            $transactionTypes = array("1" => "Cash", "2" => "DD", "3" => "Online Payment", "4" => "Online Transfer");
-
+                            // $transactionTypes = array("1" => "Cash", "2" => "DD", "3" => "Online Payment", "4" => "Online Transfer");
+                            $transactionTypes = array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer","5"=>"DD");
                             $i = 1;
                             $total = 0;
                             foreach ($transactionDetails as $transactionDetails1) {
