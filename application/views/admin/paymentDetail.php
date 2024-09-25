@@ -174,7 +174,8 @@
                         $button = '-';
                     } else {
                         if ($paymentDetails1->voucher_type == 1 ||  $paymentDetails1->voucher_type == 5) {
-                            $url = anchor('admin/cashvoucher/' . $encryptId . '/' . $paymentDetails1->id, "MCE24-25/" . $paymentDetails1->id);
+                            // $url = anchor('admin/cashvoucher/' . $encryptId . '/' . $paymentDetails1->id, "MCE24-25/" . $paymentDetails1->id);
+                            $url = anchor('admin/cashvoucherletter/' . $encryptId . '/' . $paymentDetails1->id, "MCE24-25/" . $paymentDetails1->id);
                         }
                         if ($paymentDetails1->voucher_type == 2) {
                             $url = anchor('admin/voucherletter/' . $encryptId . '/' . $paymentDetails1->id, "MCE24-25/" . $paymentDetails1->id);

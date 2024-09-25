@@ -1,0 +1,6 @@
+DEBUG - 2024-09-25 15:54:31 --> BillDesk retrieve payload - eyJhbGciOiJIUzI1NiIsImNsaWVudGlkIjoiY25ibWxuZGVnYyIsImtpZCI6IkhNQUMiLCJ0eXAiOiJKV1QifQ.eyJtZXJjaWQiOiJDTkJNTE5ERUdDIiwib3JkZXJpZCI6IjRNQzIzTUU0ODUxNzI3MTc1NTkxIn0.8Aa476VGFuZckfLS7NNefqByqwZrOvxCXebUK0V_YaA
+
+DEBUG - 2024-09-25 15:54:31 --> BillDesk retrieve curl header - ["Content-Type: application\/jose","accept: application\/jose","BD-Traceid: 4340602819","BD-Timestamp: 1727259871"]
+
+DEBUG - 2024-09-25 15:54:31 --> Billdesk retrieve order response - eyJhbGciOiJIUzI1NiIsImNsaWVudGlkIjoiY25ibWxuZGVnYyIsImtpZCI6IkhNQUMifQ.eyJzdGF0dXMiOjQwMSwiZXJyb3JfdHlwZSI6ImF1dGhlbnRpY2F0aW9uX2Vycm9yIiwiZXJyb3JfY29kZSI6IkdOQVVFMDAwNiIsIm1lc3NhZ2UiOiJSZXF1ZXN0IGZyb20gdW5hdXRob3JpemVkIGlwIn0.DrnDEbt8pVsweA9VI8FplfePxu0EIHEwT86svMyrlWM
+DEBUG - 2024-09-25 15:54:31 --> Billdesk retrieve order response decoded - {"status":401,"error_type":"authentication_error","error_code":"GNAUE0006","message":"Request from unauthorized ip"}
