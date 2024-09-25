@@ -1729,6 +1729,8 @@ class Admin extends CI_Controller
 
 		if ($response_array['transactionid']) {
 
+			$response_json = json_encode($response_array);
+
 			if ($response_array['auth_status'] == '0300') {
 				$res['status'] = 5;
 				$res['txn_id'] = $response_array['transactionid'];
@@ -1768,13 +1770,21 @@ class Admin extends CI_Controller
 
 				);
 			}
-			print_r($updateDetails);
+			// print_r($updateDetails);
 			// $res['amount'] = (int)$response_array['amount'];
-			// $result = $this->admin_model->updateDetailsbyfield('reference_no', $order_id, $updateDetails, 'transactions');
+			
+		}
+		else
+		{
+			$updateDetails = array(
+						
+				'transaction_status' => '2'
+
+			);
 		}
 
-
-		print_r($response_array);
+		$result = $this->admin_model->updateDetailsbyfield('reference_no', $order_id, $updateDetails, 'transactions');
+		// print_r($this->db->last_query());
 	}
 
 	public function getReceiptNo($reference)
