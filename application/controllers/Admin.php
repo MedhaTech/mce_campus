@@ -1745,6 +1745,36 @@ class Admin extends CI_Controller
 		}
 
 
-		print_r($res);
+		print_r($response_array);
+	}
+
+	public function getReceiptNo($reference)
+	{
+
+		$details = $this->admin_model->getDetailsbyfield($reference, 'reference_no', 'transactions')->row();
+		$cnt = $this->admin_model->getReceiptsCountNew($details->aided_unaided, $details->payment_mode)->row()->cnt;
+		$cnt_number = $cnt + 1;
+		$strlen = strlen(($cnt_number));
+		if ($strlen == 1) {
+			$cnt_number = "000" . $cnt_number;
+		}
+		if ($strlen == 2) {
+			$cnt_number = "00" . $cnt_number;
+		}
+		if ($strlen == 3) {
+			$cnt_number = "0" . $cnt_number;
+		}
+		if ($details->payment_mode == 1) {
+			$prev = "MTES/2024-25/";
+		} else {
+			if ($details->aided_unaided == "Aided") {
+				$prev = "MCE/2024-25/A/";
+			} else {
+				$prev = "MCE/2024-25/UA/";
+			}
+
+		}
+
+		return $prev . $cnt_number;
 	}
 }
