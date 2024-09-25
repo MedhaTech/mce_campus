@@ -1490,7 +1490,7 @@ class Admin extends CI_Controller
 				['Quota', $admissionDetails->quota],
 				['College Code', $admissionDetails->college_code . ' - ' . $admissionDetails->sub_quota],
 				['Category', $admissionDetails->category_allotted],
-				
+
 				['Payment Mode', "Cash"]
 			];
 
@@ -1533,7 +1533,7 @@ class Admin extends CI_Controller
 			}
 
 			// Create a function to generate a single copy
-			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy,$accno)
+			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy, $accno)
 			{
 				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
 				$collegeName2 = "Under the auspices of the MTES (R),";
@@ -1585,7 +1585,7 @@ class Admin extends CI_Controller
 				$pdf->Cell(65, 4, $dept, 0, 1, 'R');
 				$pdf->SetXY($x, $y + 39);
 				$pdf->SetFont('Arial', '', 7);
-				$pdf->MultiCell(65, 4, "Paid into the credit of CANARA BANK M.C.E BRANCH,\nHASSAN -573202., CA A/C No. ".$accno." of \nThe Principal Malnad College of Engineering, Hassan.");
+				$pdf->MultiCell(65, 4, "Paid into the credit of CANARA BANK M.C.E BRANCH,\nHASSAN -573202., CA A/C No. " . $accno . " of \nThe Principal Malnad College of Engineering, Hassan.");
 				$pdf->SetXY($x, $y + 52);
 				// $pdf->SetFont('Arial', '', 7);
 				// $pdf->MultiCell(65, 4, "Cash/D.D.No.________________________Dt________\n");
@@ -1628,7 +1628,7 @@ class Admin extends CI_Controller
 			$spacingX = 70; // Adjust this spacing to fit the copies horizontally
 
 			for ($i = 0; $i < 4; $i++) {
-				generateCopy($i, $pdf, $startX + ($i * $spacingX), $startY, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copyData[$i],$accno);
+				generateCopy($i, $pdf, $startX + ($i * $spacingX), $startY, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copyData[$i], $accno);
 			}
 
 			// $pdf->Output();
@@ -1661,7 +1661,6 @@ class Admin extends CI_Controller
 				);
 
 				$curl_payload = JWT::encode($payload, 'hbjUTwdjLDwzsFErRVCE0y0skHic1z2B', 'HS256', $headers);
-			
 			} else {
 
 				$headers = array("alg" => "HS256", "clientid" => "cnbmlndegc", "kid" => "HMAC");
@@ -1670,7 +1669,6 @@ class Admin extends CI_Controller
 					"orderid" => $order_id,
 				);
 				$curl_payload = JWT::encode($payload, 'WHjXW5WHk27mr50KetSh75vyapmO14IT', 'HS256', $headers);
-				
 			}
 		} else {
 			$headers = array("alg" => "HS256", "clientid" => "cnbmlndtrt", "kid" => "HMAC");
@@ -1679,7 +1677,6 @@ class Admin extends CI_Controller
 				"orderid" => $order_id,
 			);
 			$curl_payload = JWT::encode($payload, 'k2ieff4ugn8Ehv31tUhXTRoHK2MEBrdJ', 'HS256', $headers);
-			
 		}
 
 
@@ -1736,9 +1733,9 @@ class Admin extends CI_Controller
 				$res['txn_id'] = $response_array['transactionid'];
 				$res['reason'] = 'success';
 				$cnt_number = $this->getReceiptNo($order_id);
-					$receipt_no = $cnt_number;
-					
-					
+				$receipt_no = $cnt_number;
+
+
 				$updateDetails = array(
 					'transaction_date' => $response_array['transaction_date'],
 					'transaction_id' => $response_array['transactionid'],
@@ -1754,7 +1751,7 @@ class Admin extends CI_Controller
 					'transaction_date' => $response_array['transaction_date'],
 					'transaction_id' => $response_array['transactionid'],
 					'txn_response' => $response_json,
-					
+
 					'transaction_status' => '0'
 
 				);
@@ -1765,26 +1762,24 @@ class Admin extends CI_Controller
 					'transaction_date' => $response_array['transaction_date'],
 					'transaction_id' => $response_array['transactionid'],
 					'txn_response' => $response_json,
-					
+
 					'transaction_status' => '2'
 
 				);
 			}
 			// print_r($updateDetails);
 			// $res['amount'] = (int)$response_array['amount'];
-			
-		}
-		else
-		{
+
+		} else {
 			$updateDetails = array(
-						
+
 				'transaction_status' => '2'
 
 			);
 		}
 
 		$result = $this->admin_model->updateDetailsbyfield('reference_no', $order_id, $updateDetails, 'transactions');
-		// print_r($this->db->last_query());
+		return $result;
 	}
 
 	public function getReceiptNo($reference)
@@ -1811,9 +1806,68 @@ class Admin extends CI_Controller
 			} else {
 				$prev = "MCE/2024-25/UA/";
 			}
-
 		}
 
 		return $prev . $cnt_number;
+	}
+
+	public function updateTransactionsByUsn1($usn)
+	{
+
+		$transactions = $this->db->get_where('transactions', [
+			'reg_no' => $usn,
+			'transaction_status' => '0'
+		])->result();
+
+		foreach ($transactions as $transact) {
+
+			$order_id = $transact->reference_no;
+			$updateDetails = $this->getTransactionDetails($order_id);
+		}
+
+		return true; // or return some status
+	}
+
+	public function updateTransactionsByUsn()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+
+
+			$data['page_title'] = 'Update Transactions By Usn';
+			$data['menu'] = 'payments';
+			// $data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
+
+			$this->form_validation->set_rules('usn', 'USN', 'required');
+			if ($this->form_validation->run() === FALSE) {
+				$data['action'] = 'admin/updateTransactionsByUsn';
+				$this->admin_template->show('admin/updateTransactions', $data);
+			} else {
+
+				$usn = $this->input->post('usn');
+
+				$transactions = $this->db->get_where('transactions', [
+					'reg_no' => $usn,
+					'transaction_status' => '0'
+				])->result();
+		
+				foreach ($transactions as $transact) {
+		
+					$order_id = $transact->reference_no;
+					$updateDetails = $this->getTransactionDetails($order_id);
+				}
+				$this->session->set_flashdata('message', 'Transactions Updated');
+				$data['action'] = 'admin/updateTransactionsByUsn';
+				$this->admin_template->show('admin/updateTransactions', $data);
+
+			}
+		} else {
+			redirect('admin/timeout');
+		}
 	}
 }
