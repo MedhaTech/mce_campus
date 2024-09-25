@@ -930,7 +930,7 @@ class Admin extends CI_Controller
 
 
 			$tableData = [
-				['Admission No.', $admissionDetails->adm_no],
+				['USN', $admissionDetails->usn],
 				['Name', $admissionDetails->student_name],
 				['Year', $voucherDetails->year],
 				['Quota', $admissionDetails->quota],
