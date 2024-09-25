@@ -4,3 +4,9 @@ DEBUG - 2024-09-25 15:54:31 --> BillDesk retrieve curl header - ["Content-Type: 
 
 DEBUG - 2024-09-25 15:54:31 --> Billdesk retrieve order response - eyJhbGciOiJIUzI1NiIsImNsaWVudGlkIjoiY25ibWxuZGVnYyIsImtpZCI6IkhNQUMifQ.eyJzdGF0dXMiOjQwMSwiZXJyb3JfdHlwZSI6ImF1dGhlbnRpY2F0aW9uX2Vycm9yIiwiZXJyb3JfY29kZSI6IkdOQVVFMDAwNiIsIm1lc3NhZ2UiOiJSZXF1ZXN0IGZyb20gdW5hdXRob3JpemVkIGlwIn0.DrnDEbt8pVsweA9VI8FplfePxu0EIHEwT86svMyrlWM
 DEBUG - 2024-09-25 15:54:31 --> Billdesk retrieve order response decoded - {"status":401,"error_type":"authentication_error","error_code":"GNAUE0006","message":"Request from unauthorized ip"}
+DEBUG - 2024-09-25 19:52:47 --> BillDesk retrieve payload - eyJhbGciOiJIUzI1NiIsImNsaWVudGlkIjoiY25ibWxuZGVnYyIsImtpZCI6IkhNQUMiLCJ0eXAiOiJKV1QifQ.eyJtZXJjaWQiOiJDTkJNTE5ERUdDIiwib3JkZXJpZCI6IjRNQzIzRUMxMjYxNzI3MTc1NjY3In0.5uKMuojZfsF82hgHUAYEisiqonQYOkceZIhueHflYkk
+
+DEBUG - 2024-09-25 19:52:47 --> BillDesk retrieve curl header - ["Content-Type: application\/jose","accept: application\/jose","BD-Traceid: 5972419113","BD-Timestamp: 1727274167"]
+
+DEBUG - 2024-09-25 19:52:47 --> Billdesk retrieve order response - eyJhbGciOiJIUzI1NiIsImNsaWVudGlkIjoiY25ibWxuZGVnYyIsImtpZCI6IkhNQUMifQ.eyJzdGF0dXMiOjQwMSwiZXJyb3JfdHlwZSI6ImF1dGhlbnRpY2F0aW9uX2Vycm9yIiwiZXJyb3JfY29kZSI6IkdOQVVFMDAwNiIsIm1lc3NhZ2UiOiJSZXF1ZXN0IGZyb20gdW5hdXRob3JpemVkIGlwIn0.DrnDEbt8pVsweA9VI8FplfePxu0EIHEwT86svMyrlWM
+DEBUG - 2024-09-25 19:52:47 --> Billdesk retrieve order response decoded - {"status":401,"error_type":"authentication_error","error_code":"GNAUE0006","message":"Request from unauthorized ip"}
