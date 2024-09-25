@@ -100,8 +100,8 @@
                                 <div class="form-group">
                                     <label class="form-label">Mode of Payments :</label>
                                     <?php $payment_modes = array("" => "Select", "RTGS" => "RTGS", "IMPS" => "IMPS", "NEFT" => "NEFT", "UPI" => "UPI");
-                                    echo form_dropdown('payment_mode', $payment_modes, '', 'class="form-control input-xs" id="payment_mode"'); ?>
-                                    <span class="text-danger"><?php echo form_error('payment_mode'); ?></span>
+                                    echo form_dropdown('transfer_mode', $payment_modes, '', 'class="form-control input-xs" id="transfer_mode"'); ?>
+                                    <span class="text-danger"><?php echo form_error('transfer_mode'); ?></span>
                                 </div>
                             </div>
 
