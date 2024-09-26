@@ -485,6 +485,7 @@ class Admin_model extends CI_Model
     $this->db->select('COUNT(id) as cnt');
     $this->db->where('receipt_no != ""');
     $this->db->where('transaction_status', '1');
+    $this->db->where('transaction_type', '3');
     if($mode==1)
     {
       $this->db->where('payment_mode', '1');
