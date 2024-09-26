@@ -1111,12 +1111,16 @@ class Admin extends CI_Controller
 			$contactInfo1 = "Fill all the below mentioned data with Seal & Signature of the Payee Bank Officlal,";
 			$contactInfo2 = "and Upload to E Mail swdcb@mcehassan.ac.in,";
 			$contactInfo3 = "Submit the hard copy to Fees Section, Dean (SA) Office";
-			if ($admissionDetails->sub_quota == 'Aided') {
-				$contactInfo4 = "ACCOUNT NUMBER -  120030893500 IFSC -CNRB0011405";
-			} else {
-				$contactInfo4 = "UA ACCOUNT NUMBER -  14053070001574 IFSC -CNRB0011405";
-			}
 
+			if ($voucherDetails->type == 1) {
+				$contactInfo4 = "CORPUS FUND ACCOUNT NUMBER - 110173085919 , IFSC CODE - CNRB0011405";
+			} else {
+				if ($admissionDetails->sub_quota == 'Aided') {
+					$contactInfo4 = "ACCOUNT NUMBER -  120030893500 IFSC -CNRB0011405";
+				} else {
+					$contactInfo4 = "UA ACCOUNT NUMBER -  14053070001574 IFSC -CNRB0011405";
+				}
+			}
 
 			$issuedOn = "Date : " . date("d-m-Y ");
 			$programe = "PROGRAME : B.E";
@@ -1491,7 +1495,7 @@ class Admin extends CI_Controller
 				$tableData[] = ['Corpus Fund', $transactionDetails->amount];
 			}
 
-			
+
 
 			$pdf->SetFont('Arial', 'B', 12);
 			$pdf->Cell(0, 2, $collegeName, 0, 1, 'C');
@@ -1583,12 +1587,12 @@ class Admin extends CI_Controller
 			printRow($pdf, "Transaction Date-Time ", date('d-m-Y', strtotime($transactionDetails->transaction_date)), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printRow($pdf, "Transaction ID ", $transactionDetails->transaction_id, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printRow($pdf, "Payment Ref No ", $transactionDetails->reference_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			
-				foreach ($tableData as $row) {
 
-					printRow($pdf, $row[0], number_format($row[1], 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-				}
-			
+			foreach ($tableData as $row) {
+
+				printRow($pdf, $row[0], number_format($row[1], 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			}
+
 			printRow($pdf, "Amount In Rupees :", number_format($transactionDetails->amount, 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			$pdf->Ln(1);
 
@@ -2051,16 +2055,15 @@ class Admin extends CI_Controller
 					'reg_no' => $usn,
 					'transaction_status' => '0'
 				])->result();
-		
+
 				foreach ($transactions as $transact) {
-		
+
 					$order_id = $transact->reference_no;
 					$updateDetails = $this->getTransactionDetails($order_id);
 				}
 				$this->session->set_flashdata('message', 'Transactions Updated');
 				$data['action'] = 'admin/updateTransactionsByUsn';
 				$this->admin_template->show('admin/updateTransactions', $data);
-
 			}
 		} else {
 			redirect('admin/timeout');
