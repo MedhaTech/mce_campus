@@ -744,9 +744,9 @@
                                     <label class="radio-inline mr-3">
                                         <input type="radio" name="voucher_type" id="voucher_type" value="4"> Bank Transfer
                                     </label>
-                                    <label class="radio-inline mr-3">
+                                    <!-- <label class="radio-inline mr-3">
                                         <input type="radio" name="voucher_type" id="voucher_type" value="3"> Online
-                                    </label>
+                                    </label> -->
                                     <span class="text-danger"><?php echo form_error('voucher_type'); ?></span>
                                 </div>
 

@@ -41,9 +41,9 @@
                         </span>
                     </a>
 
-                    <?php echo form_open_multipart('admin/profileDetails/' , 'class="user"'); ?>
+                    <?php echo form_open_multipart('admin/payments/' , 'class="user"'); ?>
                     <div class="input-group mt-3 ml-3">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Enter USN"
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Enter USN For Collect Fee"
                             aria-label="Search" id="usn" name="usn" aria-describedby="basic-addon2"
                             value="<?php echo (set_value('usn')) ? set_value('usn') : $usn; ?>">
                         <div class="input-group-append">
