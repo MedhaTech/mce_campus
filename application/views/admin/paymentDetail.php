@@ -256,7 +256,7 @@
                             $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date)) . ' <br> Bank: ' . $transactionDetails1->bank_name;
                         }
                         if ($transactionDetails1->transaction_type == 3) {
-                            $receiptprint = ($transactionDetails1->receipt_no) ? anchor('admin/feereceipt/' . $admissionDetails->usn . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-";
+                            $receiptprint = ($transactionDetails1->receipt_no) ? anchor('admin/feereceiptonline/' . $admissionDetails->usn . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-";
                             $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
                         }
                         if ($transactionDetails1->transaction_type == 4) {
