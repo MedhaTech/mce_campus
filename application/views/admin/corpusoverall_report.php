@@ -3,8 +3,8 @@
       <section class="content-header mt-2">
           <div class="container-fluid">
               <div class="card card-info shadow">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                      <h3 class="card-title mb-0">
+                  <div class="card-header d-flex justify-content-between align-items-center" style="background-color:#2f4050;">
+                      <h3 class="card-title text-white mb-0">
                           <?= $page_title; ?>
                       </h3>
                       <div class="card-tools">
@@ -15,7 +15,7 @@
                                   </button>
                                   <?php echo anchor('admin/reports', 
                                         '<span class="icon"><i class="fas fa-arrow-left"></i></span> 
-                                        <span class="text">Back to List</span>', 
+                                        <span class="text text-white">Back to List</span>', 
                                         'class="btn btn-secondary btn-sm btn-icon-split ml-2 shadow-sm"'); ?>
                               </li>
                           </ul>

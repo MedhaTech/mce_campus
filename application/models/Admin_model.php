@@ -904,5 +904,17 @@ class Admin_model extends CI_Model
       $this->db->where('id', $student_id);
       return $this->db->update('students', ['edit_status' => $status]);
   }
+
+  public function get_academicyear($admission_year, $year) {
+    $this->db->select('*');
+    $this->db->from('students');
+    $this->db->where('admission_year', $admission_year);
+    $this->db->where('year', $year);
+    
+    // Execute the query and return the query object
+    $query = $this->db->get();
+    return $query; // Make sure to return the query object, not an array
+}
+
   
 }
