@@ -2070,126 +2070,195 @@ class Admin extends CI_Controller
 		}
 	}
 
-	public function corpusoverall_report($download = 0)
-{
-    if ($this->session->userdata('logged_in')) {
-        $session_data = $this->session->userdata('logged_in');
-        $data['id'] = $session_data['id'];
-        $data['username'] = $session_data['username'];
-        $data['full_name'] = $session_data['full_name'];
-        $data['role'] = $session_data['role'];
+		public function corpusoverall_report($download = 0)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
 
-        $currentAcademicYear = $this->globals->currentAcademicYear();
-        $data['page_title'] = $currentAcademicYear . ' CORPUS OVERALL FEE';
-        $data['menu'] = 'CorpusoverallfeeReport';
+			$currentAcademicYear = $this->globals->currentAcademicYear();
+			$data['page_title'] = $currentAcademicYear . ' CORPUS OVERALL FEE';
+			$data['menu'] = 'CorpusoverallfeeReport';
 
-        $data['download_action'] = 'admin/corpusoverall_report';
+			$data['download_action'] = 'admin/corpusoverall_report';
 
-        // Fetch students with Corpus balance greater than 0
-        $students = $this->admin_model->CorpusReport($currentAcademicYear)->result();
+			// Fetch students with Corpus balance greater than 0
+			$students = $this->admin_model->CorpusReport($currentAcademicYear)->result();
 
-        $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
-        $this->table->set_template($table_setup);
+			$table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+			$this->table->set_template($table_setup);
 
-        $print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Corpus Fee Demand', 'Quota', 'College Code', 'Mobile', 'Corpus Balance');
-        $this->table->set_heading($print_fields);
+			$print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Corpus Fee Demand', 'Quota', 'College Code', 'Mobile', 'Corpus Balance');
+			$this->table->set_heading($print_fields);
 
-        $i = 1;
-        foreach ($students as $student) {
-			
-            $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+			$i = 1;
+			foreach ($students as $student) {
+				
+				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
 
-            $result_array = array(
-                $i++,
-                $student->admission_year,  // Display the current academic year
-                $student->usn,
-                $student->student_name,
-                $dmm,  // Department name
-				number_format($student->Corpus_balance, 0),  // Format corpus balance
-				$student->quota,
-                $student->college_code,
-                $student->student_number,  // Assuming this is the mobile number or student number
-				number_format((float) $student->Corpus_fee_demand, 0)
-            );
+				$result_array = array(
+					$i++,
+					$student->admission_year,  // Display the current academic year
+					$student->usn,
+					$student->student_name,
+					$dmm,  // Department name
+					number_format((float) $student->Corpus_fee_demand, 0),
+					$student->quota,
+					$student->college_code,
+					$student->student_number,  // Assuming this is the mobile number or student number
+					number_format($student->Corpus_balance, 0),  // Format corpus balance
+				);
 
-            $this->table->add_row($result_array);
-        }
+				$this->table->add_row($result_array);
+			}
 
-        $data['table'] = $this->table->generate();
+			$data['table'] = $this->table->generate();
 
-        if (!$download) {
-            $this->admin_template->show('admin/corpusoverall_report', $data);
-        } else {
-            $response = array(
-                'op' => 'ok',
-                'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
-            );
-            die(json_encode($response));
-        }
-    } else {
-        redirect('admin/timeout');
-    }
-}
+			if (!$download) {
+				$this->admin_template->show('admin/corpusoverall_report', $data);
+			} else {
+				$response = array(
+					'op' => 'ok',
+					'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+				);
+				die(json_encode($response));
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
 
-public function corpusbalance_report($download = 0)
-{
-    if ($this->session->userdata('logged_in')) {
-        $session_data = $this->session->userdata('logged_in');
-        $data['id'] = $session_data['id'];
-        $data['username'] = $session_data['username'];
-        $data['full_name'] = $session_data['full_name'];
-        $data['role'] = $session_data['role'];
+	public function corpusbalance_report($download = 0)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
 
-        $currentAcademicYear = $this->globals->currentAcademicYear();
-        $data['page_title'] = $currentAcademicYear . ' CORPUS BALANCE FEE';
-        $data['menu'] = 'corpusbalancereport';
+			$currentAcademicYear = $this->globals->currentAcademicYear();
+			$data['page_title'] = $currentAcademicYear . ' CORPUS BALANCE FEE';
+			$data['menu'] = 'corpusbalancereport';
 
-        $data['download_action'] = 'admin/corpusoverall_report';
+			$data['download_action'] = 'admin/corpusoverall_report';
 
-        // Fetch students with Corpus balance greater than 0
-        $students = $this->admin_model->CorpusBalanceReport($currentAcademicYear)->result();
+			// Fetch students with Corpus balance greater than 0
+			$students = $this->admin_model->CorpusBalanceReport($currentAcademicYear)->result();
 
-        $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
-        $this->table->set_template($table_setup);
+			$table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+			$this->table->set_template($table_setup);
 
-        $print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Quota',  'College Code','Corpus Balance', 'Mobile','Corpus Fee Demand');
-        $this->table->set_heading($print_fields);
+			$print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Quota',  'College Code','Corpus Balance', 'Mobile','Corpus Fee Demand');
+			$this->table->set_heading($print_fields);
 
-        $i = 1;
-        foreach ($students as $student) {
+			$i = 1;
+			foreach ($students as $student) {
 
-            $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
 
-            $result_array = array(
-                $i++,
-                $currentAcademicYear,  // Display the current academic year
-                $student->usn,
-                $student->student_name,
-                $dmm,  // Department name
-                $student->quota,
-                $student->college_code,
-				number_format($student->Corpus_balance, 0),  // Format corpus balance
-                $student->student_number,  // Assuming this is the mobile number or student number
-				number_format($student->Corpus_fee_demand, 0)  // Format corpus balance
-            );
+				$result_array = array(
+					$i++,
+					$currentAcademicYear,  // Display the current academic year
+					$student->usn,
+					$student->student_name,
+					$dmm,  // Department name
+					$student->quota,
+					$student->college_code,
+					number_format($student->Corpus_balance, 0),  // Format corpus balance
+					$student->student_number,  // Assuming this is the mobile number or student number
+					number_format($student->Corpus_fee_demand, 0)  // Format corpus balance
+				);
 
-            $this->table->add_row($result_array);
-        }
+				$this->table->add_row($result_array);
+			}
 
-        $data['table'] = $this->table->generate();
+			$data['table'] = $this->table->generate();
 
-        if (!$download) {
-            $this->admin_template->show('admin/corpusbalance_report', $data);
-        } else {
-            $response = array(
-                'op' => 'ok',
-                'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
-            );
-            die(json_encode($response));
-        }
-    } else {
-        redirect('admin/timeout');
-    }
-}
+			if (!$download) {
+				$this->admin_template->show('admin/corpusbalance_report', $data);
+			} else {
+				$response = array(
+					'op' => 'ok',
+					'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+				);
+				die(json_encode($response));
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+	public function academic_report($download = 0)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			// Retrieve current academic year and available academic years
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['academicYears'] = array("" => "Select") + $this->globals->academicYears();
+			$data['page_title'] = 'ACADEMIC YEAR WISE';
+			$data['menu'] = 'academicyearwise';
+			$data['download_action'] = 'admin/academic_report';
+
+			// Fetch input values
+			$academic_year = $this->input->post('academic_year');
+			$year = $this->input->post('year');
+
+			// Fetch students with Corpus balance greater than 0 based on filters
+			$students = $this->admin_model->get_academicyear($academic_year, $year)->result();
+
+			// Table setup for displaying data
+			$table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+			$this->table->set_template($table_setup);
+
+			$print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 'Student Number', 'College Code', 'Quota', 'Category Claimed');
+			$this->table->set_heading($print_fields);
+
+			$i = 1;
+			foreach ($students as $student) {
+				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+
+				$result_array = array(
+					$i++,
+					$student->admission_year,
+					// $academic_year ?: $data['currentAcademicYear'],  // Display selected or current academic year
+					$student->usn,
+					$student->student_name,
+					$dmm,  // Department name
+					$student->year,
+					$student->student_number,  // Assuming this is the mobile number or student number
+					$student->quota,
+					$student->college_code,
+					$student->category_claimed,
+				);
+
+				$this->table->add_row($result_array);
+			}
+
+			$data['table'] = $this->table->generate();
+
+			// Handle download request
+			if (!$download) {
+				$this->admin_template->show('admin/academic_report', $data);
+			} else {
+				$response = array(
+					'op' => 'ok',
+					'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+				);
+				die(json_encode($response));
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
 
 }
