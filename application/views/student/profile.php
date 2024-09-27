@@ -198,9 +198,15 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="float-right position-relative">
-                            <a href="personaldetails" class="btn btn-info btn-sm">
-                                <i class="fa fa-edit"></i> Edit
-                            </a>
+                            <?php if ($student->edit_status == 0) : ?>
+                                <a href="personaldetails" class="btn btn-info btn-sm">
+                                    <i class="fa fa-edit"></i> Edit
+                                </a>
+                            <?php else : ?>
+                                <button class="btn btn-secondary btn-sm" disabled>
+                                    <i class="fa fa-edit"></i> Edit
+                                </button>
+                            <?php endif; ?>
                         </div>
                         <h4 class="card-title text-secondary">PERSONAL DETAILS</h4>
 

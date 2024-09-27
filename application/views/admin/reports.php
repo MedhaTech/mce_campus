@@ -15,7 +15,9 @@
                               </div>
                               <div class="card-body">
                                   <ul>
-                                      <li><?php echo anchor('admin/department_quota_report', 'Academic Year Wise Report'); ?> </li>
+                                      <li><?php echo anchor('admin/corpusoverall_report', 'Corpus Overall Report'); ?> </li>
+                                      <li><?php echo anchor('admin/corpusbalance_report', 'Corpus Balance Report'); ?> </li>
+                                      <!-- <li><?php echo anchor('admin/department_quota_report', 'Academic Year Wise Report'); ?> </li> -->
                                   </ul>
                               </div>
                           </div>

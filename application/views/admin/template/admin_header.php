@@ -152,6 +152,11 @@
                                     <i class="nav-icon fas fa-list mr-2"></i>Fee Reports
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="<?php echo base_url(); ?>admin/reports">
+                                    <i class="nav-icon fas fa-chart-pie mr-2"></i> Reports
+                                </a>
+                            </li>
 
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>admin/changepassword">
