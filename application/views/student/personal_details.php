@@ -34,64 +34,6 @@
                             </div>
 
                             <div class="form-group row mb-0">
-                                <label for="state" class="col-3 col-form-label">State <span
-                                        class="text-danger">*</span></label>
-                                <div class="col-9 col-form-label">
-                                    <input type="text" class="form-control" placeholder="Enter State"
-                                        id="state"
-                                        value="<?php echo (set_value('state')) ? set_value('state') : $state; ?>"
-                                        name="state">
-                                    <span class="text-danger"><?php echo form_error('state'); ?></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row mb-0">
-                                <label for="country" class="col-3 col-form-label">Country <span
-                                        class="text-danger">*</span></label>
-                                <div class="col-9 col-form-label">
-                                    <input type="text" class="form-control" placeholder="Enter country"
-                                        id="country"
-                                        value="<?php echo (set_value('country')) ? set_value('country') : $country; ?>"
-                                        name="country">
-                                    <span class="text-danger"><?php echo form_error('country'); ?></span>
-                                </div>
-                            </div>
-
-                            <!-- <div class="form-group row mb-0">
-                                <label for="state" class="col-3 col-form-label">State</label>
-                                <div class="col-9 col-form-label">
-                                    <select name="state" id="state" class="form-control select2">
-                                        <option>Select State</option>
-                                        <?php foreach ($states1 as $state): ?>
-                                        <?php $selected = ($state->name == $state) ? 'selected' : ''; ?>
-                                        <option data-id="<?= $state->id ?>" value="<?= $state->name ?>"
-                                            <?= $selected ?>>
-                                            <?= $state->name ?>
-                                        </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <span class="text-danger"><?php echo form_error('state'); ?></span>
-                                </div>
-                            </div> -->
-
-                            <!-- <div class="form-group row mb-0">
-                                <label for="country" class="col-3 col-form-label">Country</label>
-                                <div class="col-9 col-form-label">
-                                    <select name="country" id="country" class="form-control select2">
-                                        <option>Select Country</option>
-                                        <?php foreach ($countries as $country): ?>
-                                        <?php $selected = ($country->name == $country) ? 'selected' : ''; ?>
-                                        <option data-id="<?= $country->id ?>" value="<?= $country->name ?>"
-                                            <?= $selected ?>>
-                                            <?= $country->name ?>
-                                        </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <span class="text-danger"><?php echo form_error('country'); ?></span>
-                                </div>
-                            </div> -->
-
-                            <div class="form-group row mb-0">
                                 <label for="email" class="col-3 col-form-label">Student Email <span
                                         class="text-danger">*</span></label>
                                 <div class="col-9 col-form-label">
@@ -99,29 +41,6 @@
                                         value="<?php echo (set_value('email')) ? set_value('email') : $email; ?>"
                                         name="email">
                                     <span class="text-danger"><?php echo form_error('email'); ?></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row mb-0">
-                                <label for="gender" class="col-3 col-form-label">Gender <span
-                                        class="text-danger">*</span></label>
-                                <div class="col-9 col-form-label">
-                                    <input type="text" class="form-control" placeholder="Enter Gender" id="gender"
-                                        value="<?php echo (set_value('gender')) ? set_value('gender') : $gender; ?>"
-                                        name="gender">
-                                    <span class="text-danger"><?php echo form_error('gender'); ?></span>
-                                </div>
-                            </div>
-
-                            <div class="form-group row mb-0">
-                                <label for="aadhar_number" class="col-3 col-form-label">Aadhar Number <span
-                                        class="text-danger">*</span></label>
-                                <div class="col-9 col-form-label">
-                                    <input type="text" class="form-control" placeholder="Enter Aadhaar Number"
-                                        id="aadhar_number"
-                                        value="<?php echo (set_value('aadhar_number')) ? set_value('aadhar_number') : $aadhar_number; ?>"
-                                        name="aadhar_number">
-                                    <span class="text-danger"><?php echo form_error('aadhar_number'); ?></span>
                                 </div>
                             </div>
 

@@ -104,86 +104,76 @@ class Student extends CI_Controller
 		}
 	}
 
-	function personaldetails()
-	{
-		if ($this->session->userdata('student_in')) {
-			$student_session = $this->session->userdata('student_in');
-			$data['id'] = $student_session['id'];
-			$student_id = $student_session['id'];
-			$data['student_name'] = $student_session['student_name'];
-			$data['page_title'] = "Edit Personal Details";
-			$data['menu'] = "editpersonaldetails";
+	public function personaldetails() 
+{
+    if ($this->session->userdata('student_in')) {
+        $student_session = $this->session->userdata('student_in');
+        $student_id = $student_session['id'];
+        $data['id'] = $student_id;
+        $data['student_name'] = $student_session['student_name'];
+        $data['page_title'] = "Edit Personal Details";
+        $data['menu'] = "editpersonaldetails";
+        $data['username'] = $student_session['username'];
+        $data['userTypes'] = $this->globals->userTypes();
+        $data['admissionDetails'] = $this->admin_model->getDetails('students', $student_id)->row();
+        
+        // Check if edit_status is already set to 1
+        $currentDetails = $this->admin_model->getDetails('students', $student_id)->row();
+        if ($currentDetails->edit_status == 1) {
+            // Redirect to profile if already edited
+            $this->session->set_flashdata('message', 'You have already edited your personal details.');
+            $this->session->set_flashdata('status', 'alert-warning');
+            redirect('student/profile', 'refresh');
+        }
 
-			$data['username'] = $student_session['username'];
-			$data['id'] = $student_session['id'];
-			$data['menu'] = "personaldetails";
-			$data['userTypes'] = $this->globals->userTypes();
-			$data['states'] = array(" " => "Select State") + $this->globals->states();
-			$data['countries'] = $this->admin_model->getCountries();
-			$data['states1'] = $this->admin_model->get_states();
-			$data['admissionDetails'] = $this->admin_model->getDetails('students', $data['id'])->row();
-			// var_dump($data['admissionDetails']); die();
+        $this->load->library('form_validation');
+        $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 
-			$this->load->library('form_validation');
+        // Set form validation rules
+        $this->form_validation->set_rules('student_number', 'Student Number', 'required|regex_match[/^[0-9]{10}$/]');
+        $this->form_validation->set_rules('father_number', 'Father Number', 'required|regex_match[/^[0-9]{10}$/]');
+        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+        $this->form_validation->set_rules('date_of_birth', 'Date of Birth', 'required');
 
-			$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
-			// $data['admissions'] = $this->admin_model->get_details_by_id($id, 'id', 'admissions');
+        if ($this->form_validation->run() === FALSE) {
+            // If validation fails, reload the form with existing details
+            $data['action'] = 'student/personaldetails/' . $student_id;
+            $personalDetails = $this->admin_model->getDetails('students', $student_id)->row();
 
-			$this->form_validation->set_rules('student_number', 'Student Number', 'required|regex_match[/^[0-9]{10}$/]');
-			$this->form_validation->set_rules('father_number', 'Father Number', 'required|regex_match[/^[0-9]{10}$/]');
-			$this->form_validation->set_rules('state', 'State', 'required');
-			$this->form_validation->set_rules('country', 'Country', 'required');
-			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-			$this->form_validation->set_rules('gender', 'Gender', 'required');
-			$this->form_validation->set_rules('aadhar_number', 'Aadhar Number', 'required');
-			$this->form_validation->set_rules('date_of_birth', 'Date of Birth', 'required');
+            $data['student_number'] = $personalDetails->student_number;
+            $data['father_number'] = $personalDetails->father_number;
+            $data['email'] = $personalDetails->email;
+            $data['date_of_birth'] = $personalDetails->date_of_birth;
 
-			if ($this->form_validation->run() === FALSE) {
+            $this->student_template->show('student/personal_details', $data);
+        } else {
+            // Update personal details after validation
+            $updateDetails = array(
+                'student_number' => $this->input->post('student_number'),
+                'father_number' => $this->input->post('father_number'),
+                'email' => $this->input->post('email'),
+                'date_of_birth' => $this->input->post('date_of_birth'),
+            );
 
-				$data['action'] = 'student/personaldetails/' . $data['id'];
+            $result = $this->admin_model->updateDetails($student_id, $updateDetails, 'students');
 
-				$personalDetails = $this->admin_model->getDetails('students', $data['id'])->row();
+            if ($result) {
+                $this->admin_model->updateEditStatus($student_id, 1); 
 
-				$data['student_number'] = $personalDetails->student_number;
-				$data['father_number'] = $personalDetails->father_number;
-				$data['state'] = $personalDetails->state;
-				$data['country'] = $personalDetails->country;
-				$data['email'] = $personalDetails->email;
-				$data['gender'] = $personalDetails->gender;
-				$data['aadhar_number'] = $personalDetails->aadhar_number;
-				$data['date_of_birth'] = $personalDetails->date_of_birth;
-				$this->student_template->show('student/personal_details', $data);
-			} else {
-				$updateDetails = array(
-					'student_number' => $this->input->post('student_number'),
-					'father_number' => $this->input->post('father_number'),
-					'state' => $this->input->post('state'),
-					'country' => $this->input->post('country'),
-					'email' => $this->input->post('email'),
-					'gender' => $this->input->post('gender'),
-					'aadhar_number' => $this->input->post('aadhar_number'),
-					'date_of_birth' => $this->input->post('date_of_birth'),
-				);
-				// print_r($updateDetails);
-				// die();
-				$result = $this->admin_model->updateDetails($data['id'], $updateDetails, 'students');
+                $this->session->set_flashdata('message', 'Personal Details updated successfully...!');
+                $this->session->set_flashdata('status', 'alert-success');
+            } else {
+                $this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
+                $this->session->set_flashdata('status', 'alert-warning');
+            }
 
-				// var_dump($this->db->last_query());
-				// die();
-				if ($result) {
-					$this->session->set_flashdata('message', 'Personal Details updated successfully...!');
-					$this->session->set_flashdata('status', 'alert-success');
-				} else {
-					$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
-					$this->session->set_flashdata('status', 'alert-warning');
-				}
-
-				redirect('student/profile', 'refresh');
-			}
-		} else {
-			redirect('student', 'refresh');
-		}
-	}
+            // Redirect to the student profile after update
+            redirect('student/profile', 'refresh');
+        }
+    } else {
+        redirect('student', 'refresh');
+    }
+}
 
 	function fees(): void
 	{
@@ -648,7 +638,7 @@ class Student extends CI_Controller
 			$data['student_name'] = $student_session['student_name'];
 			$data['page_title'] = "Change Password";
 			$data['menu'] = "change_password";
-			$data['admissionDetails'] = $this->admin_model->getDetails('admissions', $data['id'])->row();
+			$data['admissionDetails'] = $this->admin_model->getDetails('students', $data['id'])->row();
 
 			// $this->form_validation->set_rules('oldPassword', 'Old Password', 'required');
 			$this->form_validation->set_rules('oldpassword', 'Old Password', 'required');

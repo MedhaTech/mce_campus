@@ -580,44 +580,46 @@ class Admin_model extends CI_Model
     return $query;
   }
 
-  function CorpusReport($currentAcademicYear)
+    function CorpusReport($currentAcademicYear)
   {
-    $this->db->select('admissions.id, admissions.app_no, admissions.adm_no, admissions.admit_date, admissions.dept_id, admissions.academic_year, admissions.student_name, admissions.usn, admissions.quota, admissions.sub_quota, admissions.college_code, admissions.mobile, admissions.fees_paid, admissions.status, fee_master.Corpus_fund, admissions.remarks');
-    $this->db->from('admissions');
-    $this->db->join('fee_master', 'fee_master.student_id = admissions.id');
-    $this->db->where('admissions.academic_year', $currentAcademicYear);
-    $this->db->where('admissions.status !=', '7');
-    $this->db->where('fee_master.Corpus_fund >', 0);
-    return $this->db->get();
+      $this->db->select('students.id, students.admission_year, students.department_id, students.student_name, students.usn, students.quota, students.sub_quota, students.college_code, students.student_number, students.status, fee_master.Corpus_balance, fee_master.Corpus_fee_demand');
+      $this->db->from('students');
+      $this->db->join('fee_master', 'fee_master.usn = students.usn');
+      // $this->db->where('students.admission_year', $currentAcademicYear);
+      $this->db->where('students.status !=', '7');
+      $this->db->where('fee_master.Corpus_fee_demand >', 0);  // New condition for Corpus_fee_demand
+      return $this->db->get();
   }
 
-  function CorpusBalanceReport($currentAcademicYear)
+    function CorpusBalanceReport($currentAcademicYear)
   {
-    $this->db->select('admissions.id, 
-                         admissions.app_no, 
-                         admissions.adm_no, 
-                         MAX(admissions.admit_date) AS admit_date, 
-                         MAX(admissions.dept_id) AS dept_id, 
-                         MAX(admissions.academic_year) AS academic_year, 
-                         MAX(admissions.student_name) AS student_name, 
-                         MAX(admissions.usn) AS usn, 
-                         MAX(admissions.quota) AS quota, 
-                         MAX(admissions.sub_quota) AS sub_quota, 
-                         MAX(admissions.college_code) AS college_code, 
-                         MAX(admissions.mobile) AS mobile, 
-                         MAX(admissions.fees_paid) AS fees_paid, 
-                         MAX(admissions.status) AS status, 
-                         MAX(fee_master.Corpus_fund) AS Corpus_fund, 
-                         MAX(admissions.remarks) AS remarks, 
-                         (MAX(fee_master.Corpus_fund) - COALESCE(SUM(transactions.amount), 0)) AS Corpus_fund_balance');
-    $this->db->from('admissions');
-    $this->db->join('fee_master', 'fee_master.student_id = admissions.id');
-    $this->db->join('transactions', 'transactions.id = admissions.id', 'left');
-    $this->db->where('admissions.academic_year', $currentAcademicYear);
-    $this->db->where('admissions.status !=', '7');
-    $this->db->group_by('admissions.id');
-    $this->db->having('Corpus_fund_balance >', 0);
-    return $this->db->get();
+      $this->db->select('students.id AS student_id, 
+                        students.usn, 
+                        students.student_name, 
+                        students.department_id,
+                        students.quota, 
+                        students.sub_quota, 
+                        students.college_code, 
+                        students.student_number, 
+                      
+                        MAX(fee_master.Corpus_balance) AS Corpus_balance, 
+                    
+                        (MAX(fee_master.Corpus_balance) - COALESCE(SUM(transactions.amount), 0)) AS Corpus_fund_balance');
+      
+      $this->db->from('students');
+      // $this->db->join('admissions', 'admissions.id = students.id', 'left');
+      $this->db->join('fee_master', 'fee_master.id = students.id', 'left');
+      
+      // Update this line based on the correct column in the transactions table
+      $this->db->join('transactions', 'transactions.id = students.id', 'left'); // Adjust this line
+
+      // $this->db->where('admissions.academic_year', $currentAcademicYear);
+      $this->db->where('students.status !=', '7');
+      
+      $this->db->group_by('students.id');
+      $this->db->having('Corpus_balance >', 0);
+      
+      return $this->db->get();
   }
 
   function dayBookReport($from_date, $to_date)
@@ -898,5 +900,9 @@ class Admin_model extends CI_Model
       return null; 
     }
 
-
+    public function updateEditStatus($student_id, $status) {
+      $this->db->where('id', $student_id);
+      return $this->db->update('students', ['edit_status' => $status]);
+  }
+  
 }
