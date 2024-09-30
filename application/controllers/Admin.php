@@ -974,8 +974,14 @@ class Admin extends CI_Controller
 				$tableData[] = ['Corpus Fund', $voucherDetails->corpus_fee_demand];
 			}
 
+			if ($admissionDetails->sub_quota == 'Aided') {
+				$accno = "120030893500";
+			} else {
+				$accno = "14053070001574";
+			}
+
 			// Create a function to generate a single copy
-			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy)
+			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy,$accno)
 			{
 				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
 				$collegeName2 = "Under the auspices of the MTES (R),";
@@ -1027,7 +1033,7 @@ class Admin extends CI_Controller
 				$pdf->Cell(65, 4, $dept, 0, 1, 'R');
 				$pdf->SetXY($x, $y + 39);
 				$pdf->SetFont('Arial', '', 7);
-				$pdf->MultiCell(65, 4, "Paid into the credit of CANARA BANK M.C.E BRANCH,\nHASSAN -573202., CA A/C No. 14053070001574 of \nThe Principal Malnad College of Engineering, Hassan.");
+				$pdf->MultiCell(65, 4, "Paid into the credit of CANARA BANK M.C.E BRANCH,\nHASSAN -573202., CA A/C No. ".$accno." of \nThe Principal Malnad College of Engineering, Hassan.");
 				$pdf->SetXY($x, $y + 52);
 				// $pdf->SetFont('Arial', '', 7);
 				// $pdf->MultiCell(65, 4, "Cash/D.D.No.________________________Dt________\n");
@@ -1070,7 +1076,7 @@ class Admin extends CI_Controller
 			$spacingX = 70; // Adjust this spacing to fit the copies horizontally
 
 			for ($i = 0; $i < 4; $i++) {
-				generateCopy($i, $pdf, $startX + ($i * $spacingX), $startY, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copyData[$i]);
+				generateCopy($i, $pdf, $startX + ($i * $spacingX), $startY, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copyData[$i],$accno);
 			}
 
 			// $pdf->Output();
