@@ -12,7 +12,7 @@
     <!-- App css -->
     <link href="<?php echo base_url(); ?>assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="<?php echo base_url(); ?>assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <link href="<?php echo base_url(); ?>assets/css/theme.min.css" rel="stylesheet" type="text/css" />
+    <link href="<?php echo base_url(); ?>assets/css/theme.css" rel="stylesheet" type="text/css" />
 
     <!-- Plugins css -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/plugins/datatables/dataTables.bootstrap4.css"
@@ -35,7 +35,7 @@
             <div class="navbar-header">
                 <!-- LOGO -->
                 <div class="navbar-brand-box d-flex align-items-left">
-                    <a href="index.html" class="logo">
+                    <a href="<?php echo base_url(); ?>admin/dashboard" class="logo">
                         <span>
                             MCE CAMPUS
                         </span>
@@ -99,7 +99,7 @@
                         </button>
                         <div class="dropdown-menu dropdown-menu-right">
 
-                            <a class="dropdown-item d-flex align-items-center justify-content-between"
+                            <!-- <a class="dropdown-item d-flex align-items-center justify-content-between"
                                 href="javascript:void(0)">
                                 <span>Profile</span>
                                 <span>
@@ -113,6 +113,10 @@
                             <a class="dropdown-item d-flex align-items-center justify-content-between"
                                 href="javascript:void(0)">
                                 <span>Lock Account</span>
+                            </a> -->
+                            <a class="dropdown-item d-flex align-items-center justify-content-between"
+                                href="<?php echo base_url(); ?>admin/changepassword">
+                                <span>Change Password</span>
                             </a>
                             <a class="dropdown-item d-flex align-items-center justify-content-between"
                                 href="<?php echo base_url(); ?>admin/logout">
@@ -157,15 +161,7 @@
                                     <i class="nav-icon fas fa-chart-pie mr-2"></i> Reports
                                 </a>
                             </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link" href="<?php echo base_url(); ?>admin/changepassword">
-                                    <i class="nav-icon fas fa-fingerprint mr-2"></i>Change Password
-                                </a>
-                            </li>
-
-
-
+                            
                         </ul>
                     </div>
                 </nav>
