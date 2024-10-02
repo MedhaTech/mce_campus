@@ -211,9 +211,9 @@ class Admin_model extends CI_Model
   }
   function getFee($course, $quota, $sub_quota)
   {
-    
 
-    
+
+
     $this->db->where('id', $sub_quota);
     return $this->db->get('fee_structure');
   }
@@ -515,24 +515,18 @@ class Admin_model extends CI_Model
       return false;
     }
   }
-  public function getReceiptsCountNew($aided,$mode)
+  public function getReceiptsCountNew($aided, $mode)
   {
     $this->db->select('COUNT(id) as cnt');
     $this->db->where('receipt_no != ""');
     $this->db->where('transaction_status', '1');
     $this->db->where('transaction_type', '3');
-    if($mode==1)
-    {
+    if ($mode == 1) {
       $this->db->where('payment_mode', '1');
-    }
-    else
-    {
-      if($aided=="Aided")
-      {
+    } else {
+      if ($aided == "Aided") {
         $this->db->where('aided_unaided', 'Aided');
-      }
-      else
-      {
+      } else {
         $this->db->where('aided_unaided', 'UnAided');
       }
       $this->db->where('payment_mode', '0');
@@ -649,6 +643,7 @@ class Admin_model extends CI_Model
     return $query;
   }
 
+
   public function CorpusReport($academic_year = null, $department = null, $year = null)
 {
     $this->db->select('students.id, students.admission_year, students.department_id, students.student_name, students.usn, students.year, students.sub_quota, students.college_code, students.student_number, students.status, fee_master.Corpus_balance, fee_master.Corpus_fee_demand');
@@ -673,7 +668,7 @@ class Admin_model extends CI_Model
 
     public function CorpusBalanceReport($academic_year = null, $department = null, $year = null)
   {
-      $this->db->select('students.id AS student_id, 
+    $this->db->select('students.id AS student_id, 
                         students.usn, 
                         students.student_name, 
                         students.department_id,
@@ -683,6 +678,7 @@ class Admin_model extends CI_Model
                         students.student_number, 
                         MAX(fee_master.Corpus_balance) AS Corpus_balance, 
                         (MAX(fee_master.Corpus_balance) - COALESCE(SUM(transactions.amount), 0)) AS Corpus_fund_balance');
+
       $this->db->from('students');
       $this->db->join('fee_master', 'fee_master.id = students.id', 'left');
       $this->db->join('transactions', 'transactions.id = students.id', 'left');
@@ -819,7 +815,7 @@ class Admin_model extends CI_Model
     }
   }
 
-  public function checkFieldGreaterThanZero1($fee_structure_id, $field, $usn,$year)
+  public function checkFieldGreaterThanZero1($fee_structure_id, $field, $usn, $year)
   {
     // Step 1: Retrieve the top 3 rows for the given admission_id
     $this->db->select($field);
@@ -857,7 +853,7 @@ class Admin_model extends CI_Model
     return 0;
   }
 
-  public function checkFieldGreaterThanZerovalue($fee_master_id, $field, $usn,$year)
+  public function checkFieldGreaterThanZerovalue($fee_master_id, $field, $usn, $year)
   {
     // Step 1: Retrieve the top 3 rows for the given admission_id
     $this->db->select($field);
@@ -955,9 +951,18 @@ class Admin_model extends CI_Model
     $this->db->update('comedk_seats', $data);
   }
 
+  public function dateTransactions()
+  {
+    $this->db->select('transaction_date , transaction_type, SUM(amount) AS total_amount');
+    $this->db->from('transactions');
+    $this->db->where('transaction_status', '1');
+    $this->db->group_by('transaction_date , transaction_type');
+    $this->db->order_by('transaction_date ASC');
+    return $this->db->get();
+  }
+  public function get_total_amount($year, $usn, $payment_mode)
+  {
 
-  public function get_total_amount($year, $usn, $payment_mode) {
-    
     $this->db->select('SUM(amount) AS total_amount');
     $this->db->from('transactions');
     $this->db->where('year', $year);
@@ -968,37 +973,40 @@ class Admin_model extends CI_Model
     $query = $this->db->get();
     $result = $query->row();
     return $result ? $result->total_amount : 0;
-}
-
-    public function get_department_short_code($department_id) {
-      $this->db->select('department_short_name');
-      $this->db->from('departments');
-      $this->db->where('department_id', $department_id);
-      
-      $query = $this->db->get();
-      
-      if ($query->num_rows() > 0) {
-          return $query->row()->department_short_name; 
-      }
-      
-      return null; 
-    }
-
-    public function updateEditStatus($student_id, $status) {
-      $this->db->where('id', $student_id);
-      return $this->db->update('students', ['edit_status' => $status]);
   }
 
-  public function get_academicyear($admission_year, $year) {
+  public function get_department_short_code($department_id)
+  {
+    $this->db->select('department_short_name');
+    $this->db->from('departments');
+    $this->db->where('department_id', $department_id);
+
+    $query = $this->db->get();
+
+    if ($query->num_rows() > 0) {
+      return $query->row()->department_short_name;
+    }
+
+    return null;
+  }
+
+  public function updateEditStatus($student_id, $status)
+  {
+    $this->db->where('id', $student_id);
+    return $this->db->update('students', ['edit_status' => $status]);
+  }
+
+  public function get_academicyear($admission_year, $year)
+  {
     $this->db->select('*');
     $this->db->from('students');
     $this->db->where('admission_year', $admission_year);
     $this->db->where('year', $year);
-    
+
     // Execute the query and return the query object
     $query = $this->db->get();
     return $query; // Make sure to return the query object, not an array
-}
+  }
 
-  
+
 }

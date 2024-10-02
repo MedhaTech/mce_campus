@@ -32,7 +32,7 @@ class Globals
     public function transactionTypes()
     {
 
-        return array("1" => "Cash", "2" => "DD", "3" => "Online Payment", "4" => "Online Transfer");
+        return array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer","5"=>"DD");
 
     }
 
