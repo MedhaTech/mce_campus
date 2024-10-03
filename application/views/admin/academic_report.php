@@ -6,10 +6,10 @@
             <div class="card card-info shadow">
                 <div class="card-header d-flex justify-content-between align-items-center" style="background-color:#2f4050;">
                     <h3 class="card-title text-white"><?= $page_title; ?></h3>
-                    <div class="card-tools d-flex">
+                     <div class="card-tools d-flex">
                         <button class="btn btn-danger btn-sm mr-2" id="get_details" type="submit">Download</button>
                         <?php echo anchor('admin/reports', '<span class="icon"><i class="fas fa-arrow-left"></i></span> <span class="text">Back to List</span>', 'class="btn btn-secondary btn-sm btn-icon-split shadow-sm"'); ?>
-                    </div>
+                     </div>
                 </div>
                 <div class="card-body">
                     <?php echo form_open_multipart($download_action, 'class="user"'); ?>
@@ -23,10 +23,10 @@
                         </div>
                         <div class="col-md-3 col-sm-12">
                             <div class="form-group">
-                                <?php
-                                $year_options = array('0' => "All", 'I' => 'I', 'II' => 'II', 'III' => 'III', 'IV' => 'IV');
+                            <?php
+                                $year_options = array('I' => 'I', 'II' => 'II', 'III' => 'III', 'IV' => 'IV');
                                 echo form_dropdown('year', $year_options, set_value('year'), 'class="form-control" id="year"');
-                                ?>
+                            ?>
                             </div>
                         </div>
                         <div class="col-md-3 col-sm-12">
