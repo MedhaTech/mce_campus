@@ -53,51 +53,51 @@
   </div>
 
   <script>
-      $(document).ready(function() {
-          var base_url = '<?php echo base_url(); ?>';
+    $(document).ready(function() {
+        var base_url = '<?php echo base_url(); ?>';
 
+        $("#get_details").click(function(event) {
+            event.preventDefault();
 
-          $("#get_details").click(function() {
-              event.preventDefault();
+            var to_date = $("#to_date").val();
+            var from_date = $("#from_date").val();
 
+            $("#get_details").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Downloading...');
+            $("#get_details").prop('disabled', true);
 
-              var to_date = $("#to_date").val();
-              var from_date = $("#from_date").val();
+            $.ajax({
+                type: 'POST',
+                url: base_url + 'admin/dayBookReportDownload/',
+                data: {
+                    to_date: to_date,
+                    from_date: from_date
+                },
+                dataType: 'json',
+                cache: false,
+                success: function(data) {
+                    // Get current date and time
+                    var now = new Date();
+                    var day = String(now.getDate()).padStart(2, '0');
+                    var month = String(now.getMonth() + 1).padStart(2, '0'); // January is 0!
+                    var year = now.getFullYear();
+                    var hours = String(now.getHours()).padStart(2, '0');
+                    var minutes = String(now.getMinutes()).padStart(2, '0');
 
-              $("#get_details").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Downloading...');
-              $("#get_details").prop('disabled', true);
+                    // Format: Day Book Report - ddmmyyyyhhmm.xls
+                    var formattedDateTime = day + month + year + hours + minutes;
+                    var filename = "Day Book Report - " + formattedDateTime + ".xls";
 
-              //$("#res").hide();
-              //$("#process").show();
+                    var $a = $("<a>");
+                    $a.attr("href", data.file);
+                    $("body").append($a);
+                    $a.attr("download", filename);
+                    $a[0].click();
+                    $a.remove();
 
-
-    
-                  $.ajax({
-                      'type': 'POST',
-                      'url': base_url + 'admin/dayBookReportDownload/',
-                      'data': {
-                          'to_date': to_date,
-                          'from_date': from_date
-                      },
-                      'dataType': 'json',
-                      'cache': false,
-                      'success': function(data) {
-                          var filename = "Day Book Report.xls";
-                          var $a = $("<a>");
-                          $a.attr("href", data.file);
-                          $("body").append($a);
-                          $a.attr("download", filename);
-                          $a[0].click();
-                          $a.remove();
-                          $("#get_details").html('Download');
-                          $("#get_details").prop('disabled', false);
-                      }
-                  });
-            
-
-
-          });
-
-
-      });
-  </script>
+                    $("#get_details").html('Download');
+                    $("#get_details").prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>

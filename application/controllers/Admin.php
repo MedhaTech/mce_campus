@@ -2595,7 +2595,7 @@ class Admin extends CI_Controller
 				$table .= '<td>' . $transactions1->category_claimed . '</td>';
 				$table .= '<td>' . $transactions1->category_allotted . '</td>';
 				$table .= '<td>' . $this->admin_model->get_dept_by_id($transactions1->department_id)["department_name"] . '</td>';
-				$table .= '<td>\'' . htmlspecialchars($transactions1->receipt_no) . '</td>';
+				$table .= '<td>' . htmlspecialchars($transactions1->receipt_no) . '</td>';
 				$table .= '<td>' . $transactionTypes[$transactions1->transaction_type] . '</td>';
 				$table .= '<td>' . htmlspecialchars($transactions1->reference_no) . '</td>';
 				$table .= '<td>' . date('d-m-Y', strtotime($transactions1->reference_date)) . '</td>';
