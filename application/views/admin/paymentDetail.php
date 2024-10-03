@@ -83,7 +83,7 @@
                                             <th rowspan="2" width="11%" class="align-middle">YEAR</th>
                                             <th colspan="3" class="">CORPUS FEE (&#8377;)</th>
                                             <th colspan="3" class="">COLLEGE FEE (&#8377;)</th>
-                                            <th rowspan="2" width="11%"  class="align-middle">ACTION</th>
+                                            <th rowspan="2" width="11%" class="align-middle">ACTION</th>
                                         </tr>
                                         <tr class="text-center">
                                             <th width="13%">DEMAND</th>
@@ -92,7 +92,7 @@
                                             <th width="13%">DEMAND</th>
                                             <th width="13%">COLLECTION</th>
                                             <th width="13%">BALANCE</th>
-                                           
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -160,7 +160,7 @@
                 $rec = 0;
                 $table_setup = array('table_open' => '<table class="table table-hover font14">');
                 $this->table->set_template($table_setup);
-                $print_fields = array('S.No', 'Voucher', 'Amount', 'Voucher Type', 'Date',  'Status', 'Action');
+                $print_fields = array('S.No', 'Voucher', 'Amount', 'Voucher Type', 'Date',  'Status', 'Comments', 'Remarks', 'Action');
                 $this->table->set_heading($print_fields);
 
                 $statusTypes = array("0" => "<span class='text-danger'>Not Paid</span>", "1" => "<span class='text-success'>Paid</span>", "2" => "Failed", "3" => "<span class='text-warning'>Processing</span>");
@@ -187,13 +187,19 @@
 
                         if ($paymentDetails1->status != 1) {
                             $button = anchor('admin/mark_paid/' . $encryptId . '/' . $paymentDetails1->id, "Mark as paid", 'class="btn btn-success btn-sm"');
+                            $button .= anchor('admin/update_voucher/' . $encryptId . '/' . $paymentDetails1->id, "Edit", 'class="btn btn-primary btn-sm"');
+                            $button .= anchor('admin/voucher_delete/' . $encryptId . '/' . $paymentDetails1->id, "Delete", 'class="btn btn-danger btn-sm"');
                         } else {
                             $button = '-';
                         }
                     }
 
 
-
+                    if ($paymentDetails1->file != '') {
+                        $filee = anchor('assets/voucher/' . $paymentDetails1->file, "Download", 'target="blank" class="btn btn-success btn-sm"');
+                    } else {
+                        $filee = '';
+                    }
 
                     $result_array = array(
                         $i++,
@@ -202,6 +208,8 @@
                         $voucher_types[$paymentDetails1->voucher_type],
                         $paymentDetails1->requested_on,
                         $statusTypes[$paymentDetails1->status],
+                        $paymentDetails1->comments . '<br>' . $filee,
+                        $paymentDetails1->remarks,
                         $button
 
 
@@ -218,87 +226,87 @@
 
         </div>
         <div class="card m-2 shadow card-info">
-                <div class="card-header">
-                    <h3 class="card-title">Transaction Amount Details</h3>
-                    <div class="card-tools">
-                        <ul class="nav nav-pills ml-auto">
-                            <li class="nav-item">
+            <div class="card-header">
+                <h3 class="card-title">Transaction Amount Details</h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
+                        <li class="nav-item">
 
-                            </li>
-                        </ul>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
-                <div class="card-body">
-
-                </div>
-                <?php $rec = 0;   // to update Admisison Date
-                //   print_r($transactionDetails);
-                if ($transactionDetails) {
-                    $rec = 0;
-                    $table_setup = array('table_open' => '<table class="table table-hover font14">');
-                    $this->table->set_template($table_setup);
-                    $print_fields = array('S.No', 'Receipt', 'Date', 'Mode of Payment', 'Amount', 'Comments', 'Status');
-                    $this->table->set_heading($print_fields);
-
-                    $transactionTypes = array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer","5"=>"DD");
-
-                    $i = 1;
-                    $total = 0;
-                    foreach ($transactionDetails as $transactionDetails1) {
-
-                        $trans = null;
-                        if ($transactionDetails1->transaction_type == 1) {
-                            $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
-                            $receiptprint = $transactionDetails1->receipt_no;
-                        }
-                        if ($transactionDetails1->transaction_type == 2) {
-                            $receiptprint = $transactionDetails1->receipt_no;
-                            $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date)) . ' <br> Bank: ' . $transactionDetails1->bank_name;
-                        }
-                        if ($transactionDetails1->transaction_type == 3) {
-                            $receiptprint = ($transactionDetails1->receipt_no) ? anchor('admin/feereceiptonline/' . $admissionDetails->usn . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-";
-                            $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
-                        }
-                        if ($transactionDetails1->transaction_type == 4) {
-                            $receiptprint = ($transactionDetails1->receipt_no) ? anchor('admin/feereceipt/' . $admissionDetails->usn . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-";
-                            $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> Payment Mode:" . $transactionDetails1->transfer_mode . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
-                        }
-                        if ($transactionDetails1->transaction_type == 5) {
-                            $receiptprint = $transactionDetails1->receipt_no;
-                            $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
-                        }
-                        if ($transactionDetails1->transaction_status == 1) {
-                            $transaction_status = "<span class='text-success'>Verified</span>";
-                        } else if ($transactionDetails1->transaction_status == 2) {
-                            $transaction_status = "<span class='text-danger'>Cancelled</span>";
-                            // $transaction_status = "<span class='text-danger'>Cancelled</span><br><span class='text-dark'>".nl2br($transactionDetails1->remarks)."</span>";
-                        } else {
-                            $transaction_status = "<span class='text-warning'>Processing</span>";
-                            // $transaction_status = "<span class='text-warning'>Processing</span> <br>".anchor('admin/approvePayment/'.$transactionDetails1->id,'Approve','class="btn btn-info btn-sm"').' '.anchor('admin/deletePayment/'.$transactionDetails1->id.'/'.$transactionDetails1->admissions_id,'Delete','class="btn btn-danger btn-sm"');
-                        }
-
-
-
-                        $result_array = array(
-                            $i++,
-                            $receiptprint,
-                            ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
-                            $trans,
-                            number_format($transactionDetails1->amount, 2),
-                            $transactionDetails1->remarks,
-                            $transaction_status
-                        );
-                        $this->table->add_row($result_array);
-                    }
-
-                    echo $this->table->generate();
-                } else {
-                    $rec = 1;
-                    echo "<h6 class='text-left'> No transaction details found..! </h6>";
-                }
-                ?>
+            </div>
+            <div class="card-body">
 
             </div>
+            <?php $rec = 0;   // to update Admisison Date
+            //   print_r($transactionDetails);
+            if ($transactionDetails) {
+                $rec = 0;
+                $table_setup = array('table_open' => '<table class="table table-hover font14">');
+                $this->table->set_template($table_setup);
+                $print_fields = array('S.No', 'Receipt', 'Date', 'Mode of Payment', 'Amount', 'Comments', 'Status');
+                $this->table->set_heading($print_fields);
+
+                $transactionTypes = array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer", "5" => "DD");
+
+                $i = 1;
+                $total = 0;
+                foreach ($transactionDetails as $transactionDetails1) {
+
+                    $trans = null;
+                    if ($transactionDetails1->transaction_type == 1) {
+                        $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                        $receiptprint = $transactionDetails1->receipt_no;
+                    }
+                    if ($transactionDetails1->transaction_type == 2) {
+                        $receiptprint = $transactionDetails1->receipt_no;
+                        $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date)) . ' <br> Bank: ' . $transactionDetails1->bank_name;
+                    }
+                    if ($transactionDetails1->transaction_type == 3) {
+                        $receiptprint = ($transactionDetails1->receipt_no) ? anchor('admin/feereceiptonline/' . $admissionDetails->usn . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-";
+                        $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                    }
+                    if ($transactionDetails1->transaction_type == 4) {
+                        $receiptprint = ($transactionDetails1->receipt_no) ? anchor('admin/feereceipt/' . $admissionDetails->usn . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-";
+                        $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> Payment Mode:" . $transactionDetails1->transfer_mode . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                    }
+                    if ($transactionDetails1->transaction_type == 5) {
+                        $receiptprint = $transactionDetails1->receipt_no;
+                        $trans = $voucher_types[$transactionDetails1->transaction_type] . "<br> No:" . $transactionDetails1->reference_no . '<br> Dt:' . date('d-m-Y', strtotime($transactionDetails1->transaction_date));
+                    }
+                    if ($transactionDetails1->transaction_status == 1) {
+                        $transaction_status = "<span class='text-success'>Verified</span>";
+                    } else if ($transactionDetails1->transaction_status == 2) {
+                        $transaction_status = "<span class='text-danger'>Cancelled</span>";
+                        // $transaction_status = "<span class='text-danger'>Cancelled</span><br><span class='text-dark'>".nl2br($transactionDetails1->remarks)."</span>";
+                    } else {
+                        $transaction_status = "<span class='text-warning'>Processing</span>";
+                        // $transaction_status = "<span class='text-warning'>Processing</span> <br>".anchor('admin/approvePayment/'.$transactionDetails1->id,'Approve','class="btn btn-info btn-sm"').' '.anchor('admin/deletePayment/'.$transactionDetails1->id.'/'.$transactionDetails1->admissions_id,'Delete','class="btn btn-danger btn-sm"');
+                    }
+
+
+
+                    $result_array = array(
+                        $i++,
+                        $receiptprint,
+                        ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
+                        $trans,
+                        number_format($transactionDetails1->amount, 2),
+                        $transactionDetails1->remarks,
+                        $transaction_status
+                    );
+                    $this->table->add_row($result_array);
+                }
+
+                echo $this->table->generate();
+            } else {
+                $rec = 1;
+                echo "<h6 class='text-left'> No transaction details found..! </h6>";
+            }
+            ?>
+
+        </div>
 
 
 

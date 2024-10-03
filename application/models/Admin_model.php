@@ -922,5 +922,15 @@ class Admin_model extends CI_Model
     return $query; // Make sure to return the query object, not an array
   }
 
+  public function get_fee_details_usn($usn, $year) {
+    $this->db->select('*');
+    $this->db->from('fee_master');
+    $this->db->where('usn', $usn);
+    $this->db->where('year', $year);
+    $this->db->where('status', 1);
+
+    return $this->db->get();
+}
+
 
 }
