@@ -237,10 +237,10 @@
                                         echo "<td class='text-center'>" . $fee->academic_year . "</td>";
                                         echo "<td class='text-center'>" . $fee->year . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($fee->corpus_fee_demand) . "</td>";
-                                        echo "<td class='text-center'>" . formatIndianCurrency($fee->corpus_fee_collection) . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency( $paid_amount) . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($college_fee_demand) . "</td>";
-                                        echo "<td class='text-center'>" . formatIndianCurrency($college_fee_collection) . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($college_paid_fee) . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($college_fee_balance) . '  ' . $college_pay_btn . "</td>";
                                         echo "</tr>";
                                     }
