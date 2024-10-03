@@ -591,17 +591,50 @@ class Admin extends CI_Controller
 						$updateDetails['dd_date'] = date('Y-m-d', strtotime($this->input->post('dd_date')));
 					}
 				}
+				if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
+					$config['upload_path'] = './assets/voucher/';
+					$config['allowed_types'] = 'pdf'; // Adjust file types as needed
+					$config['max_size'] = 10240; // Maximum file size in kilobytes (10MB)
+					$config['encrypt_name'] = FALSE; // Encrypt the file name for security
+
+					// Load the upload library with the config settings
+					$this->load->library('upload', $config);
+
+					if (!$this->upload->do_upload('file')) {
+						// If the upload failed, display the error
+						$error = array('error' => $this->upload->display_errors());
+						echo "Failed to upload file: " . $error['error'];
+					} else {
+						$upload_data = $this->upload->data();
+
+						// Define the new file name
+						$new_file_name = time().'.pdf';
+
+						// Define old and new file paths
+						$old_file_path = $upload_data['full_path'];
+						$new_file_path = $config['upload_path'] . $new_file_name;
+
+						// Rename the file
+						if (rename($old_file_path, $new_file_path)) {
+							// echo "File uploaded and renamed successfully!";
+							$updateDetails['file'] = $new_file_name;
+						} else {
+							// echo "File uploaded but failed to rename.";
+						}
+					}
+				}
 				if ($updateDetails['voucher_type'] == 3) {
 					$updateDetails['offline'] = 0;
 				} else {
 					$updateDetails['offline'] = 1;
 				}
-
+				$updateDetails['comments'] = $this->input->post('comments');
+				$updateDetails['remarks'] = $this->input->post('remarks');
 
 				$updateDetails['year'] = $this->input->post('year');
 				$updateDetails['usn'] = $usn;
 				$updateDetails['mobile'] = $data['admissionDetails']->student_number;
-				;
+
 				$updateDetails['final_fee'] = $this->input->post('final_fee');
 				$updateDetails['requested_by'] = $data['full_name'];
 				$updateDetails['requested_on'] = date('Y-m-d h:i:s');
@@ -626,6 +659,159 @@ class Admin extends CI_Controller
 		}
 	}
 
+	public function voucher_delete($encryptId, $id)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+
+
+
+
+			$voucherExists = $this->admin_model->getDetails('payment_structure1', $id)->num_rows();
+
+			if ($voucherExists > 0) {
+
+				$this->admin_model->delDetails('payment_structure1', $id);
+
+
+				$this->session->set_flashdata('message', 'Voucher deleted successfully.');
+				$this->session->set_flashdata('status', 'alert-success');
+			} else {
+
+				$this->session->set_flashdata('message', 'Voucher not found.');
+				$this->session->set_flashdata('status', 'alert-warning');
+			}
+
+
+			redirect('admin/paymentDetail/' . $encryptId, 'refresh');
+		} else {
+			redirect('admin', 'refresh');
+		}
+	}
+
+	function update_voucher($encryptId,$feestruct_id) {
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+			$data['page_title'] = "Update Voucher Request";
+			$data['menu'] = "payments";
+			
+			$usn = base64_decode($encryptId);
+			$admissionSingle = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			
+			// Fetch existing voucher data
+			$voucherData = $this->admin_model->getDetails('payment_structure1', $feestruct_id)->row();
+			if (!$voucherData) {
+				$this->session->set_flashdata('message', 'Voucher not found.');
+				$this->session->set_flashdata('status', 'alert-warning');
+				redirect('admin/paymentDetail/' . $encryptId, 'refresh');
+			}
+			
+			$data['voucherData'] = $voucherData;
+			$data['fee_structure'] = $this->admin_model->get_fee_details_usn($voucherData->usn, $voucherData->year)->row();
+			
+
+			$data['usn'] = $usn;
+			$data['encryptId'] = $encryptId;
+			$data['admissionDetails'] = $admissionSingle;
+			
+			// Set validation rules for updating
+			$this->form_validation->set_rules('voucher_type', 'Voucher Type', 'required');
+			$this->form_validation->set_rules('final_fee', 'Total Amount', 'numeric|required');
+			
+			if ($this->form_validation->run() === FALSE) {
+				$data['action'] = 'admin/update_voucher/' . $encryptId . '/' . $feestruct_id;
+				$this->admin_template->show('admin/update_voucher', $data);
+			} else {
+				$selectedFees = $this->input->post('selected_fees');
+				$finalFee = $this->input->post('final_fee');
+				$selectedFeesArray = json_decode($selectedFees, true);
+				
+				$updateDetails = array();
+				$updateDetails['type'] = 0;
+				foreach ($selectedFeesArray as $selected) {
+					$field = preg_replace('/_checkbox$/', '', $selected['name']);
+					$updateDetails[$field] = $selected['newvalue'];
+					
+					if ($field == 'corpus_fee_demand') {
+						$updateDetails['type'] = 1;
+					}
+				}
+				if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
+					$config['upload_path'] = './assets/voucher/';
+					$config['allowed_types'] = 'pdf'; // Adjust file types as needed
+					$config['max_size'] = 10240; // Maximum file size in kilobytes (10MB)
+					$config['encrypt_name'] = FALSE; // Encrypt the file name for security
+
+					// Load the upload library with the config settings
+					$this->load->library('upload', $config);
+
+					if (!$this->upload->do_upload('file')) {
+						// If the upload failed, display the error
+						$error = array('error' => $this->upload->display_errors());
+						echo "Failed to upload file: " . $error['error'];
+					} else {
+						$upload_data = $this->upload->data();
+
+						// Define the new file name
+						$new_file_name = time().'.pdf';
+
+						// Define old and new file paths
+						$old_file_path = $upload_data['full_path'];
+						$new_file_path = $config['upload_path'] . $new_file_name;
+
+						// Rename the file
+						if (rename($old_file_path, $new_file_path)) {
+							// echo "File uploaded and renamed successfully!";
+							$updateDetails['file'] = $new_file_name;
+						} else {
+							// echo "File uploaded but failed to rename.";
+						}
+					}
+				}
+				
+				$updateDetails['voucher_type'] = $this->input->post('voucher_type');
+				if ($updateDetails['voucher_type'] == 5 || $updateDetails['voucher_type'] == 2) {
+					$updateDetails['dd_bank'] = $this->input->post('dd_bank');
+					$updateDetails['dd_number'] = $this->input->post('dd_number');
+					$updateDetails['dd_date'] = $this->input->post('dd_date') ? date('Y-m-d', strtotime($this->input->post('dd_date'))) : '';
+				}
+				$updateDetails['offline'] = ($updateDetails['voucher_type'] == 3) ? 0 : 1;
+				$updateDetails['comments'] = $this->input->post('comments');
+				$updateDetails['remarks'] = $this->input->post('remarks');
+				$updateDetails['year'] = $this->input->post('year');
+				$updateDetails['usn'] = $usn;
+				$updateDetails['mobile'] = $data['admissionDetails']->student_number;
+				$updateDetails['final_fee'] = $this->input->post('final_fee');
+				$updateDetails['requested_by'] = $data['full_name'];
+				$updateDetails['requested_on'] = date('Y-m-d h:i:s');
+				
+				// Update voucher details in the database
+				$result = $this->admin_model->updateDetails($feestruct_id, $updateDetails,'payment_structure1');
+				
+				if ($result) {
+					$this->session->set_flashdata('message', 'Voucher updated successfully!');
+					$this->session->set_flashdata('status', 'alert-success');
+				} else {
+					$this->session->set_flashdata('message', 'Failed to update voucher. Please try again.');
+					$this->session->set_flashdata('status', 'alert-warning');
+				}
+				
+				redirect('admin/paymentDetail/' . $encryptId, 'refresh');
+			}
+		} else {
+			redirect('admin', 'refresh');
+		}
+	}
+	
 	function mark_paid($encryptId, $id)
 	{
 		if ($this->session->userdata('logged_in')) {
@@ -2317,6 +2503,7 @@ class Admin extends CI_Controller
 		}
 	}
 
+
 	public function daybook_report()
 	{
 		if ($this->session->userdata('logged_in')) {
@@ -2653,5 +2840,6 @@ class Admin extends CI_Controller
         redirect('admin/timeout');
     }
 }
+
 
 }
