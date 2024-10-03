@@ -93,10 +93,8 @@
 $(document).ready(function() {
     var base_url = '<?php echo base_url(); ?>';
 
-
-    $("#get_details").click(function() {
+    $("#get_details").click(function(event) {
         event.preventDefault();
-
 
         var admissions = $("#admissions").val();
 
@@ -105,36 +103,38 @@ $(document).ready(function() {
         );
         $("#get_details").prop('disabled', true);
 
-        //$("#res").hide();
-        //$("#process").show();
-
-
-
         $.ajax({
-            'type': 'POST',
-            'url': base_url + 'admin/corpusoverall_report/1',
-            'data': {
-                'admissions': admissions
+            type: 'POST',
+            url: base_url + 'admin/corpusoverall_report/1',
+            data: {
+                admissions: admissions
             },
-            'dataType': 'json',
-            'cache': false,
-            'success': function(data) {
-                var filename = "Corpus Overall Report.xls";
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                // Get current date and time
+                var now = new Date();
+                var day = String(now.getDate()).padStart(2, '0');
+                var month = String(now.getMonth() + 1).padStart(2, '0'); // January is 0!
+                var year = now.getFullYear();
+                var hours = String(now.getHours()).padStart(2, '0');
+                var minutes = String(now.getMinutes()).padStart(2, '0');
+
+                // Format: Corpus Overall Report - ddmmyyyyhhmm.xls
+                var formattedDateTime = day + month + year + hours + minutes;
+                var filename = "Corpus Overall Report - " + formattedDateTime + ".xls";
+
                 var $a = $("<a>");
                 $a.attr("href", data.file);
                 $("body").append($a);
                 $a.attr("download", filename);
                 $a[0].click();
                 $a.remove();
+
                 $("#get_details").html('Download');
                 $("#get_details").prop('disabled', false);
             }
         });
-
-
-
     });
-
-
 });
-  </script>
+</script>
