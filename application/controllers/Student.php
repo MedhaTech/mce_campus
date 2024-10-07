@@ -186,6 +186,7 @@ class Student extends CI_Controller
 			$data['menu'] = "profile";
 			$data['action'] = "student/pay_now";
 			$data['voucher_types'] = $this->globals->voucher_types();
+			$data['paymentDetail'] = $this->admin_model->getDetailsbyfield2('usn',$data['usn'], 'offline','0', 'payment_structure1')->result();
 			$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($data['usn'], 'reg_no', 'transactions')->result();
 			$data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
 			$data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
@@ -252,7 +253,7 @@ class Student extends CI_Controller
 				'academic_year' => "2024-2025",
 				'admissions_id' => "60",
 				'reference_date' => date('Y-m-d'),
-				'payment_id' => "0",
+				'payment_id' => $this->input->post('pay_id'),
 				'payment_mode' => $payment_mode,
 				'transaction_status' => '0',
 				'created_on' => date('Y-m-d h:i:s')
@@ -444,7 +445,7 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-
+				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'],$updateDetails1);
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
 
@@ -519,7 +520,7 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-
+				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'],$updateDetails1);
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
 
@@ -594,7 +595,7 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-
+				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'],$updateDetails1);
 
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);

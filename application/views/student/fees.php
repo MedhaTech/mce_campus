@@ -202,6 +202,7 @@
                                             <input type="hidden" name="mobile" id="mobile" value="' . htmlspecialchars($student->student_number) . '">
                                             <input type="hidden" name="amount" id="amount" value="' . htmlspecialchars($corpus_fee_balance) . '">
                                             <input type="hidden" name="year" id="year" value="' . htmlspecialchars($fee->year) . '">
+                                            <input type="hidden" name="pay_id" id="pay_id" value="0">
                                             <input type="hidden" name="payment_mode" id="payment_mode" value="1">
                                             <button type="submit" class="btn btn-danger btn-sm" name="Update" id="Update">PAY FEE</button>
                                             </form>';
@@ -226,6 +227,7 @@
                                             <input type="hidden" name="mobile" id="mobile" value="' . htmlspecialchars($student->student_number) . '">
                                             <input type="hidden" name="amount" id="amount" value="' . htmlspecialchars($college_fee_balance) . '">
                                             <input type="hidden" name="year" id="year" value="' . htmlspecialchars($fee->year) . '">
+                                            <input type="hidden" name="pay_id" id="pay_id" value="0">
                                             <input type="hidden" name="payment_mode" id="payment_mode" value="0">
                                             <button type="submit" class="btn btn-danger btn-sm" name="Update" id="Update">PAY FEE</button>
                                             </form>';
@@ -237,7 +239,7 @@
                                         echo "<td class='text-center'>" . $fee->academic_year . "</td>";
                                         echo "<td class='text-center'>" . $fee->year . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($fee->corpus_fee_demand) . "</td>";
-                                        echo "<td class='text-center'>" . formatIndianCurrency( $paid_amount) . "</td>";
+                                        echo "<td class='text-center'>" . formatIndianCurrency($paid_amount) . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($corpus_fee_balance) . '  ' . $corpus_pay_btn . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($college_fee_demand) . "</td>";
                                         echo "<td class='text-center'>" . formatIndianCurrency($college_paid_fee) . "</td>";
@@ -256,7 +258,73 @@
                 <p><b>Note : FEE ONCE PAID WILL NOT BE REFUNDED UNDER ANY CIRCUMSTANCES-KINDLY VERIFY THE DATA ENTERED BEFORE FINAL SUBMISSION </b></p>
             </div><!-- end col-->
         </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Part Payment Amount Details</h3>
+                        <div class="card-tools">
 
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                    </div>
+                    <?php $rec = 0;   // to update Admisison Date
+
+                    if ($paymentDetail) {
+                        $rec = 0;
+                        $table_setup = array('table_open' => '<table class="table table-hover font14">');
+                        $this->table->set_template($table_setup);
+                        $print_fields = array('S.No', 'Amount', 'Date',  'Status', 'Action');
+                        $this->table->set_heading($print_fields);
+
+                        $statusTypes = array("0" => "Not Paid", "1" => "Paid", "2" => "Failed", "3" => "Processing");
+
+                        $i = 1;
+                        $total = 0;
+                        foreach ($paymentDetail as $paymentDetails1) {
+
+
+                            if ($paymentDetails1->status == 0) {
+
+                                $action1 = '<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
+                                <input type="hidden" name="usn" id="usn" value="' . htmlspecialchars($student->usn) . '">
+                                <input type="hidden" name="name" id="name" value="' . htmlspecialchars($student->student_name) . '">
+                                <input type="hidden" name="email" id="email" value="' . htmlspecialchars($student->email) . '">
+                                <input type="hidden" name="aided_unaided" id="aided_unaided" value="' . htmlspecialchars($student->sub_quota) . '">
+                                <input type="hidden" name="mobile" id="mobile" value="' . htmlspecialchars($student->student_number) . '">
+                                <input type="hidden" name="amount" id="amount" value="' . htmlspecialchars($paymentDetails1->final_fee) . '">
+                                 <input type="hidden" name="year" id="year" value="' . htmlspecialchars($paymentDetails1->year) . '">
+                                <input type="hidden" name="payment_mode" id="payment_mode" value="' . htmlspecialchars($paymentDetails1->type) . '">
+                                <input type="hidden" name="pay_id" id="pay_id" value="' . htmlspecialchars($paymentDetails1->id) . '">
+                                <button type="submit" class="btn btn-danger btn-sm" name="Update" id="Update">Pay Now</button>
+                            </form>';
+
+                                $result_array = array(
+                                    $i++,
+                                    $paymentDetails1->final_fee,
+                                    $paymentDetails1->requested_on,
+                                    $statusTypes[$paymentDetails1->status],
+                                    $action1
+
+
+
+                                );
+                                $this->table->add_row($result_array);
+                            }
+                        }
+
+                        echo $this->table->generate();
+                    } else {
+                        $rec = 1;
+                        echo "<h6 class='text-left'> No payment details found..! </h6>";
+                    }
+                    ?>
+
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -271,7 +339,7 @@
                             $this->table->set_heading($print_fields);
 
                             // $transactionTypes = array("1" => "Cash", "2" => "DD", "3" => "Online Payment", "4" => "Online Transfer");
-                            $transactionTypes = array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer","5"=>"DD");
+                            $transactionTypes = array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer", "5" => "DD");
                             $i = 1;
                             $total = 0;
                             foreach ($transactionDetails as $transactionDetails1) {

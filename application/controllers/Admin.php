@@ -630,7 +630,7 @@ class Admin extends CI_Controller
 				}
 				$updateDetails['comments'] = $this->input->post('comments');
 				$updateDetails['remarks'] = $this->input->post('remarks');
-
+				$updateDetails['pp_reason'] = $this->input->post('pp_reason');
 				$updateDetails['year'] = $this->input->post('year');
 				$updateDetails['usn'] = $usn;
 				$updateDetails['mobile'] = $data['admissionDetails']->student_number;
@@ -787,6 +787,7 @@ class Admin extends CI_Controller
 				$updateDetails['offline'] = ($updateDetails['voucher_type'] == 3) ? 0 : 1;
 				$updateDetails['comments'] = $this->input->post('comments');
 				$updateDetails['remarks'] = $this->input->post('remarks');
+				$updateDetails['pp_reason'] = $this->input->post('pp_reason');
 				$updateDetails['year'] = $this->input->post('year');
 				$updateDetails['usn'] = $usn;
 				$updateDetails['mobile'] = $data['admissionDetails']->student_number;
