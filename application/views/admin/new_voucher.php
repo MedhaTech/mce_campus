@@ -727,208 +727,217 @@
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-sm-12">
 
-                               
+                            <label class="form-label text-primary">Voucher Type</label>
 
-                                <label class="form-label text-primary">Voucher Type</label>
+                            <div class="form-group  col-sm-12">
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" id="voucher_type" value="1"> Cash
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" id="voucher_type" value="2"> Bank DD
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" id="voucher_type" value="5"> DD
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" id="voucher_type" value="4"> Bank Transfer
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" id="voucher_type" value="3"> Online
+                                </label>
+                                <span class="text-danger"><?php echo form_error('voucher_type'); ?></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="col-sm-12">
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">Comments:</label>
+                                            <textarea class="form-control" placeholder="Enter your comments" id="comments" name="comments" value=""></textarea>
+                                            <span class="text-danger"><?php echo form_error('comments'); ?></span>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">Remarks:</label>
+                                            <textarea class="form-control" placeholder="Enter remarks" id="remarks" name="remarks" value=""></textarea>
+                                            <span class="text-danger"><?php echo form_error('remarks'); ?></span>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">Proof of document:</label>
+                                            <input type="file" class="form-control" id="file" name="file">
+                                            <span class="text-danger"><?php echo form_error('file'); ?></span>
+                                        </div>
 
-                                <div class="form-group  col-sm-12">
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" id="voucher_type" value="1"> Cash
-                                    </label>
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" id="voucher_type" value="2"> Bank DD
-                                    </label>
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" id="voucher_type" value="5"> DD
-                                    </label>
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" id="voucher_type" value="4"> Bank Transfer
-                                    </label>
-                                    <!-- <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" id="voucher_type" value="3"> Online
-                                    </label> -->
-                                    <span class="text-danger"><?php echo form_error('voucher_type'); ?></span>
-                                </div>
-
-
-                                <div id="dd_details">
-                                    <div class="form-group col-md-6 col-sm-12">
-                                        <label class="form-label">DD Date:</label>
-                                        <input type="date" class="form-control" placeholder="Enter Date" id="dd_date" name="dd_date" value="">
-                                        <span class="text-danger"><?php echo form_error('dd_date'); ?></span>
                                     </div>
-                                    <div class="form-group col-md-6 col-sm-12">
-                                        <label class="form-label">DD Number:</label>
-                                        <input type="text" class="form-control" placeholder="Enter number" id="dd_number" name="dd_number" value="">
-                                        <span class="text-danger"><?php echo form_error('dd_number'); ?></span>
+                                </div>
+                                <div class="col-md-6  ">
+                                    <div class="form-group col-sm-12">
+                                        <label class="form-label">Part Payment Reason:</label>
+                                        <?php
+
+                                        $pp_options = array('' => 'Select Reason', 'Chairman Approved' => 'Chairman Approved', 'Daily Transfer Limit' => 'Daily Transfer Limit');
+                                        echo form_dropdown('pp_reason', $pp_options, set_value('pp_reason'), 'class="form-control" id="pp_reason"');
+                                        ?>
+                                        <span class="text-danger"><?php echo form_error('pp_reason'); ?></span>
                                     </div>
-                                    <div class="form-group col-md-6 col-sm-12">
-                                        <label class="form-label">Bank Name & Branch:</label>
-                                        <input type="text" class="form-control" placeholder="Enter bank name" id="dd_bank" name="dd_bank" value="">
-                                        <span class="text-danger"><?php echo form_error('dd_bank'); ?></span>
+                                    <div id="dd_details">
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">DD Date:</label>
+                                            <input type="date" class="form-control" placeholder="Enter Date" id="dd_date" name="dd_date" value="">
+                                            <span class="text-danger"><?php echo form_error('dd_date'); ?></span>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">DD Number:</label>
+                                            <input type="text" class="form-control" placeholder="Enter number" id="dd_number" name="dd_number" value="">
+                                            <span class="text-danger"><?php echo form_error('dd_number'); ?></span>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">Bank Name & Branch:</label>
+                                            <input type="text" class="form-control" placeholder="Enter bank name" id="dd_bank" name="dd_bank" value="">
+                                            <span class="text-danger"><?php echo form_error('dd_bank'); ?></span>
+                                        </div>
+
                                     </div>
-
                                 </div>
-
-                                <div class="form-group col-md-6 col-sm-12">
-                                    <label class="form-label">Comments:</label>
-                                    <textarea class="form-control" placeholder="Enter your comments" id="comments" name="comments" value=""></textarea>
-                                    <span class="text-danger"><?php echo form_error('comments'); ?></span>
-                                </div>
-                                <div class="form-group col-md-6 col-sm-12">
-                                    <label class="form-label">Remarks:</label>
-                                    <textarea class="form-control" placeholder="Enter remarks" id="remarks" name="remarks" value=""></textarea>
-                                    <span class="text-danger"><?php echo form_error('remarks'); ?></span>
-                                </div>
-                                <div class="form-group col-md-6 col-sm-12">
-                                    <label class="form-label">Document:</label>
-                                    <input type="file" class="form-control" id="file" name="file">
-                                    <span class="text-danger"><?php echo form_error('file'); ?></span>
-                                </div>
-
                             </div>
                         </div>
-                    </div>
-                    <div class="card-footer">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <?php echo anchor('admin/paymentDetail/' . $encryptId, 'BACK', 'class="btn btn-dark btn-square" '); ?>
-                            </div>
-                            <div class="col-md-6  ">
-                                <button type="submit" class="btn btn-info btn-square" name="create" id="create"> CREATE </button>
+                        <div class="card-footer">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <?php echo anchor('admin/paymentDetail/' . $encryptId, 'BACK', 'class="btn btn-dark btn-square" '); ?>
+                                </div>
+                                <div class="col-md-6  ">
+                                    <button type="submit" class="btn btn-info btn-square" name="create" id="create"> CREATE </button>
+                                </div>
                             </div>
                         </div>
+                        </form>
                     </div>
-                    </form>
+
                 </div>
-
             </div>
         </div>
+
     </div>
+    <!-- End of Main Content -->
 
-</div>
-<!-- End of Main Content -->
-
-<script>
-    $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
 
 
-        $("#dd_details").hide();
+            $("#dd_details").hide();
 
 
-        $('input[type=radio][name=voucher_type]').change(function() {
+            $('input[type=radio][name=voucher_type]').change(function() {
 
-            if (this.value == "5" || this.value == "2") {
+                if (this.value == "5" || this.value == "2") {
 
-                $("#dd_details").show();
+                    $("#dd_details").show();
 
-            } else {
-                $("#dd_details").hide();
-            }
-
-
-        });
-        // Function to update final fee based on selected checkboxes
-        function updateFinalFee() {
-            var sum = 0;
-            var corpusFundChecked = false;
-
-            // Iterate over each checkbox that needs to be considered
-            $('input[type="checkbox"]').each(function() {
-                if ($(this).prop('checked')) {
-                    var inputId = $(this).attr('id').replace('_checkbox', '');
-                    $('#' + inputId).removeAttr('readonly');
-                    var inputValue = parseFloat($('#' + inputId).val());
-
-                    if ($(this).attr('id') === 'corpus_fee_demand_checkbox') {
-                        // If corpus_fee_demand_checkbox is checked, uncheck all others
-                        corpusFundChecked = true;
-                        sum = inputValue; // Set sum to only the corpus fund value
-                    } else {
-                        // Add value to sum only if it's not corpus_fee_demand_checkbox
-                        sum += inputValue;
-                    }
+                } else {
+                    $("#dd_details").hide();
                 }
+
+
             });
+            // Function to update final fee based on selected checkboxes
+            function updateFinalFee() {
+                var sum = 0;
+                var corpusFundChecked = false;
 
-            // Update the final_fee input with the calculated sum
-            $('#final_fee').val(sum.toFixed(2));
-
-            // If corpus_fee_demand_checkbox is checked, uncheck all other checkboxes
-            if (corpusFundChecked) {
+                // Iterate over each checkbox that needs to be considered
                 $('input[type="checkbox"]').each(function() {
-                    if ($(this).attr('id') !== 'corpus_fee_demand_checkbox' && $(this).prop('checked')) {
-                        $(this).prop('checked', false);
+                    if ($(this).prop('checked')) {
+                        var inputId = $(this).attr('id').replace('_checkbox', '');
+                        $('#' + inputId).removeAttr('readonly');
+                        var inputValue = parseFloat($('#' + inputId).val());
+
+                        if ($(this).attr('id') === 'corpus_fee_demand_checkbox') {
+                            // If corpus_fee_demand_checkbox is checked, uncheck all others
+                            corpusFundChecked = true;
+                            sum = inputValue; // Set sum to only the corpus fund value
+                        } else {
+                            // Add value to sum only if it's not corpus_fee_demand_checkbox
+                            sum += inputValue;
+                        }
                     }
                 });
+
+                // Update the final_fee input with the calculated sum
+                $('#final_fee').val(sum.toFixed(2));
+
+                // If corpus_fee_demand_checkbox is checked, uncheck all other checkboxes
+                if (corpusFundChecked) {
+                    $('input[type="checkbox"]').each(function() {
+                        if ($(this).attr('id') !== 'corpus_fee_demand_checkbox' && $(this).prop('checked')) {
+                            $(this).prop('checked', false);
+                        }
+                    });
+                }
             }
-        }
-        $('#selectAllCheckbox').change(function() {
-            // Check if the master checkbox is checked
-            var isChecked = $(this).is(':checked');
+            $('#selectAllCheckbox').change(function() {
+                // Check if the master checkbox is checked
+                var isChecked = $(this).is(':checked');
 
-            // Select or deselect all checkboxes that are not disabled and not with the ID 'corpus_fee_demand_checkbox'
-            $('input[type="checkbox"]:not(:disabled):not(#corpus_fee_demand_checkbox)').prop('checked', isChecked);
-        });
-        // Attach change event listener to relevant checkboxes
-        $('input[type="checkbox"]').change(function() {
-            updateFinalFee(); // Update the final fee whenever a checkbox changes
-        });
-        $('input[type="text"]').change(function() {
-            updateFinalFee(); // Update the final fee whenever a checkbox changes
-        });
-        // Initialize final fee on page load
-        updateFinalFee();
-    });
-</script>
-
-<script>
-    $(document).ready(function() {
-        // Listen for form submission
-        $('form').submit(function(event) {
-            // Prevent the default form submission
-            event.preventDefault();
-
-            // Array to store selected checkbox values
-            var selectedFees = [];
-
-            // Iterate over each checked checkbox
-            $('input[name="fees[]"]:checked').each(function() {
-                // Get the value of the checkbox (e.g., 'e_learning_fee')
-                var feeValue = $(this).val();
-                var inputId = $(this).attr('id').replace('_checkbox', '');
-                var inputValue = parseFloat($('#' + inputId).val());
-                // Find the corresponding text field value based on feeValue
-                var textFieldValue = $('#' + feeValue).val();
-
-                // Prepare data for submission
-                selectedFees.push({
-                    name: $(this).attr('id'),
-                    value: feeValue,
-                    textFieldValue: textFieldValue,
-                    newvalue: inputValue
-                });
+                // Select or deselect all checkboxes that are not disabled and not with the ID 'corpus_fee_demand_checkbox'
+                $('input[type="checkbox"]:not(:disabled):not(#corpus_fee_demand_checkbox)').prop('checked', isChecked);
             });
-            var finalFee = $('#final_fee').val();
-
-            // Add final fee and selectedFees array as hidden input fields to the form
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'final_fee',
-                value: finalFee
-            }).appendTo('form');
-
-            // Add selectedFees array as a hidden input field to the form
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'selected_fees',
-                value: JSON.stringify(selectedFees)
-            }).appendTo('form');
-
-            // Submit the form programmatically
-            this.submit();
+            // Attach change event listener to relevant checkboxes
+            $('input[type="checkbox"]').change(function() {
+                updateFinalFee(); // Update the final fee whenever a checkbox changes
+            });
+            $('input[type="text"]').change(function() {
+                updateFinalFee(); // Update the final fee whenever a checkbox changes
+            });
+            // Initialize final fee on page load
+            updateFinalFee();
         });
-    });
-</script>
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // Listen for form submission
+            $('form').submit(function(event) {
+                // Prevent the default form submission
+                event.preventDefault();
+
+                // Array to store selected checkbox values
+                var selectedFees = [];
+
+                // Iterate over each checked checkbox
+                $('input[name="fees[]"]:checked').each(function() {
+                    // Get the value of the checkbox (e.g., 'e_learning_fee')
+                    var feeValue = $(this).val();
+                    var inputId = $(this).attr('id').replace('_checkbox', '');
+                    var inputValue = parseFloat($('#' + inputId).val());
+                    // Find the corresponding text field value based on feeValue
+                    var textFieldValue = $('#' + feeValue).val();
+
+                    // Prepare data for submission
+                    selectedFees.push({
+                        name: $(this).attr('id'),
+                        value: feeValue,
+                        textFieldValue: textFieldValue,
+                        newvalue: inputValue
+                    });
+                });
+                var finalFee = $('#final_fee').val();
+
+                // Add final fee and selectedFees array as hidden input fields to the form
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'final_fee',
+                    value: finalFee
+                }).appendTo('form');
+
+                // Add selectedFees array as a hidden input field to the form
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'selected_fees',
+                    value: JSON.stringify(selectedFees)
+                }).appendTo('form');
+
+                // Submit the form programmatically
+                this.submit();
+            });
+        });
+    </script>

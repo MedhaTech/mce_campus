@@ -267,20 +267,20 @@ class Admin_model extends CI_Model
 
   public function get_fee_balance($academic_year, $department = null, $year = null)
   {
-      $this->db->select('students.usn, fee_master.academic_year, students.student_name, students.department_id, students.year, students.student_number, students.college_code, fee_master.college_fee_demand, fee_master.college_fee_collection, (fee_master.college_fee_demand - fee_master.college_fee_collection) AS balance');
-      $this->db->from('students');
-      $this->db->join('fee_master', 'fee_master.usn = students.usn');
-      if ($department) {
-          $this->db->where('students.department_id', $department);
-      }
-      if ($year) {
-          $this->db->where('fee_master.year', $year);
-      }
-      $this->db->where('fee_master.academic_year', $academic_year);
-      $this->db->having('balance >', 0);
-      $query = $this->db->get();
-      return $query->result();
-  }  
+    $this->db->select('students.usn, fee_master.academic_year, students.student_name, students.department_id, students.year, students.student_number, students.college_code, fee_master.college_fee_demand, fee_master.college_fee_collection, (fee_master.college_fee_demand - fee_master.college_fee_collection) AS balance');
+    $this->db->from('students');
+    $this->db->join('fee_master', 'fee_master.usn = students.usn');
+    if ($department) {
+      $this->db->where('students.department_id', $department);
+    }
+    if ($year) {
+      $this->db->where('fee_master.year', $year);
+    }
+    $this->db->where('fee_master.academic_year', $academic_year);
+    $this->db->having('balance >', 0);
+    $query = $this->db->get();
+    return $query->result();
+  }
 
   function getEnquiries_per($academic_year)
   {
@@ -388,7 +388,6 @@ class Admin_model extends CI_Model
       $this->db->group_by('quota, sub_quota');
       return $this->db->get('admissions');
     }
-
   }
 
   function getAdmissionStats($department_id, $quota, $sub_quota)
@@ -575,9 +574,9 @@ class Admin_model extends CI_Model
   // }
 
   function DCBReport($currentAcademicYear, $department = '', $year = '', $type = '')
-{
+  {
     $this->db->select(
-        '
+      '
         students.usn, 
         students.student_name, 
         students.quota, 
@@ -592,21 +591,21 @@ class Admin_model extends CI_Model
     $this->db->from('students');
     $this->db->join('fee_master', 'students.usn = fee_master.usn', 'left');
     // $this->db->where('students.academic_year', $currentAcademicYear);
-    
+
     if ($department != '') {
-        $this->db->where('students.department_id', $department);
+      $this->db->where('students.department_id', $department);
     }
     if ($year != '') {
-        $this->db->where('fee_master.year', $year);
+      $this->db->where('fee_master.year', $year);
     }
     if ($type != '') {
-        $this->db->where('students.sub_quota', $type);
+      $this->db->where('students.sub_quota', $type);
     }
     $this->db->where('students.status !=', '7');
-    
+
     $query = $this->db->get();
     return $query;
-}
+  }
 
   function FeebalanceReport($currentAcademicYear, $course = '', $year = '')
   {
@@ -645,28 +644,28 @@ class Admin_model extends CI_Model
 
 
   public function CorpusReport($academic_year = null, $department = null, $year = null)
-{
+  {
     $this->db->select('students.id, students.admission_year, students.department_id, students.student_name, students.usn, students.year, students.sub_quota, students.college_code, students.student_number, students.status, fee_master.Corpus_balance, fee_master.Corpus_fee_demand');
     $this->db->from('students');
     $this->db->join('fee_master', 'fee_master.usn = students.usn');
     $this->db->where('students.status !=', '7');
-    $this->db->where('fee_master.Corpus_fee_demand >', 0); 
+    $this->db->where('fee_master.Corpus_fee_demand >', 0);
 
     // Apply filters if provided
     if ($academic_year) {
-        $this->db->where('students.admission_year', $academic_year);
+      $this->db->where('students.admission_year', $academic_year);
     }
     if ($department) {
-        $this->db->where('students.department_id', $department);
+      $this->db->where('students.department_id', $department);
     }
     if ($year) {
-        $this->db->where('students.year', $year);
+      $this->db->where('students.year', $year);
     }
 
     return $this->db->get();
-}
+  }
 
-    public function CorpusBalanceReport($academic_year = null, $department = null, $year = null)
+  public function CorpusBalanceReport($academic_year = null, $department = null, $year = null)
   {
     $this->db->select('students.id AS student_id, 
                         students.usn, 
@@ -679,26 +678,26 @@ class Admin_model extends CI_Model
                         MAX(fee_master.Corpus_balance) AS Corpus_balance, 
                         (MAX(fee_master.Corpus_balance) - COALESCE(SUM(transactions.amount), 0)) AS Corpus_fund_balance');
 
-      $this->db->from('students');
-      $this->db->join('fee_master', 'fee_master.id = students.id', 'left');
-      $this->db->join('transactions', 'transactions.id = students.id', 'left');
-      $this->db->where('students.status !=', '7');
+    $this->db->from('students');
+    $this->db->join('fee_master', 'fee_master.id = students.id', 'left');
+    $this->db->join('transactions', 'transactions.id = students.id', 'left');
+    $this->db->where('students.status !=', '7');
 
-      // Apply filters if provided
-      if ($academic_year) {
-          $this->db->where('fee_master.academic_year', $academic_year);
-      }
-      if ($department) {
-          $this->db->where('students.department_id', $department);
-      }
-      if ($year) {
-          $this->db->where('students.year', $year);
-      }
+    // Apply filters if provided
+    if ($academic_year) {
+      $this->db->where('fee_master.academic_year', $academic_year);
+    }
+    if ($department) {
+      $this->db->where('students.department_id', $department);
+    }
+    if ($year) {
+      $this->db->where('students.year', $year);
+    }
 
-      $this->db->group_by('students.id');
-      $this->db->having('Corpus_balance >', 0);
+    $this->db->group_by('students.id');
+    $this->db->having('Corpus_balance >', 0);
 
-      return $this->db->get();
+    return $this->db->get();
   }
 
   function dayBookReport($from_date, $to_date)
@@ -749,7 +748,7 @@ class Admin_model extends CI_Model
   }
 
   function transactionsdatewise($from, $to)
-{
+  {
     $this->db->select('students.usn, students.student_name, students.admission_year, students.quota, students.sub_quota, students.college_code, students.department_id, students.category_claimed, students.category_allotted, students.admission_year, students.status, transactions.id as transactions_id, transactions.receipt_no, transactions.transaction_date, transactions.transaction_type, transactions.bank_name, transactions.reference_no, transactions.reference_date, transactions.year, transactions.amount, transactions.remarks, transactions.transaction_status');
 
     $this->db->where('transactions.transaction_status', '1');
@@ -758,7 +757,7 @@ class Admin_model extends CI_Model
     $this->db->join('students', 'students.usn = transactions.reg_no');
     $this->db->order_by('transactions.transaction_date', 'ASC');
     return $this->db->get('transactions');
-}
+  }
 
   function getAdmissions_quota($academic_year, $course, $quota)
   {
@@ -1008,7 +1007,8 @@ class Admin_model extends CI_Model
     return $query; // Make sure to return the query object, not an array
   }
 
-  public function get_fee_details_usn($usn, $year) {
+  public function get_fee_details_usn($usn, $year)
+  {
     $this->db->select('*');
     $this->db->from('fee_master');
     $this->db->where('usn', $usn);
@@ -1016,7 +1016,27 @@ class Admin_model extends CI_Model
     $this->db->where('status', 1);
 
     return $this->db->get();
-}
+  }
+  public function update_payment_structure($transaction_id, $update_data)
+  {
+    $this->db->select('payment_id');
+    $this->db->from('transactions');
+    $this->db->where('reference_no', $transaction_id);
+    $query = $this->db->get();
 
+    if ($query->num_rows() > 0) {
+      $transaction = $query->row();
+      $payment_id = $transaction->payment_id;
 
+      if ($payment_id != 0) {
+        $this->db->where('id', $payment_id);
+        $this->db->update('payment_structure1', $update_data);
+
+        if ($this->db->affected_rows() > 0) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }

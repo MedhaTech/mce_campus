@@ -78,7 +78,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="renewal_of_registration_fees" id="renewal_of_registration_fees" class="form-control" value="<?php echo ($voucherData->renewal_of_registration_fees>0) ? $voucherData->renewal_of_registration_fees : $fee_structure->renewal_of_registration_fees; ?>">
+                                    <input type="text" readonly name="renewal_of_registration_fees" id="renewal_of_registration_fees" class="form-control" value="<?php echo ($voucherData->renewal_of_registration_fees > 0) ? $voucherData->renewal_of_registration_fees : $fee_structure->renewal_of_registration_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -89,16 +89,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->renewal_of_registration_fees > 0)
-                                    {
+                                    if ($voucherData->renewal_of_registration_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="renewal_of_registration_fees_checkbox" value="<?php echo ($voucherData->renewal_of_registration_fees>0) ? $voucherData->renewal_of_registration_fees : $fee_structure->renewal_of_registration_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="renewal_of_registration_fees_checkbox" value="<?php echo ($voucherData->renewal_of_registration_fees > 0) ? $voucherData->renewal_of_registration_fees : $fee_structure->renewal_of_registration_fees; ?>">
                                 </div>
                             </div>
 
@@ -125,7 +123,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="e_consortium_fees" id="e_consortium_fees" class="form-control" value="<?php echo ($voucherData->e_consortium_fees>0) ? $voucherData->e_consortium_fees : $fee_structure->e_consortium_fees; ?>">
+                                    <input type="text" readonly name="e_consortium_fees" id="e_consortium_fees" class="form-control" value="<?php echo ($voucherData->e_consortium_fees > 0) ? $voucherData->e_consortium_fees : $fee_structure->e_consortium_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -136,16 +134,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->e_consortium_fees > 0)
-                                    {
+                                    if ($voucherData->e_consortium_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="e_consortium_fees_checkbox" value="<?php echo ($voucherData->e_consortium_fees>0) ? $voucherData->e_consortium_fees : $fee_structure->e_consortium_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="e_consortium_fees_checkbox" value="<?php echo ($voucherData->e_consortium_fees > 0) ? $voucherData->e_consortium_fees : $fee_structure->e_consortium_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -170,7 +166,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="students_sports_fees" id="students_sports_fees" class="form-control" value="<?php echo ($voucherData->students_sports_fees>0) ? $voucherData->students_sports_fees : $fee_structure->students_sports_fees; ?>">
+                                    <input type="text" readonly name="students_sports_fees" id="students_sports_fees" class="form-control" value="<?php echo ($voucherData->students_sports_fees > 0) ? $voucherData->students_sports_fees : $fee_structure->students_sports_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -181,16 +177,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->students_sports_fees > 0)
-                                    {
+                                    if ($voucherData->students_sports_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="students_sports_fees_checkbox" value="<?php echo ($voucherData->students_sports_fees>0) ? $voucherData->students_sports_fees : $fee_structure->students_sports_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="students_sports_fees_checkbox" value="<?php echo ($voucherData->students_sports_fees > 0) ? $voucherData->students_sports_fees : $fee_structure->students_sports_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -216,7 +210,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="students_sports_development_fees" id="students_sports_development_fees" class="form-control" value="<?php echo ($voucherData->students_sports_development_fees>0) ? $voucherData->students_sports_development_fees : $fee_structure->students_sports_development_fees; ?>">
+                                    <input type="text" readonly name="students_sports_development_fees" id="students_sports_development_fees" class="form-control" value="<?php echo ($voucherData->students_sports_development_fees > 0) ? $voucherData->students_sports_development_fees : $fee_structure->students_sports_development_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -227,16 +221,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->students_sports_development_fees > 0)
-                                    {
+                                    if ($voucherData->students_sports_development_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="students_sports_development_fees_checkbox" value="<?php echo ($voucherData->students_sports_development_fees>0) ? $voucherData->students_sports_development_fees : $fee_structure->students_sports_development_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="students_sports_development_fees_checkbox" value="<?php echo ($voucherData->students_sports_development_fees > 0) ? $voucherData->students_sports_development_fees : $fee_structure->students_sports_development_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -262,7 +254,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="career_guideliness_and_counselling_fees" id="career_guideliness_and_counselling_fees" class="form-control" value="<?php echo ($voucherData->career_guideliness_and_counselling_fees>0) ? $voucherData->career_guideliness_and_counselling_fees : $fee_structure->career_guideliness_and_counselling_fees; ?>">
+                                    <input type="text" readonly name="career_guideliness_and_counselling_fees" id="career_guideliness_and_counselling_fees" class="form-control" value="<?php echo ($voucherData->career_guideliness_and_counselling_fees > 0) ? $voucherData->career_guideliness_and_counselling_fees : $fee_structure->career_guideliness_and_counselling_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -273,16 +265,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->career_guideliness_and_counselling_fees > 0)
-                                    {
+                                    if ($voucherData->career_guideliness_and_counselling_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="career_guideliness_and_counselling_fees_checkbox" value="<?php echo ($voucherData->career_guideliness_and_counselling_fees>0) ? $voucherData->career_guideliness_and_counselling_fees : $fee_structure->career_guideliness_and_counselling_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="career_guideliness_and_counselling_fees_checkbox" value="<?php echo ($voucherData->career_guideliness_and_counselling_fees > 0) ? $voucherData->career_guideliness_and_counselling_fees : $fee_structure->career_guideliness_and_counselling_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -308,7 +298,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="university_development_fees" id="university_development_fees" class="form-control" value="<?php echo ($voucherData->university_development_fees>0) ? $voucherData->university_development_fees : $fee_structure->university_development_fees; ?>">
+                                    <input type="text" readonly name="university_development_fees" id="university_development_fees" class="form-control" value="<?php echo ($voucherData->university_development_fees > 0) ? $voucherData->university_development_fees : $fee_structure->university_development_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -319,16 +309,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->university_development_fees > 0)
-                                    {
+                                    if ($voucherData->university_development_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="university_development_fees_checkbox" value="<?php echo ($voucherData->university_development_fees>0) ? $voucherData->university_development_fees : $fee_structure->university_development_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="university_development_fees_checkbox" value="<?php echo ($voucherData->university_development_fees > 0) ? $voucherData->university_development_fees : $fee_structure->university_development_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -352,7 +340,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="cultural_activities_fees" id="cultural_activities_fees" class="form-control" value="<?php echo ($voucherData->cultural_activities_fees>0) ? $voucherData->cultural_activities_fees : $fee_structure->cultural_activities_fees; ?>">
+                                    <input type="text" readonly name="cultural_activities_fees" id="cultural_activities_fees" class="form-control" value="<?php echo ($voucherData->cultural_activities_fees > 0) ? $voucherData->cultural_activities_fees : $fee_structure->cultural_activities_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -363,16 +351,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->cultural_activities_fees > 0)
-                                    {
+                                    if ($voucherData->cultural_activities_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="cultural_activities_fees_checkbox" value="<?php echo ($voucherData->cultural_activities_fees>0) ? $voucherData->cultural_activities_fees : $fee_structure->cultural_activities_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="cultural_activities_fees_checkbox" value="<?php echo ($voucherData->cultural_activities_fees > 0) ? $voucherData->cultural_activities_fees : $fee_structure->cultural_activities_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -398,7 +384,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="teachers_development_fees" id="teachers_development_fees" class="form-control" value="<?php echo ($voucherData->teachers_development_fees>0) ? $voucherData->teachers_development_fees : $fee_structure->teachers_development_fees; ?>">
+                                    <input type="text" readonly name="teachers_development_fees" id="teachers_development_fees" class="form-control" value="<?php echo ($voucherData->teachers_development_fees > 0) ? $voucherData->teachers_development_fees : $fee_structure->teachers_development_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -409,16 +395,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->teachers_development_fees > 0)
-                                    {
+                                    if ($voucherData->teachers_development_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="teachers_development_fees_checkbox" value="<?php echo ($voucherData->teachers_development_fees>0) ? $voucherData->teachers_development_fees : $fee_structure->teachers_development_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="teachers_development_fees_checkbox" value="<?php echo ($voucherData->teachers_development_fees > 0) ? $voucherData->teachers_development_fees : $fee_structure->teachers_development_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -444,7 +428,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="student_development_fees" id="student_development_fees" class="form-control" value="<?php echo ($voucherData->student_development_fees>0) ? $voucherData->student_development_fees : $fee_structure->student_development_fees; ?>">
+                                    <input type="text" readonly name="student_development_fees" id="student_development_fees" class="form-control" value="<?php echo ($voucherData->student_development_fees > 0) ? $voucherData->student_development_fees : $fee_structure->student_development_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -455,16 +439,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->student_development_fees > 0)
-                                    {
+                                    if ($voucherData->student_development_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="student_development_fees_checkbox" value="<?php echo ($voucherData->student_development_fees>0) ? $voucherData->student_development_fees : $fee_structure->student_development_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="student_development_fees_checkbox" value="<?php echo ($voucherData->student_development_fees > 0) ? $voucherData->student_development_fees : $fee_structure->student_development_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -490,7 +472,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="indian_red_cross_membership_fees" id="indian_red_cross_membership_fees" class="form-control" value="<?php echo ($voucherData->indian_red_cross_membership_fees>0) ? $voucherData->indian_red_cross_membership_fees : $fee_structure->indian_red_cross_membership_fees; ?>">
+                                    <input type="text" readonly name="indian_red_cross_membership_fees" id="indian_red_cross_membership_fees" class="form-control" value="<?php echo ($voucherData->indian_red_cross_membership_fees > 0) ? $voucherData->indian_red_cross_membership_fees : $fee_structure->indian_red_cross_membership_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -501,16 +483,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->indian_red_cross_membership_fees > 0)
-                                    {
+                                    if ($voucherData->indian_red_cross_membership_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="indian_red_cross_membership_fees_checkbox" value="<?php echo ($voucherData->indian_red_cross_membership_fees>0) ? $voucherData->indian_red_cross_membership_fees : $fee_structure->indian_red_cross_membership_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="indian_red_cross_membership_fees_checkbox" value="<?php echo ($voucherData->indian_red_cross_membership_fees > 0) ? $voucherData->indian_red_cross_membership_fees : $fee_structure->indian_red_cross_membership_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -536,7 +516,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="women_cell_fees" id="women_cell_fees" class="form-control" value="<?php echo ($voucherData->women_cell_fees>0) ? $voucherData->women_cell_fees : $fee_structure->women_cell_fees; ?>">
+                                    <input type="text" readonly name="women_cell_fees" id="women_cell_fees" class="form-control" value="<?php echo ($voucherData->women_cell_fees > 0) ? $voucherData->women_cell_fees : $fee_structure->women_cell_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -547,16 +527,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->women_cell_fees > 0)
-                                    {
+                                    if ($voucherData->women_cell_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="women_cell_fees_checkbox" value="<?php echo ($voucherData->women_cell_fees>0) ? $voucherData->women_cell_fees : $fee_structure->women_cell_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="women_cell_fees_checkbox" value="<?php echo ($voucherData->women_cell_fees > 0) ? $voucherData->women_cell_fees : $fee_structure->women_cell_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -581,7 +559,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="nss_fees" id="nss_fees" class="form-control" value="<?php echo ($voucherData->nss_fees>0) ? $voucherData->nss_fees : $fee_structure->nss_fees; ?>">
+                                    <input type="text" readonly name="nss_fees" id="nss_fees" class="form-control" value="<?php echo ($voucherData->nss_fees > 0) ? $voucherData->nss_fees : $fee_structure->nss_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -592,16 +570,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->nss_fees > 0)
-                                    {
+                                    if ($voucherData->nss_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="nss_fees_checkbox" value="<?php echo ($voucherData->nss_fees>0) ? $voucherData->nss_fees : $fee_structure->nss_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="nss_fees_checkbox" value="<?php echo ($voucherData->nss_fees > 0) ? $voucherData->nss_fees : $fee_structure->nss_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -625,7 +601,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="teachers_flag_fees" id="teachers_flag_fees" class="form-control" value="<?php echo ($voucherData->teachers_flag_fees>0) ? $voucherData->teachers_flag_fees : $fee_structure->teachers_flag_fees; ?>">
+                                    <input type="text" readonly name="teachers_flag_fees" id="teachers_flag_fees" class="form-control" value="<?php echo ($voucherData->teachers_flag_fees > 0) ? $voucherData->teachers_flag_fees : $fee_structure->teachers_flag_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -636,16 +612,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->teachers_flag_fees > 0)
-                                    {
+                                    if ($voucherData->teachers_flag_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="teachers_flag_fees_checkbox" value="<?php echo ($voucherData->teachers_flag_fees>0) ? $voucherData->teachers_flag_fees : $fee_structure->teachers_flag_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="teachers_flag_fees_checkbox" value="<?php echo ($voucherData->teachers_flag_fees > 0) ? $voucherData->teachers_flag_fees : $fee_structure->teachers_flag_fees; ?>">
                                 </div>
                             </div>
 
@@ -676,7 +650,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="college_other_fees" id="college_other_fees" class="form-control" value="<?php echo ($voucherData->college_other_fees>0) ? $voucherData->college_other_fees : $fee_structure->college_other_fees; ?>">
+                                    <input type="text" readonly name="college_other_fees" id="college_other_fees" class="form-control" value="<?php echo ($voucherData->college_other_fees > 0) ? $voucherData->college_other_fees : $fee_structure->college_other_fees; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -687,16 +661,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->college_other_fees > 0)
-                                    {
+                                    if ($voucherData->college_other_fees > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="college_other_fees_checkbox" value="<?php echo ($voucherData->college_other_fees>0) ? $voucherData->college_other_fees : $fee_structure->college_other_fees; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="college_other_fees_checkbox" value="<?php echo ($voucherData->college_other_fees > 0) ? $voucherData->college_other_fees : $fee_structure->college_other_fees; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -720,7 +692,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="exam_fee" id="exam_fee" class="form-control" value="<?php echo ($voucherData->exam_fee>0) ? $voucherData->exam_fee : $fee_structure->exam_fee; ?>">
+                                    <input type="text" readonly name="exam_fee" id="exam_fee" class="form-control" value="<?php echo ($voucherData->exam_fee > 0) ? $voucherData->exam_fee : $fee_structure->exam_fee; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -731,16 +703,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->exam_fee > 0)
-                                    {
+                                    if ($voucherData->exam_fee > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="exam_fee_checkbox" value="<?php echo ($voucherData->exam_fee>0) ? $voucherData->exam_fee : $fee_structure->exam_fee; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="exam_fee_checkbox" value="<?php echo ($voucherData->exam_fee > 0) ? $voucherData->exam_fee : $fee_structure->exam_fee; ?>">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -765,7 +735,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="tuition_fee" id="tuition_fee" class="form-control" value="<?php echo ($voucherData->tuition_fee>0) ? $voucherData->tuition_fee : $fee_structure->tuition_fee; ?>">
+                                    <input type="text" readonly name="tuition_fee" id="tuition_fee" class="form-control" value="<?php echo ($voucherData->tuition_fee > 0) ? $voucherData->tuition_fee : $fee_structure->tuition_fee; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -776,16 +746,14 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->tuition_fee > 0)
-                                    {
+                                    if ($voucherData->tuition_fee > 0) {
                                         $check = "checked";
-                                    }
-                                  else{
-                                    $check = "";
+                                    } else {
+                                        $check = "";
                                     }
 
                                     ?>
-                                    <input type="checkbox"  <?=$check;?> <?= $readonly; ?> name="fees[]" id="tuition_fee_checkbox" value="<?php echo ($voucherData->tuition_fee>0) ? $voucherData->tuition_fee : $fee_structure->tuition_fee; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="tuition_fee_checkbox" value="<?php echo ($voucherData->tuition_fee > 0) ? $voucherData->tuition_fee : $fee_structure->tuition_fee; ?>">
                                 </div>
                             </div>
 
@@ -813,7 +781,7 @@
                                     </label>
                                 </div>
                                 <div class="col-md-2">
-                                    <input type="text" readonly name="corpus_fee_demand" id="corpus_fee_demand" class="form-control" value="<?php echo ($voucherData->corpus_fee_demand>0) ? $voucherData->corpus_fee_demand : $fee_structure->corpus_fee_demand; ?>">
+                                    <input type="text" readonly name="corpus_fee_demand" id="corpus_fee_demand" class="form-control" value="<?php echo ($voucherData->corpus_fee_demand > 0) ? $voucherData->corpus_fee_demand : $fee_structure->corpus_fee_demand; ?>">
                                     <span class="text-danger"></span>
                                 </div>
                                 <div class="col-md-1">
@@ -824,17 +792,15 @@
                                     } else {
                                         $readonly = "";
                                     }
-                                    if($voucherData->corpus_fee_demand >0 )
-                                    {
+                                    if ($voucherData->corpus_fee_demand > 0) {
                                         $check = "checked";
+                                    } else {
+                                        $check = "";
                                     }
-                                  else{
-                                    $check = "";
-                                    }
-                                    
+
 
                                     ?>
-                                    <input type="checkbox"   <?=$check;?> <?= $readonly; ?> name="fees[]" id="corpus_fee_demand_checkbox" value="<?php echo ($voucherData->corpus_fee_demand>0) ? $voucherData->corpus_fee_demand : $fee_structure->corpus_fee_demand; ?>">
+                                    <input type="checkbox" <?= $check; ?> <?= $readonly; ?> name="fees[]" id="corpus_fee_demand_checkbox" value="<?php echo ($voucherData->corpus_fee_demand > 0) ? $voucherData->corpus_fee_demand : $fee_structure->corpus_fee_demand; ?>">
                                 </div>
                             </div>
                             <hr />
@@ -847,64 +813,85 @@
                                     <span class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-sm-12">
 
 
 
-                                <label class="form-label text-primary">Voucher Type</label>
-                                <div class="form-group col-sm-12">
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" value="1" <?php echo ($voucherData->voucher_type == 1) ? 'checked' : ''; ?>> Cash
-                                    </label>
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" value="2" <?php echo ($voucherData->voucher_type == 2) ? 'checked' : ''; ?>> Bank DD
-                                    </label>
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" value="5" <?php echo ($voucherData->voucher_type == 5) ? 'checked' : ''; ?>> DD
-                                    </label>
-                                    <label class="radio-inline mr-3">
-                                        <input type="radio" name="voucher_type" value="4" <?php echo ($voucherData->voucher_type == 4) ? 'checked' : ''; ?>> Bank Transfer
-                                    </label>
-                                    <span class="text-danger"><?php echo form_error('voucher_type'); ?></span>
-                                </div>
 
-                                <div id="dd_details" style="display: <?php echo ($voucherData->voucher_type == 2 || $voucherData->voucher_type == 5) ? 'block' : 'none'; ?>;">
-                                    <div class="form-group col-md-6 col-sm-12">
-                                        <label class="form-label">DD Date:</label>
-                                        <input type="date" class="form-control" placeholder="Enter Date" id="dd_date" name="dd_date" value="<?php echo $voucherData->dd_date; ?>">
-                                        <span class="text-danger"><?php echo form_error('dd_date'); ?></span>
-                                    </div>
-                                    <div class="form-group col-md-6 col-sm-12">
-                                        <label class="form-label">DD Number:</label>
-                                        <input type="text" class="form-control" placeholder="Enter number" id="dd_number" name="dd_number" value="<?php echo $voucherData->dd_number; ?>">
-                                        <span class="text-danger"><?php echo form_error('dd_number'); ?></span>
-                                    </div>
-                                    <div class="form-group col-md-6 col-sm-12">
-                                        <label class="form-label">Bank Name & Branch:</label>
-                                        <input type="text" class="form-control" placeholder="Enter bank name" id="dd_bank" name="dd_bank" value="<?php echo $voucherData->dd_bank; ?>">
-                                        <span class="text-danger"><?php echo form_error('dd_bank'); ?></span>
-                                    </div>
-                                </div>
-
-                                <div class="form-group col-md-6 col-sm-12">
-                                    <label class="form-label">Comments:</label>
-                                    <textarea class="form-control" placeholder="Enter your comments" id="comments" name="comments"><?php echo $voucherData->comments; ?></textarea>
-                                    <span class="text-danger"><?php echo form_error('comments'); ?></span>
-                                </div>
-
-                                <div class="form-group col-md-6 col-sm-12">
-                                    <label class="form-label">Remarks:</label>
-                                    <textarea class="form-control" placeholder="Enter remarks" id="remarks" name="remarks"><?php echo $voucherData->remarks; ?></textarea>
-                                    <span class="text-danger"><?php echo form_error('remarks'); ?></span>
-                                </div>
-
-                                <div class="form-group col-md-6 col-sm-12">
-                                    <label class="form-label">Document:</label>
-                                    <input type="file" class="form-control" id="file" name="file">
-                                    <span class="text-danger"><?php echo form_error('file'); ?></span>
-                                </div>
-
+                            <label class="form-label text-primary">Voucher Type</label>
+                            <div class="form-group col-sm-12">
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" value="1" <?php echo ($voucherData->voucher_type == 1) ? 'checked' : ''; ?>> Cash
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" value="2" <?php echo ($voucherData->voucher_type == 2) ? 'checked' : ''; ?>> Bank DD
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" value="5" <?php echo ($voucherData->voucher_type == 5) ? 'checked' : ''; ?>> DD
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" value="4" <?php echo ($voucherData->voucher_type == 4) ? 'checked' : ''; ?>> Bank Transfer
+                                </label>
+                                <label class="radio-inline mr-3">
+                                    <input type="radio" name="voucher_type" value="3" <?php echo ($voucherData->voucher_type == 3) ? 'checked' : ''; ?>> Online
+                                </label>
+                                <span class="text-danger"><?php echo form_error('voucher_type'); ?></span>
                             </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="col-sm-12">
+
+
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">Comments:</label>
+                                            <textarea class="form-control" placeholder="Enter your comments" id="comments" name="comments"><?php echo $voucherData->comments; ?></textarea>
+                                            <span class="text-danger"><?php echo form_error('comments'); ?></span>
+                                        </div>
+
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">Remarks:</label>
+                                            <textarea class="form-control" placeholder="Enter remarks" id="remarks" name="remarks"><?php echo $voucherData->remarks; ?></textarea>
+                                            <span class="text-danger"><?php echo form_error('remarks'); ?></span>
+                                        </div>
+
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">Proof of document:</label>
+                                            <input type="file" class="form-control" id="file" name="file">
+                                            <span class="text-danger"><?php echo form_error('file'); ?></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6  ">
+                                <div class="form-group col-sm-12">
+                                        <label class="form-label">Part Payment Reason:</label>
+                                        <?php
+
+                                        $pp_options = array('' => 'Select Reason', 'Chairman Approved' => 'Chairman Approved', 'Daily Transfer Limit' => 'Daily Transfer Limit');
+                                        echo form_dropdown('pp_reason', $pp_options, $voucherData->pp_reason, 'class="form-control" id="pp_reason"');
+                                        ?>
+                                        <span class="text-danger"><?php echo form_error('pp_reason'); ?></span>
+                                    </div>
+                                    <div id="dd_details" style="display: <?php echo ($voucherData->voucher_type == 2 || $voucherData->voucher_type == 5) ? 'block' : 'none'; ?>;">
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">DD Date:</label>
+                                            <input type="date" class="form-control" placeholder="Enter Date" id="dd_date" name="dd_date" value="<?php echo $voucherData->dd_date; ?>">
+                                            <span class="text-danger"><?php echo form_error('dd_date'); ?></span>
+                                        </div>
+                                        <div class="form-group col-sm-12">
+                                            <label class="form-label">DD Number:</label>
+                                            <input type="text" class="form-control" placeholder="Enter number" id="dd_number" name="dd_number" value="<?php echo $voucherData->dd_number; ?>">
+                                            <span class="text-danger"><?php echo form_error('dd_number'); ?></span>
+                                        </div>
+                                        <div class="form-group  col-sm-12">
+                                            <label class="form-label">Bank Name & Branch:</label>
+                                            <input type="text" class="form-control" placeholder="Enter bank name" id="dd_bank" name="dd_bank" value="<?php echo $voucherData->dd_bank; ?>">
+                                            <span class="text-danger"><?php echo form_error('dd_bank'); ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                         </div>
                     </div>
                     <div class="card-footer">
@@ -930,20 +917,17 @@
 <script>
     $(document).ready(function() {
 
-<?php if($voucherData->voucher_type==2 || $voucherData->voucher_type== 5)
-{
-    ?>
-    $("#dd_details").show();
-<?php
-}
-else
-{
-    ?>
-    $("#dd_details").hide();
-<?php
-}
-?>
-        
+        <?php if ($voucherData->voucher_type == 2 || $voucherData->voucher_type == 5) {
+        ?>
+            $("#dd_details").show();
+        <?php
+        } else {
+        ?>
+            $("#dd_details").hide();
+        <?php
+        }
+        ?>
+
 
 
         $('input[type=radio][name=voucher_type]').change(function() {
