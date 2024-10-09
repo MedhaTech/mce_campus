@@ -282,6 +282,41 @@ class Admin_model extends CI_Model
     return $query->result();
   }
 
+  public function get_dcb_balance($academic_year, $department = null, $year = null)
+  {
+      $this->db->select('
+          students.usn, 
+          fee_master.academic_year, 
+          students.student_name, 
+          students.department_id, 
+          students.year, 
+          students.student_number, 
+          students.college_code, 
+          fee_master.college_fee_demand, 
+          fee_master.college_fee_collection, 
+          (fee_master.college_fee_demand - fee_master.college_fee_collection) AS balance,
+          fee_master.corpus_fee_demand,  
+          fee_master.corpus_fee_collection,  
+          (fee_master.corpus_fee_demand - fee_master.corpus_fee_collection) AS corpus_balance,
+          fee_master.total_university_other_fee
+      ');
+      $this->db->from('students');
+      $this->db->join('fee_master', 'fee_master.usn = students.usn');
+      
+      if ($department) {
+          $this->db->where('students.department_id', $department);
+      }
+      if ($year) {
+          $this->db->where('fee_master.year', $year);
+      }
+      
+      $this->db->where('fee_master.academic_year', $academic_year);
+      $this->db->having('balance >', 0);
+      $query = $this->db->get();
+      
+      return $query->result();
+  }  
+
   function getEnquiries_per($academic_year)
   {
     $this->db->where('academic_year', $academic_year);
