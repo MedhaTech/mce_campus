@@ -311,7 +311,7 @@ class Admin_model extends CI_Model
       }
       
       $this->db->where('fee_master.academic_year', $academic_year);
-      $this->db->having('balance >', 0);
+      // $this->db->having('balance >', 0);
       $query = $this->db->get();
       
       return $query->result();
@@ -567,46 +567,6 @@ class Admin_model extends CI_Model
     }
     return $this->db->get('transactions');
   }
-
-  // function DCBReport($currentAcademicYear, $course = '', $year = '', $type = '')
-  // {
-  //   $this->db->select(
-  //     '
-  //   admissions.id, 
-  //   admissions.app_no, 
-  //   admissions.adm_no, 
-  //   admissions.admit_date, 
-  //   admissions.dept_id, 
-  //   admissions.academic_year, 
-  //   admissions.student_name, 
-  //   admissions.usn, 
-  //   admissions.quota, 
-  //   admissions.sub_quota, 
-  //   admissions.college_code, 
-  //   admissions.category_claimed, 
-  //   admissions.category_allotted, 
-  //    admissions.caste, 
-  //     admissions.father_mobile, 
-  //   admissions.mobile,
-  //   admissions.status, 
-  //   fee_master.remarks'
-  //   );
-  //   $this->db->from('admissions');
-  //   $this->db->join('fee_master', 'admissions.id = fee_master.student_id', 'left');
-  //   $this->db->where('admissions.academic_year', $currentAcademicYear);
-  //   if ($course != '') {
-  //     $this->db->where('admissions.dept_id', $course);
-  //   }
-  //   if ($year != '') {
-  //     $this->db->where('fee_master.year', $year);
-  //   }
-  //   if ($type != '') {
-  //     $this->db->where('admissions.sub_quota', $type);
-  //   }
-  //   $this->db->where('admissions.status !=', '7');
-  //   $query = $this->db->get();
-  //   return $query;
-  // }
 
   function DCBReport($currentAcademicYear, $department = '', $year = '', $type = '')
   {

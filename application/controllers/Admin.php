@@ -2620,77 +2620,95 @@ class Admin extends CI_Controller
 	}
 
 	public function dcb_report($download = 0)
-{
-    if ($this->session->userdata('logged_in')) {
-        $session_data = $this->session->userdata('logged_in');
-        $data['id'] = $session_data['id'];
-        $data['username'] = $session_data['username'];
-        $data['full_name'] = $session_data['full_name'];
-        $data['role'] = $session_data['role'];
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
 
-        $data['currentAcademicYear'] = $this->globals->currentAcademicYear();
-        $data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
-        $data['department_options'] = array("" => "Select Department") + $this->departments();
-        $data['page_title'] = 'DEMAND COLLECTION BALANCE(DCB) REPORT';
-        $data['menu'] = 'demandcollectionbalancereport';
-        $data['download_action'] = 'admin/dcb_report';
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
+			$data['department_options'] = array("" => "Select Department") + $this->departments();
+			$data['page_title'] = 'DEMAND COLLECTION BALANCE (DCB) REPORT';
+			$data['menu'] = 'demandcollectionbalancereport';
+			$data['download_action'] = 'admin/dcb_report';
 
-        // Fetch input values
-        $academic_year = $this->input->post('academic_year');
-        $department = $this->input->post('department');
-        $year = $this->input->post('year');
+			// Fetch input values
+			$academic_year = $this->input->post('academic_year');
+			$department = $this->input->post('department');
+			$year = $this->input->post('year');
 
-        // Corrected: No need to call ->result() here
-        $students = $this->admin_model->get_dcb_balance($academic_year, $department, $year);
+			// Get student data
+			$students = $this->admin_model->get_dcb_balance($academic_year, $department, $year);
 
-        // Table setup for displaying data
-        $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
-        $this->table->set_template($table_setup);
+			// Table setup for displaying data
+			$table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+			$this->table->set_template($table_setup);
 
-        // Updated table headings to include Corpus fields
-        $print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 'Student Number', 'College Fee Demand', 'College Fee Collection', 'Balance',  'Corpus Fee Demand', 'Corpus Fee Collection', 'Corpus Balance', 'Total university other fee');
-        $this->table->set_heading($print_fields);
+			// Updated table headings to include Corpus fields
+			$print_fields = array(
+				'S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 
+				'Student Number', 'College Fee Demand', 'College Fee Collection', 'Balance', 
+				'Corpus Fee Demand', 'Corpus Fee Collection',  'Corpus Balance'
+			);
+			$this->table->set_heading($print_fields);
 
-        $i = 1;
-        foreach ($students as $student) {
-            $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+			$i = 1;
+			foreach ($students as $student) {
+				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+				
+				$corpus_fee_demand = $student->corpus_fee_demand; // Corpus fee demand
+				$corpus_collection = $student->corpus_fee_collection;
+				$corpus_fee_collection = $this->admin_model->get_total_amount($year, $student->usn, 1); 
+				$paid_amount_corpus = $corpus_fee_collection + $corpus_collection; // Total paid amount
+				$corpus_balance = $student->corpus_fee_demand - $paid_amount_corpus; 
 
-            $result_array = array(
-                $i++,
-                $student->academic_year,
-                $student->usn,
-                $student->student_name,
-                $dmm,  
-                $year ? $year : $currentAcademicYear, 
-                $student->student_number,  
-				$student->college_fee_demand,
-                $student->college_fee_collection,
-				$student->balance,
-				$student->corpus_fee_demand,
-				$student->corpus_fee_collection,
-                $student->corpus_balance, 
-				$student->total_university_other_fee 
-            );
+				// Corpus fee demand and collection
+				$college_fee_demand = $student->college_fee_demand; // Corpus fee demand
+				$college_collection = $student->college_fee_collection;
+				$collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); // Corpus payment
+				$paid_amount = $college_collection + $collection_amount; // Total paid amount
+				$college_balance = $college_fee_demand - $paid_amount; // Corpus balance
 
-            $this->table->add_row($result_array);
-        }
+				// Prepare data row
+				$result_array = array(
+					$i++,
+					$student->academic_year,
+					$student->usn,
+					$student->student_name,
+					$dmm,
+					$year ? $year : $data['currentAcademicYear'],
+					$student->student_number,
+					number_format($student->college_fee_demand, 0),
+					number_format($paid_amount, 0), // Set college fee collection to 0
+					number_format($college_balance, 0),
+					number_format($corpus_fee_demand, 0),
+					number_format($paid_amount_corpus, 0),
+					number_format($corpus_balance, 0),
+				);
 
-        $data['table'] = $this->table->generate();
+				$this->table->add_row($result_array);
+			}
 
-        // Handle download request
-        if (!$download) {
-            $this->admin_template->show('admin/dcb_report', $data);
-        } else {
-            $response = array(
-                'op' => 'ok',
-                'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
-            );
-            die(json_encode($response));
-        }
-    } else {
-        redirect('admin/timeout');
-    }
-}
+			$data['table'] = $this->table->generate();
+
+			// Handle download request
+			if (!$download) {
+				$this->admin_template->show('admin/dcb_report', $data);
+			} else {
+				$response = array(
+					'op' => 'ok',
+					'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+				);
+				die(json_encode($response));
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
 
 	public function feebalance_report($download = 0)
 {
