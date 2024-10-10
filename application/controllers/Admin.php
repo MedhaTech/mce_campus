@@ -2628,138 +2628,73 @@ class Admin extends CI_Controller
 			$data['full_name'] = $session_data['full_name'];
 			$data['role'] = $session_data['role'];
 
-			$currentAcademicYear = $this->globals->currentAcademicYear();
-			$data['page_title'] = $currentAcademicYear . ' REPORT DEMAND COLLECTION BALANCE (DCB)';
-			$data['menu'] = 'DCBReport';
-
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
+			$data['department_options'] = array("" => "Select Department") + $this->departments();
+			$data['page_title'] = 'DEMAND COLLECTION BALANCE (DCB) REPORT';
+			$data['menu'] = 'demandcollectionbalancereport';
 			$data['download_action'] = 'admin/dcb_report';
-			// $data['course_options'] = array("" => "Select") + $this->courses();
-			$data['department_options'] = array("0" => "All") + $this->departments();
-			$currentAcademicYear = $this->globals->currentAcademicYear();
-			// $admissions = $this->admin_model->DCBReport($currentAcademicYear)->result();
-			$admissions = $this->admin_model->DCBReport($currentAcademicYear)->result();
 
-			if ($_POST) {
-				$department = $this->input->post('department');
-				$Syear = $this->input->post('year');
-				$type = $this->input->post('type');
-				$admissions = $this->admin_model->DCBReport($currentAcademicYear, $department, $syear, $type)->result();
-			} else {
-				$admissions = $this->admin_model->DCBReport($currentAcademicYear, $department = '', $year = '', $type = '')->result();
-			}
+			// Fetch input values
+			$academic_year = $this->input->post('academic_year');
+			$department = $this->input->post('department');
+			$year = $this->input->post('year');
 
-			$fees = $this->admin_model->feeDetails()->result();
-			$feeDetails = array();
-			foreach ($fees as $fees1) {
-				$feeDetails[$fees1->reg_no] = $fees1->paid_amount;
-			}
+			// Get student data
+			$students = $this->admin_model->get_dcb_balance($academic_year, $department, $year);
 
-			$fees1 = $this->admin_model->feeDetailscorpus()->result();
-			$feeDetails1 = array();
-			foreach ($fees1 as $fees11) {
-				$feeDetails1[$fees11->reg_no] = $fees11->paid_amount;
-			}
-
-			$fees2 = $this->admin_model->feeDetailscollege()->result();
-			$feeDetails2 = array();
-			foreach ($fees2 as $fees22) {
-				$feeDetails22[$fees22->reg_no] = $fees22->paid_amount;
-			}
-
-			$table_setup = array('table_open' => '<table class="table table-bordered" border="1" id="example2" >');
+			// Table setup for displaying data
+			$table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
 			$this->table->set_template($table_setup);
-			// $table_setup = array ('table_open'=> '<table class="table table-bordered font14" border="1" id="dataTable" >');
-			// $this->table->set_template($table_setup);
 
+			// Updated table headings to include Corpus fields
 			$print_fields = array(
-				'S.No',
-				'Academic Year',
-				'Course',
-				'Student Name',
-				'Usn',
-				'Quota',
-				'Sub Quota',
-				'College Code',
-				'Studying Year',
-				'Mobile',
-				'Father Number',
-				'Caste',
-				'Alloted Category',
-				'claimed Category',
-				'Admit. Date',
-				'Total University Other Fee',
-				'College Fee Demand',
-				'College Fee Paid',
-				'College Fee Balance',
-				'Corpus Fee Demand',
-				'Corpus Fee Paid',
-				'Corpus Fee Balance',
-				'Remarks'
+				'S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 
+				'Student Number', 'College Fee Demand', 'College Fee Collection', 'Balance', 
+				'Corpus Fee Demand', 'Corpus Fee Collection',  'Corpus Balance'
 			);
-
 			$this->table->set_heading($print_fields);
 
 			$i = 1;
-			$final_fee = 0;
-			$fees_paid = 0;
-			$balance_amount = 0;
-			// var_dump($admissions);
-			// die();
-			foreach ($admissions as $admissions1) {
-				$dmm = $this->admin_model->get_dept_by_id($admissions1->department_id)["department_name"];
+			foreach ($students as $student) {
+				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+				
+				$corpus_fee_demand = $student->corpus_fee_demand; // Corpus fee demand
+				$corpus_collection = $student->corpus_fee_collection;
+				$corpus_fee_collection = $this->admin_model->get_total_amount($year, $student->usn, 1); 
+				$paid_amount_corpus = $corpus_fee_collection + $corpus_collection; // Total paid amount
+				$corpus_balance = $student->corpus_fee_demand - $paid_amount_corpus; 
 
-				// if($admissions1->dsc_1 == $admissions1->dsc_2){
-				//     $combination = $admissions1->dsc_1;
-				// }else{
-				//     $combination = $admissions1->dsc_1.' - '.$admissions1->dsc_2;
-				// }
-				$fees_data = $this->admin_model->getDetailsbyfield($admissions1->usn, 'usn', 'fee_master')->row();
-				$balance_amount_data = $fees_data->final_fee - $feeDetails[$admissions1->usn];
-				$paid_amount = (array_key_exists($admissions1->usn, $feeDetails)) ? $feeDetails[$admissions1->usn] : '0';
-				$balance_amount = $admissions1->final_fee - $paid_amount;
+				// Corpus fee demand and collection
+				$college_fee_demand = $student->college_fee_demand; // Corpus fee demand
+				$college_collection = $student->college_fee_collection;
+				$collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); // Corpus payment
+				$paid_amount = $college_collection + $collection_amount; // Total paid amount
+				$college_balance = $college_fee_demand - $paid_amount; // Corpus balance
 
-				$corpus_bal = $fees_data->corpus_fund - $feeDetails11[$admissions1->id];
-				$college_bal = $fees_data->total_college_fee - $feeDetails22[$admissions1->id];
+				// Prepare data row
 				$result_array = array(
 					$i++,
-					// $admissions1->academic_year,
-					// $admissions1->reg_no,
-					$admissions1->academic_year,
+					$student->academic_year,
+					$student->usn,
+					$student->student_name,
 					$dmm,
-					$admissions1->student_name,
-					$admissions1->usn,
-					$admissions1->quota,
-					$admissions1->sub_quota,
-					$admissions1->college_code,
-					$admissions1->year,
-					$admissions1->mobile,
-					$admissions1->father_mobile,
-					$admissions1->caste,
-					$admissions1->category_allotted,
-					$admissions1->category_claimed,
-					($admissions1->admit_date != "0000-00-00") ? date('d-m-Y', strtotime($admissions1->admit_date)) : '',
-					// number_format($fees_data->final_fee, 0),
-					// number_format($feeDetails[$admissions1->id], 0),
-					// number_format($balance_amount_data, 0),
-					number_format($fees_data->total_university_fee, 0),
-					number_format($fees_data->total_college_fee, 0),
-					number_format($feeDetails22[$admissions1->usn], 0),
-					number_format($college_bal, 0),
-					number_format($fees_data->corpus_fund, 0),
-					number_format($feeDetails11[$admissions1->usn], 0),
-					number_format($corpus_bal, 0),
-					// ($admissions1->next_due_date != "0000-00-00") ? date('d-m-Y', strtotime($admissions1->next_due_date)) : '',
-					$admissions1->remarks
+					$year ? $year : $data['currentAcademicYear'],
+					$student->student_number,
+					number_format($student->college_fee_demand, 0),
+					number_format($paid_amount, 0), // Set college fee collection to 0
+					number_format($college_balance, 0),
+					number_format($corpus_fee_demand, 0),
+					number_format($paid_amount_corpus, 0),
+					number_format($corpus_balance, 0),
 				);
-				// var_dump($result_array);
+
 				$this->table->add_row($result_array);
-				$final_fee = $final_fee + $admissions1->total_college_fee;
-				$fees_paid = $fees_paid + $paid_amount;
-				$balance_amount = $balance_amount + $balance_amount;
 			}
 
 			$data['table'] = $this->table->generate();
-			// var_dump($data['table']); die();
+
+			// Handle download request
 			if (!$download) {
 				$this->admin_template->show('admin/dcb_report', $data);
 			} else {
@@ -2773,6 +2708,7 @@ class Admin extends CI_Controller
 			redirect('admin/timeout');
 		}
 	}
+
 
 	public function feebalance_report($download = 0)
 {

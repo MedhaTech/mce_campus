@@ -1,34 +1,29 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-      <section class="content-header">
+      <section class="content-header m-2">
           <div class="container-fluid">
               <div class="card card-info shadow">
-                  <div class="card-header">
-                      <h3 class="card-title">
-                          <?= $page_title; ?>
-                      </h3>
-                      <div class="card-tools">
-                          <ul class="nav nav-pills ml-auto">
-                              <li class="nav-item">
-                                  <button type="submit" class="btn btn-danger btn-sm" name="download" id="get_details"><i class="fas fa-download"></i> Download </button>
-                                  <?php echo anchor('admin/reports', '<span class="icon"><i class="fas fa-arrow-left"></i></span> <span class="text">Back to List</span>', 'class="btn btn-secondary btn-sm btn-icon-split d-none d-sm-inline-block shadow-sm"'); ?>
-                              </li>
-                          </ul>
-                      </div>
-                  </div>
+              <div class="card-header d-flex justify-content-between align-items-center"  style="background-color:#2f4050;">
+                <h3 class="card-title mb-0 text-white">
+                    <?= $page_title; ?>
+                </h3>
+                 <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto d-flex align-items-center">
+                        <li class="nav-item mr-2">
+                            <button type="submit" class="btn btn-danger btn-sm" name="download" id="get_details">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <?php echo anchor('admin/reports', '<span class="icon"><i class="fas fa-arrow-left"></i></span> <span class="text text-white">Back to List</span>', 'class="btn btn-secondary btn-sm btn-icon-split d-none d-sm-inline-block shadow-sm"'); ?>
+                        </li>
+                    </ul>
+                 </div>
+                </div>
                   <div class="card-body">
                       <?php echo form_open_multipart($action, 'class="user" id="enquiry_list"'); ?>
 
                       <div class="form-row">
-                          <div class="col-md-2 col-sm-12">
-                              <div class="form-group">
-
-                                  <label class="label font-13">Stream</label>
-                                  <?php $Stream = array("" => "Select Stream", "BE" => "BE");
-                                    echo form_dropdown('Stream', $Stream, (set_value('Stream')) ? set_value('Stream') : 'Stream', 'class="form-control form-control-md" id="Stream"');
-                                    ?>
-                              </div>
-                          </div>
 
                           <div class="col-md-3 col-sm-12">
                               <div class="form-group">
@@ -42,25 +37,17 @@
                           <div class="col-md-3 col-sm-12">
                               <div class="form-group">
                                   <label class="label font-13">Student studying year<span class="text-danger">*</span></label>
-                                  <?php $Syear = array("" => "Select Student studying year", "I" => "I", "II" => "II", "III" => "IIII", "IV" => "IV");
-                                    echo form_dropdown('year', $Syear, (set_value('Syear')) ? set_value('year') : 'Syear', 'class="form-control form-control-md" id="year"');
+                                  <?php $Syear = array("" => "Select Student studying year", "I" => "I", "II" => "II", "III" => "III", "IV" => "IV");
+                                    echo form_dropdown('year', $Syear, (set_value('year')) ? set_value('year') : 'Syear', 'class="form-control form-control-md" id="year"');
                                     ?>
                               </div>
                           </div>
                           <div class="col-md-2 col-sm-12">
                               <div class="form-group">
                                   <label class="label font-13">Academic year</label>
-                                  <?php $Syear = array("" => "Select Academic year", "2024-2025" => "2024-2025");
-                                    echo form_dropdown('Syear', $Syear, (set_value('Syear')) ? set_value('Syear') : 'Syear', 'class="form-control form-control-md" id="Syear"');
-                                    ?>
-                              </div>
-                          </div>
-                          <div class="col-md-2 col-sm-12">
-                              <div class="form-group">
-                                  <label class="label font-13">Type</label>
-                                  <?php $type = array("" => "Select Type", "Aided" => "Aided", "UnAided" => "UnAided");
-                                    echo form_dropdown('type', $type, (set_value('type')) ? set_value('type') : 'type', 'class="form-control form-control-md" id="type"');
-                                    ?>
+                                  <?php
+                                 echo form_dropdown('academic_year', $academicYears, (set_value('academic_year')) ? set_value('academic_year') : 'academic_year', 'class="form-control " id="academic_year"');
+                              ?>
                               </div>
                           </div>
                       </div>
@@ -99,10 +86,9 @@
               event.preventDefault();
 
 
-              var admissions = $("#admissions").val();
-              var course = $("#course").val();
+              var department = $("#department").val();
               var year = $("#year").val();
-              var type = $("#type").val();
+              var academic_year = $("#academic_year").val();
 
               $("#get_details").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Downloading...');
               $("#get_details").prop('disabled', true);
@@ -116,9 +102,9 @@
                   'type': 'POST',
                   'url': base_url + 'admin/dcb_report/1',
                   'data': {
-                    'course': course,
+                    'department': department,
                     'year': year,
-                    'type': type
+                    'academic_year': academic_year
 
                   },
                   'dataType': 'json',

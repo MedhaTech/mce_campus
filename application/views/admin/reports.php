@@ -14,7 +14,7 @@
                                     <li><?php echo anchor('admin/academic_report', 'Academic Report'); ?> </li>
                                     <li><?php echo anchor('admin/daybook_report', 'Day Book Report'); ?> </li>
                                     <li><?php echo anchor('admin/dateTransactions', 'Day & Mode of Payment wise Transaction Details'); ?></li>
-                                    <!-- <li><?php echo anchor('admin/dcb_report', 'DCB Report'); ?> </li> -->
+                                    <li><?php echo anchor('admin/dcb_report', 'DCB Report'); ?> </li>
                                     <li><?php echo anchor('admin/feebalance_report', 'Fee Balance Report'); ?> </li>
                                     <li><?php echo anchor('admin/corpusoverall_report', 'Corpus Overall Report'); ?> </li>
                                     <li><?php echo anchor('admin/corpusbalance_report', 'Corpus Balance Report'); ?> </li>
