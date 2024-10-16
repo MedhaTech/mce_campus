@@ -9,6 +9,12 @@
             </div>
         </div>
         <!-- end page title -->
+        <?php if (!empty($security_message)): ?>
+            <div class="alert alert-warning">
+                <?php echo $security_message; ?>
+            </div>
+        <?php endif; ?>
+
         <?php if ($this->session->flashdata('message')) { ?>
             <div class="alert <?= $this->session->flashdata('status'); ?>" id="msg">
                 <?php echo $this->session->flashdata('message') ?>

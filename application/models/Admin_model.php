@@ -1034,4 +1034,35 @@ class Admin_model extends CI_Model
     }
     return false;
   }
+
+  // Get student details by USN
+  public function get_student_by_usn($usn) {
+    $this->db->where('usn', $usn);
+    $query = $this->db->get('students');
+    return $query->row(); // Return the student record
+}
+
+public function change_password($student_id, $old_password, $new_password) {
+  // Fetch the current password
+  $this->db->where('id', $student_id);
+  $this->db->where('password', md5($old_password));
+  $student = $this->db->get('students')->row();
+
+  // If the old password matches, update with the new password
+  if ($student) {
+      $this->db->where('id', $student_id);
+      $this->db->update('students', ['password' => md5($new_password), 'change_password' => 1]);
+      return true;
+  } else {
+      return false; // Old password doesn't match
+  }
+}
+
+public function get_student_by_id($student_id)
+{
+    $this->db->where('id', $student_id);
+    $query = $this->db->get('students'); 
+    return $query->row(); // Return the student data as an object
+}
+
 }

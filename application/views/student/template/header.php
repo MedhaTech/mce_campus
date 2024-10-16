@@ -97,23 +97,48 @@
 
                     <div class="collapse navbar-collapse" id="topnav-menu-content">
                         <ul class="navbar-nav">
+
+                            <?php if ($change_password == 1): ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>student/dashboard">
                                     <i class="mdi mdi-view-dashboard mr-2"></i>Dashboard
                                 </a>
                             </li>
+                            <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#" onclick="return false;">
+                                    <i class="nav-icon fas fa-receipt mr-2"></i>Dashboard
+                                </a>
+                            </li>
+                            <?php endif; ?>
 
+                            <?php if ($change_password == 1): ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>student/fees">
-                                   <i class="nav-icon fas fa-receipt mr-2"></i>Fees
+                                    <i class="nav-icon fas fa-receipt mr-2"></i>Fees
                                 </a>
                             </li>
+                            <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#" onclick="return false;">
+                                    <i class="nav-icon fas fa-receipt mr-2"></i>Fees
+                                </a>
+                            </li>
+                            <?php endif; ?>
 
+                            <?php if ($change_password == 1): ?>
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>student/profile">
-                                   <i class="nav-icon fas fa-user mr-2"></i>My Profile
+                                    <i class="nav-icon fas fa-user mr-2"></i>My Profile
                                 </a>
                             </li>
+                            <?php else: ?>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#" onclick="return false;">
+                                    <i class="nav-icon fas fa-receipt mr-2"></i>My Profile
+                                </a>
+                            </li>
+                            <?php endif; ?>
 
                             <li class="nav-item">
                                 <a class="nav-link" href="<?php echo base_url(); ?>student/changePassword">
@@ -121,9 +146,8 @@
                                 </a>
                             </li>
 
-
-
                         </ul>
+
                     </div>
                 </nav>
             </div>

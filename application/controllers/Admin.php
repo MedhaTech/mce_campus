@@ -2666,11 +2666,11 @@ class Admin extends CI_Controller
 				$corpus_balance = $student->corpus_fee_demand - $paid_amount_corpus; 
 
 				// Corpus fee demand and collection
-				$college_fee_demand = $student->college_fee_demand; // Corpus fee demand
+				$college_fee_demand = $student->college_fee_demand;
 				$college_collection = $student->college_fee_collection;
-				$collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); // Corpus payment
-				$paid_amount = $college_collection + $collection_amount; // Total paid amount
-				$college_balance = $college_fee_demand - $paid_amount; // Corpus balance
+				$collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); 
+				$paid_amount = $college_collection + $collection_amount; 
+				$college_balance = $college_fee_demand - $paid_amount; 
 
 				// Prepare data row
 				$result_array = array(
@@ -2710,7 +2710,75 @@ class Admin extends CI_Controller
 	}
 
 
-	public function feebalance_report($download = 0)
+// 	public function feebalance_report($download = 0)
+// {
+//     if ($this->session->userdata('logged_in')) {
+//         $session_data = $this->session->userdata('logged_in');
+//         $data['id'] = $session_data['id'];
+//         $data['username'] = $session_data['username'];
+//         $data['full_name'] = $session_data['full_name'];
+//         $data['role'] = $session_data['role'];
+
+//         $data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+//         $data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
+//         $data['department_options'] = array("" => "Select Department") + $this->departments();
+//         $data['page_title'] = 'FEE BALANCE REPORT';
+//         $data['menu'] = 'feebalancereport';
+//         $data['download_action'] = 'admin/feebalance_report';
+
+//         // Fetch input values
+//         $academic_year = $this->input->post('academic_year');
+//         $department = $this->input->post('department');
+//         $year = $this->input->post('year');
+
+//         // Corrected: No need to call ->result() here
+//         $students = $this->admin_model->get_fee_balance($academic_year, $department, $year);
+
+//         // Table setup for displaying data
+//         $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+//         $this->table->set_template($table_setup);
+
+//         $print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 'Student Number', 'Balance', 'College Fee Demand');
+//         $this->table->set_heading($print_fields);
+
+//         $i = 1;
+//         foreach ($students as $student) {
+//             $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+
+//             $result_array = array(
+//                 $i++,
+//                 $student->academic_year,
+//                 $student->usn,
+//                 $student->student_name,
+//                 $dmm,  // Department name
+// 				$year ? $year : $currentAcademicYear,  // Display selected or current academic year
+//                 // $student->year,
+//                 $student->student_number,  // Assuming this is the mobile number or student number
+//                 $student->balance,
+// 				$student->college_fee_demand,
+//             );
+
+//             $this->table->add_row($result_array);
+//         }
+
+//         $data['table'] = $this->table->generate();
+
+//         // Handle download request
+//         if (!$download) {
+//             $this->admin_template->show('admin/feebalance_report', $data);
+//         } else {
+//             $response = array(
+//                 'op' => 'ok',
+//                 'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+//             );
+//             die(json_encode($response));
+//         }
+//     } else {
+//         redirect('admin/timeout');
+//     }
+// }
+
+public function feebalance_report($download = 0)
 {
     if ($this->session->userdata('logged_in')) {
         $session_data = $this->session->userdata('logged_in');
@@ -2731,34 +2799,53 @@ class Admin extends CI_Controller
         $department = $this->input->post('department');
         $year = $this->input->post('year');
 
-        // Corrected: No need to call ->result() here
         $students = $this->admin_model->get_fee_balance($academic_year, $department, $year);
 
         // Table setup for displaying data
         $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
         $this->table->set_template($table_setup);
 
-        $print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 'Student Number', 'Balance', 'College Fee Demand');
+        // Define the table heading
+        $print_fields = array(
+            'S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 
+            'Student Number',
+            'College Fee Demand', 'College Balance'
+        );
         $this->table->set_heading($print_fields);
 
         $i = 1;
         foreach ($students as $student) {
             $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
 
-            $result_array = array(
-                $i++,
-                $student->academic_year,
-                $student->usn,
-                $student->student_name,
-                $dmm,  // Department name
-				$year ? $year : $currentAcademicYear,  // Display selected or current academic year
-                // $student->year,
-                $student->student_number,  // Assuming this is the mobile number or student number
-                $student->balance,
-				$student->college_fee_demand,
-            );
+            // Corpus fee details
+            $corpus_fee_demand = $student->corpus_fee_demand; // Corpus fee demand
+            $corpus_collection = $student->corpus_fee_collection; // Corpus collected so far
+            $corpus_fee_collection = $this->admin_model->get_total_amount($year, $student->usn, 1); // Additional paid amount for corpus
+            $paid_amount_corpus = $corpus_fee_collection + $corpus_collection; // Total paid amount for corpus
+            $corpus_balance = $corpus_fee_demand - $paid_amount_corpus; // Corpus balance
 
-            $this->table->add_row($result_array);
+            // College fee details
+            $college_fee_demand = $student->college_fee_demand; // College fee demand
+            $college_collection = $student->college_fee_collection; // College collected so far
+            $collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); // Additional paid amount for college
+            $paid_amount_college = $college_collection + $collection_amount; // Total paid amount for college
+            $college_balance = $college_fee_demand - $paid_amount_college; // College balance
+
+            if ($corpus_balance > 0 || $college_balance > 0) {
+                $result_array = array(
+                    $i++,
+                    $student->academic_year,
+                    $student->usn,
+                    $student->student_name,
+                    $dmm,  // Department name
+                    $year ? $year : $data['currentAcademicYear'],  
+                    $student->student_number,  
+                    $college_fee_demand,
+                    $college_balance
+                );
+
+                $this->table->add_row($result_array);
+            }
         }
 
         $data['table'] = $this->table->generate();
