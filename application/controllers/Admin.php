@@ -608,7 +608,7 @@ class Admin extends CI_Controller
 						$upload_data = $this->upload->data();
 
 						// Define the new file name
-						$new_file_name = time().'.pdf';
+						$new_file_name = time() . '.pdf';
 
 						// Define old and new file paths
 						$old_file_path = $upload_data['full_path'];
@@ -694,7 +694,8 @@ class Admin extends CI_Controller
 		}
 	}
 
-	function update_voucher($encryptId,$feestruct_id) {
+	function update_voucher($encryptId, $feestruct_id)
+	{
 		if ($this->session->userdata('logged_in')) {
 			$session_data = $this->session->userdata('logged_in');
 			$data['id'] = $session_data['id'];
@@ -703,10 +704,10 @@ class Admin extends CI_Controller
 			$data['role'] = $session_data['role'];
 			$data['page_title'] = "Update Voucher Request";
 			$data['menu'] = "payments";
-			
+
 			$usn = base64_decode($encryptId);
 			$admissionSingle = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
-			
+
 			// Fetch existing voucher data
 			$voucherData = $this->admin_model->getDetails('payment_structure1', $feestruct_id)->row();
 			if (!$voucherData) {
@@ -714,19 +715,19 @@ class Admin extends CI_Controller
 				$this->session->set_flashdata('status', 'alert-warning');
 				redirect('admin/paymentDetail/' . $encryptId, 'refresh');
 			}
-			
+
 			$data['voucherData'] = $voucherData;
 			$data['fee_structure'] = $this->admin_model->get_fee_details_usn($voucherData->usn, $voucherData->year)->row();
-			
+
 
 			$data['usn'] = $usn;
 			$data['encryptId'] = $encryptId;
 			$data['admissionDetails'] = $admissionSingle;
-			
+
 			// Set validation rules for updating
 			$this->form_validation->set_rules('voucher_type', 'Voucher Type', 'required');
 			$this->form_validation->set_rules('final_fee', 'Total Amount', 'numeric|required');
-			
+
 			if ($this->form_validation->run() === FALSE) {
 				$data['action'] = 'admin/update_voucher/' . $encryptId . '/' . $feestruct_id;
 				$this->admin_template->show('admin/update_voucher', $data);
@@ -734,13 +735,13 @@ class Admin extends CI_Controller
 				$selectedFees = $this->input->post('selected_fees');
 				$finalFee = $this->input->post('final_fee');
 				$selectedFeesArray = json_decode($selectedFees, true);
-				
+
 				$updateDetails = array();
 				$updateDetails['type'] = 0;
 				foreach ($selectedFeesArray as $selected) {
 					$field = preg_replace('/_checkbox$/', '', $selected['name']);
 					$updateDetails[$field] = $selected['newvalue'];
-					
+
 					if ($field == 'corpus_fee_demand') {
 						$updateDetails['type'] = 1;
 					}
@@ -762,7 +763,7 @@ class Admin extends CI_Controller
 						$upload_data = $this->upload->data();
 
 						// Define the new file name
-						$new_file_name = time().'.pdf';
+						$new_file_name = time() . '.pdf';
 
 						// Define old and new file paths
 						$old_file_path = $upload_data['full_path'];
@@ -777,7 +778,7 @@ class Admin extends CI_Controller
 						}
 					}
 				}
-				
+
 				$updateDetails['voucher_type'] = $this->input->post('voucher_type');
 				if ($updateDetails['voucher_type'] == 5 || $updateDetails['voucher_type'] == 2) {
 					$updateDetails['dd_bank'] = $this->input->post('dd_bank');
@@ -794,10 +795,10 @@ class Admin extends CI_Controller
 				$updateDetails['final_fee'] = $this->input->post('final_fee');
 				$updateDetails['requested_by'] = $data['full_name'];
 				$updateDetails['requested_on'] = date('Y-m-d h:i:s');
-				
+
 				// Update voucher details in the database
-				$result = $this->admin_model->updateDetails($feestruct_id, $updateDetails,'payment_structure1');
-				
+				$result = $this->admin_model->updateDetails($feestruct_id, $updateDetails, 'payment_structure1');
+
 				if ($result) {
 					$this->session->set_flashdata('message', 'Voucher updated successfully!');
 					$this->session->set_flashdata('status', 'alert-success');
@@ -805,14 +806,14 @@ class Admin extends CI_Controller
 					$this->session->set_flashdata('message', 'Failed to update voucher. Please try again.');
 					$this->session->set_flashdata('status', 'alert-warning');
 				}
-				
+
 				redirect('admin/paymentDetail/' . $encryptId, 'refresh');
 			}
 		} else {
 			redirect('admin', 'refresh');
 		}
 	}
-	
+
 	function mark_paid($encryptId, $id)
 	{
 		if ($this->session->userdata('logged_in')) {
@@ -1198,15 +1199,17 @@ class Admin extends CI_Controller
 			if ($voucherDetails->tuition_fee > 0) {
 				$tableData[] = ['Tution Fee', $voucherDetails->tuition_fee];
 			}
-			if ($voucherDetails->corpus_fee_demand > 0) {
-				$tableData[] = ['Corpus Fund', $voucherDetails->corpus_fee_demand];
-			}
-
 			if ($admissionDetails->sub_quota == 'Aided') {
 				$accno = "120030893500";
 			} else {
 				$accno = "14053070001574";
 			}
+			if ($voucherDetails->corpus_fee_demand > 0) {
+				$tableData[] = ['Corpus Fund', $voucherDetails->corpus_fee_demand];
+				$accno = "110173085919";
+			}
+
+			
 
 			// Create a function to generate a single copy
 			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy, $accno)
@@ -2371,7 +2374,7 @@ class Admin extends CI_Controller
 		}
 	}
 
-		public function corpusbalance_report($download = 0)
+	public function corpusbalance_report($download = 0)
 	{
 		if ($this->session->userdata('logged_in')) {
 			$session_data = $this->session->userdata('logged_in');
@@ -2649,21 +2652,31 @@ class Admin extends CI_Controller
 
 			// Updated table headings to include Corpus fields
 			$print_fields = array(
-				'S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 
-				'Student Number', 'College Fee Demand', 'College Fee Collection', 'Balance', 
-				'Corpus Fee Demand', 'Corpus Fee Collection',  'Corpus Balance'
+				'S.No',
+				'Academic Year',
+				'Usn',
+				'Student Name',
+				'Course',
+				'Year',
+				'Student Number',
+				'College Fee Demand',
+				'College Fee Collection',
+				'Balance',
+				'Corpus Fee Demand',
+				'Corpus Fee Collection',
+				'Corpus Balance'
 			);
 			$this->table->set_heading($print_fields);
 
 			$i = 1;
 			foreach ($students as $student) {
 				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
-				
+
 				$corpus_fee_demand = $student->corpus_fee_demand; // Corpus fee demand
 				$corpus_collection = $student->corpus_fee_collection;
-				$corpus_fee_collection = $this->admin_model->get_total_amount($year, $student->usn, 1); 
+				$corpus_fee_collection = $this->admin_model->get_total_amount($year, $student->usn, 1);
 				$paid_amount_corpus = $corpus_fee_collection + $corpus_collection; // Total paid amount
-				$corpus_balance = $student->corpus_fee_demand - $paid_amount_corpus; 
+				$corpus_balance = $student->corpus_fee_demand - $paid_amount_corpus;
 
 				// Corpus fee demand and collection
 				$college_fee_demand = $student->college_fee_demand;
@@ -2708,6 +2721,7 @@ class Admin extends CI_Controller
 			redirect('admin/timeout');
 		}
 	}
+
 
 
 // 	public function feebalance_report($download = 0)
@@ -2865,5 +2879,71 @@ public function feebalance_report($download = 0)
     }
 }
 
+	public function feebalance_report1($download = 0)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
 
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
+			$data['department_options'] = array("" => "Select Department") + $this->departments();
+			$data['page_title'] = 'FEE BALANCE REPORT';
+			$data['menu'] = 'feebalancereport';
+			$data['download_action'] = 'admin/feebalance_report';
+
+			// Fetch input values
+			$academic_year = $this->input->post('academic_year');
+			$department = $this->input->post('department');
+			$year = $this->input->post('year');
+
+			// Corrected: No need to call ->result() here
+			$students = $this->admin_model->get_fee_balance($academic_year, $department, $year);
+
+			// Table setup for displaying data
+			$table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+			$this->table->set_template($table_setup);
+
+			$print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 'Student Number', 'Balance', 'College Fee Demand');
+			$this->table->set_heading($print_fields);
+
+			$i = 1;
+			foreach ($students as $student) {
+				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+
+				$result_array = array(
+					$i++,
+					$student->academic_year,
+					$student->usn,
+					$student->student_name,
+					$dmm,  // Department name
+					$year ? $year : $currentAcademicYear,  // Display selected or current academic year
+					// $student->year,
+					$student->student_number,  // Assuming this is the mobile number or student number
+					$student->balance,
+					$student->college_fee_demand,
+				);
+
+				$this->table->add_row($result_array);
+			}
+
+			$data['table'] = $this->table->generate();
+
+			// Handle download request
+			if (!$download) {
+				$this->admin_template->show('admin/feebalance_report', $data);
+			} else {
+				$response = array(
+					'op' => 'ok',
+					'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+				);
+				die(json_encode($response));
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
 }
