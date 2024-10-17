@@ -84,7 +84,8 @@ if (!function_exists('formatIndianCurrency')) {
         $formattedNumber = preg_replace('/\B(?=(\d{2})+(?!\d))/', ',', $remainingDigits) . $lastThreeDigits;
         
         // Concatenating the decimal part
-        return '₹' . $formattedNumber . '.' . $decimalPart;
+        // return '₹' . $formattedNumber . '.' . $decimalPart;
+        return $formattedNumber . '.' . $decimalPart;
     }
 }
 

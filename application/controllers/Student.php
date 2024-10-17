@@ -46,27 +46,27 @@ class Student extends CI_Controller
 	// }
 
 	function index()
-{
-    $this->form_validation->set_rules('usn', 'USN', 'trim|required');
-    $this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
-    
-    if ($this->form_validation->run() == FALSE) {
-        $data['page_title'] = "Student Login";
-        $data['action'] = 'student';
-        $this->login_template->show('student/login', $data);
-    } else {
-        $usn = $this->input->post('usn');
-        $student = $this->admin_model->get_student_by_usn($usn); // Fetch student details
+	{
+		$this->form_validation->set_rules('usn', 'USN', 'trim|required');
+		$this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
 
-        if ($student->change_password == 0) {
-            // Redirect to change password page if password not changed yet
-            redirect('student/changePassword', 'refresh');
-        } else {
-            // Proceed to dashboard if password is already changed
-            redirect('student/dashboard', 'refresh');
-        }
-    }
-}
+		if ($this->form_validation->run() == FALSE) {
+			$data['page_title'] = "Student Login";
+			$data['action'] = 'student';
+			$this->login_template->show('student/login', $data);
+		} else {
+			$usn = $this->input->post('usn');
+			$student = $this->admin_model->get_student_by_usn($usn); // Fetch student details
+
+			if ($student->change_password == 0) {
+				// Redirect to change password page if password not changed yet
+				redirect('student/changePassword', 'refresh');
+			} else {
+				// Proceed to dashboard if password is already changed
+				redirect('student/dashboard', 'refresh');
+			}
+		}
+	}
 
 	function check_database($password)
 	{
@@ -110,24 +110,27 @@ class Student extends CI_Controller
 	// }
 
 	public function dashboard()
-{
-    if ($this->session->userdata('student_in')) {
-        $student_session = $this->session->userdata('student_in');
-        $student_id = $student_session['id'];
-        $data['id'] = $student_id;
-        $data['student_name'] = $student_session['student_name'];
-        $data['page_title'] = "Dashboard";
-        $data['menu'] = "dashboard";
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$student_id = $student_session['id'];
+			$data['id'] = $student_id;
+			$data['usn'] = $student_session['usn'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Dashboard";
+			$data['menu'] = "dashboard";
 
-        // Fetch student details, including change_password column
-        $student = $this->admin_model->get_student_by_id($student_id);
-        $data['change_password'] = $student->change_password;
+			// Fetch student details, including change_password column
+			$student = $this->admin_model->get_student_by_id($student_id);
+			$data['change_password'] = $student->change_password;
+			
+			$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
 
-        $this->student_template->show('student/dashboard', $data);
-    } else {
-        redirect('student', 'refresh');
-    }
-}
+			$this->student_template->show('student/dashboard', $data);
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
 
 	// function profile()
 	// {
@@ -148,98 +151,98 @@ class Student extends CI_Controller
 	// }
 
 	public function profile()
-{
-    if ($this->session->userdata('student_in')) {
-        $student_session = $this->session->userdata('student_in');
-        $student_id = $student_session['id'];
-        $data['id'] = $student_id;
-        $data['usn'] = $student_session['usn'];
-        $data['student_name'] = $student_session['student_name'];
-        $data['page_title'] = "My Profile";
-        $data['menu'] = "my_profile";
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$student_id = $student_session['id'];
+			$data['id'] = $student_id;
+			$data['usn'] = $student_session['usn'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "My Profile";
+			$data['menu'] = "my_profile";
 
-        // Fetch student details, including change_password column
-        $student = $this->admin_model->get_student_by_id($student_id);
-        $data['change_password'] = $student->change_password;
+			// Fetch student details, including change_password column
+			$student = $this->admin_model->get_student_by_id($student_id);
+			$data['change_password'] = $student->change_password;
 
-        $data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+			$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
 
-        $this->student_template->show('student/profile', $data);
-    } else {
-        redirect('student', 'refresh');
-    }
-}
+			$this->student_template->show('student/profile', $data);
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
 
-	public function personaldetails() 
-{
-    if ($this->session->userdata('student_in')) {
-        $student_session = $this->session->userdata('student_in');
-        $student_id = $student_session['id'];
-        $data['id'] = $student_id;
-        $data['student_name'] = $student_session['student_name'];
-        $data['page_title'] = "Edit Personal Details";
-        $data['menu'] = "editpersonaldetails";
-        $data['username'] = $student_session['username'];
-        $data['userTypes'] = $this->globals->userTypes();
-        $data['admissionDetails'] = $this->admin_model->getDetails('students', $student_id)->row();
-        
-        // Check if edit_status is already set to 1
-        $currentDetails = $this->admin_model->getDetails('students', $student_id)->row();
-        if ($currentDetails->edit_status == 1) {
-            // Redirect to profile if already edited
-            $this->session->set_flashdata('message', 'You have already edited your personal details.');
-            $this->session->set_flashdata('status', 'alert-warning');
-            redirect('student/profile', 'refresh');
-        }
+	public function personaldetails()
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$student_id = $student_session['id'];
+			$data['id'] = $student_id;
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Edit Personal Details";
+			$data['menu'] = "editpersonaldetails";
+			$data['username'] = $student_session['username'];
+			$data['userTypes'] = $this->globals->userTypes();
+			$data['admissionDetails'] = $this->admin_model->getDetails('students', $student_id)->row();
 
-        $this->load->library('form_validation');
-        $this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+			// Check if edit_status is already set to 1
+			$currentDetails = $this->admin_model->getDetails('students', $student_id)->row();
+			if ($currentDetails->edit_status == 1) {
+				// Redirect to profile if already edited
+				$this->session->set_flashdata('message', 'You have already edited your personal details.');
+				$this->session->set_flashdata('status', 'alert-warning');
+				redirect('student/profile', 'refresh');
+			}
 
-        // Set form validation rules
-        $this->form_validation->set_rules('student_number', 'Student Number', 'required|regex_match[/^[0-9]{10}$/]');
-        $this->form_validation->set_rules('father_number', 'Father Number', 'required|regex_match[/^[0-9]{10}$/]');
-        $this->form_validation->set_rules('email', 'Email', 'required|valid_email');
-        $this->form_validation->set_rules('date_of_birth', 'Date of Birth', 'required');
+			$this->load->library('form_validation');
+			$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 
-        if ($this->form_validation->run() === FALSE) {
-            // If validation fails, reload the form with existing details
-            $data['action'] = 'student/personaldetails/' . $student_id;
-            $personalDetails = $this->admin_model->getDetails('students', $student_id)->row();
+			// Set form validation rules
+			$this->form_validation->set_rules('student_number', 'Student Number', 'required|regex_match[/^[0-9]{10}$/]');
+			$this->form_validation->set_rules('father_number', 'Father Number', 'required|regex_match[/^[0-9]{10}$/]');
+			$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
+			$this->form_validation->set_rules('date_of_birth', 'Date of Birth', 'required');
 
-            $data['student_number'] = $personalDetails->student_number;
-            $data['father_number'] = $personalDetails->father_number;
-            $data['email'] = $personalDetails->email;
-            $data['date_of_birth'] = $personalDetails->date_of_birth;
+			if ($this->form_validation->run() === FALSE) {
+				// If validation fails, reload the form with existing details
+				$data['action'] = 'student/personaldetails/' . $student_id;
+				$personalDetails = $this->admin_model->getDetails('students', $student_id)->row();
 
-            $this->student_template->show('student/personal_details', $data);
-        } else {
-            // Update personal details after validation
-            $updateDetails = array(
-                'student_number' => $this->input->post('student_number'),
-                'father_number' => $this->input->post('father_number'),
-                'email' => $this->input->post('email'),
-                'date_of_birth' => $this->input->post('date_of_birth'),
-            );
+				$data['student_number'] = $personalDetails->student_number;
+				$data['father_number'] = $personalDetails->father_number;
+				$data['email'] = $personalDetails->email;
+				$data['date_of_birth'] = $personalDetails->date_of_birth;
 
-            $result = $this->admin_model->updateDetails($student_id, $updateDetails, 'students');
+				$this->student_template->show('student/personal_details', $data);
+			} else {
+				// Update personal details after validation
+				$updateDetails = array(
+					'student_number' => $this->input->post('student_number'),
+					'father_number' => $this->input->post('father_number'),
+					'email' => $this->input->post('email'),
+					'date_of_birth' => $this->input->post('date_of_birth'),
+				);
 
-            if ($result) {
-                $this->admin_model->updateEditStatus($student_id, 1); 
+				$result = $this->admin_model->updateDetails($student_id, $updateDetails, 'students');
 
-                $this->session->set_flashdata('message', 'Personal Details updated successfully...!');
-                $this->session->set_flashdata('status', 'alert-success');
-            } else {
-                $this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
-                $this->session->set_flashdata('status', 'alert-warning');
-            }
+				if ($result) {
+					$this->admin_model->updateEditStatus($student_id, 1);
 
-            // Redirect to the student profile after update
-            redirect('student/profile', 'refresh');
-        }
-    } else {
-        redirect('student', 'refresh');
-    }
-}
+					$this->session->set_flashdata('message', 'Personal Details updated successfully...!');
+					$this->session->set_flashdata('status', 'alert-success');
+				} else {
+					$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
+					$this->session->set_flashdata('status', 'alert-warning');
+				}
+
+				// Redirect to the student profile after update
+				redirect('student/profile', 'refresh');
+			}
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
 
 	// function fees(): void
 	// {
@@ -264,32 +267,32 @@ class Student extends CI_Controller
 	// }
 
 	public function fees(): void
-{
-    if ($this->session->userdata('student_in')) {
-        $student_session = $this->session->userdata('student_in');
-        $student_id = $student_session['id'];
-        $data['id'] = $student_id;
-        $data['usn'] = $student_session['usn'];
-        $data['student_name'] = $student_session['student_name'];
-        $data['page_title'] = "Fees";
-        $data['menu'] = "fees";
-        
-        // Fetch student details, including change_password column
-        $student = $this->admin_model->get_student_by_id($student_id);
-        $data['change_password'] = $student->change_password; 
+	{
+		if ($this->session->userdata('student_in')) {
+			$student_session = $this->session->userdata('student_in');
+			$student_id = $student_session['id'];
+			$data['id'] = $student_id;
+			$data['usn'] = $student_session['usn'];
+			$data['student_name'] = $student_session['student_name'];
+			$data['page_title'] = "Fees";
+			$data['menu'] = "fees";
 
-        $data['action'] = "student/pay_now";
-        $data['voucher_types'] = $this->globals->voucher_types();
-        $data['paymentDetail'] = $this->admin_model->getDetailsbyfield2('usn', $data['usn'], 'offline', '0', 'payment_structure1')->result();
-        $data['transactionDetails'] = $this->admin_model->getDetailsbyfield($data['usn'], 'reg_no', 'transactions')->result();
-        $data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
-        $data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
+			// Fetch student details, including change_password column
+			$student = $this->admin_model->get_student_by_id($student_id);
+			$data['change_password'] = $student->change_password;
 
-        $this->student_template->show('student/fees', $data);
-    } else {
-        redirect('student', 'refresh');
-    }
-}
+			$data['action'] = "student/pay_now";
+			$data['voucher_types'] = $this->globals->voucher_types();
+			$data['paymentDetail'] = $this->admin_model->getDetailsbyfield2('usn', $data['usn'], 'offline', '0', 'payment_structure1')->result();
+			$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($data['usn'], 'reg_no', 'transactions')->result();
+			$data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+			$data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
+
+			$this->student_template->show('student/fees', $data);
+		} else {
+			redirect('student', 'refresh');
+		}
+	}
 
 	public function pay_now()
 	{
@@ -539,7 +542,7 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'],$updateDetails1);
+				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'], $updateDetails1);
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
 
@@ -614,7 +617,7 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'],$updateDetails1);
+				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'], $updateDetails1);
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
 
@@ -689,7 +692,7 @@ class Student extends CI_Controller
 				$this->set_session($response_array['additional_info']->additional_info3, $response_array['additional_info']->additional_info4);
 
 				$result = $this->admin_model->updateDetailsbyfield('reference_no', $response_array['orderid'], $updateDetails, 'transactions');
-				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'],$updateDetails1);
+				$result1 = $this->admin_model->update_payment_structure($response_array['orderid'], $updateDetails1);
 
 				$payment = ['orderid' => $response_array['orderid']];
 				$this->session->set_userdata('payment', $payment);
@@ -771,7 +774,7 @@ class Student extends CI_Controller
 	// 	}
 	// }
 
-		public function changePassword()
+	public function changePassword()
 	{
 		if ($this->session->userdata('student_in')) {
 			$student_session = $this->session->userdata('student_in');
@@ -813,11 +816,11 @@ class Student extends CI_Controller
 					if ($result) {
 						$this->session->set_flashdata('message', 'Password updated successfully!');
 						$this->session->set_flashdata('status', 'alert-success');
-						
+
 						// Logout the student after password change
 						$this->session->unset_userdata('student_in');
 						$this->session->sess_destroy();
-						
+
 						// Redirect to login page with a message
 						$this->session->set_flashdata('message', 'Password updated. Please log in again with your new password.');
 						redirect('student', 'refresh');

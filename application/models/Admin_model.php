@@ -284,7 +284,7 @@ class Admin_model extends CI_Model
 
   public function get_dcb_balance($academic_year, $department = null, $year = null)
   {
-      $this->db->select('
+    $this->db->select('
           students.usn, 
           fee_master.academic_year, 
           students.student_name, 
@@ -300,22 +300,22 @@ class Admin_model extends CI_Model
           (fee_master.corpus_fee_demand - fee_master.corpus_fee_collection) AS corpus_balance,
           fee_master.total_university_other_fee
       ');
-      $this->db->from('students');
-      $this->db->join('fee_master', 'fee_master.usn = students.usn');
-      
-      if ($department) {
-          $this->db->where('students.department_id', $department);
-      }
-      if ($year) {
-          $this->db->where('fee_master.year', $year);
-      }
-      
-      $this->db->where('fee_master.academic_year', $academic_year);
-      // $this->db->having('balance >', 0);
-      $query = $this->db->get();
-      
-      return $query->result();
-  }  
+    $this->db->from('students');
+    $this->db->join('fee_master', 'fee_master.usn = students.usn');
+
+    if ($department) {
+      $this->db->where('students.department_id', $department);
+    }
+    if ($year) {
+      $this->db->where('fee_master.year', $year);
+    }
+
+    $this->db->where('fee_master.academic_year', $academic_year);
+    // $this->db->having('balance >', 0);
+    $query = $this->db->get();
+
+    return $query->result();
+  }
 
   function getEnquiries_per($academic_year)
   {
@@ -1036,33 +1036,35 @@ class Admin_model extends CI_Model
   }
 
   // Get student details by USN
-  public function get_student_by_usn($usn) {
+  public function get_student_by_usn($usn)
+  {
     $this->db->where('usn', $usn);
     $query = $this->db->get('students');
     return $query->row(); // Return the student record
-}
-
-public function change_password($student_id, $old_password, $new_password) {
-  // Fetch the current password
-  $this->db->where('id', $student_id);
-  $this->db->where('password', md5($old_password));
-  $student = $this->db->get('students')->row();
-
-  // If the old password matches, update with the new password
-  if ($student) {
-      $this->db->where('id', $student_id);
-      $this->db->update('students', ['password' => md5($new_password), 'change_password' => 1]);
-      return true;
-  } else {
-      return false; // Old password doesn't match
   }
-}
 
-public function get_student_by_id($student_id)
-{
+  public function change_password($student_id, $old_password, $new_password)
+  {
+    // Fetch the current password
     $this->db->where('id', $student_id);
-    $query = $this->db->get('students'); 
+    $this->db->where('password', md5($old_password));
+    $student = $this->db->get('students')->row();
+
+    // If the old password matches, update with the new password
+    if ($student) {
+      $this->db->where('id', $student_id);
+      $this->db->update('students', ['password' => md5($new_password), 'change_password' => 1, 'last_updated_on' => date('Y-m-d h:i:s')]);
+      return true;
+    } else {
+      return false; // Old password doesn't match
+    }
+  }
+
+  public function get_student_by_id($student_id)
+  {
+    $this->db->where('id', $student_id);
+    $query = $this->db->get('students');
     return $query->row(); // Return the student data as an object
-}
+  }
 
 }
