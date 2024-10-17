@@ -30,20 +30,43 @@ class Student extends CI_Controller
 		ini_set('upload_max_filesize', '20M');
 	}
 
-	function index()
-	{
-		$this->form_validation->set_rules('usn', 'USN', 'trim|required');
-		$this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
-		if ($this->form_validation->run() == FALSE) {
-			$data['page_title'] = "Student Login";
-			$data['action'] = 'student';
+	// function index()
+	// {
+	// 	$this->form_validation->set_rules('usn', 'USN', 'trim|required');
+	// 	$this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
+	// 	if ($this->form_validation->run() == FALSE) {
+	// 		$data['page_title'] = "Student Login";
+	// 		$data['action'] = 'student';
 
-			$this->login_template->show('student/login', $data);
-		} else {
-			$usn = $this->input->post('usn');
-			redirect('student/dashboard', 'refresh');
-		}
-	}
+	// 		$this->login_template->show('student/login', $data);
+	// 	} else {
+	// 		$usn = $this->input->post('usn');
+	// 		redirect('student/dashboard', 'refresh');
+	// 	}
+	// }
+
+	function index()
+{
+    $this->form_validation->set_rules('usn', 'USN', 'trim|required');
+    $this->form_validation->set_rules('password', 'Password', 'trim|required|callback_check_database');
+    
+    if ($this->form_validation->run() == FALSE) {
+        $data['page_title'] = "Student Login";
+        $data['action'] = 'student';
+        $this->login_template->show('student/login', $data);
+    } else {
+        $usn = $this->input->post('usn');
+        $student = $this->admin_model->get_student_by_usn($usn); // Fetch student details
+
+        if ($student->change_password == 0) {
+            // Redirect to change password page if password not changed yet
+            redirect('student/changePassword', 'refresh');
+        } else {
+            // Proceed to dashboard if password is already changed
+            redirect('student/dashboard', 'refresh');
+        }
+    }
+}
 
 	function check_database($password)
 	{
@@ -70,39 +93,82 @@ class Student extends CI_Controller
 		}
 	}
 
-	function dashboard()
-	{
-		if ($this->session->userdata('student_in')) {
-			$student_session = $this->session->userdata('student_in');
-			$data['id'] = $student_session['id'];
-			$student_id = $student_session['id'];
-			$data['student_name'] = $student_session['student_name'];
-			$data['page_title'] = "Dashboard";
-			$data['menu'] = "dashboard";
+	// function dashboard()
+	// {
+	// 	if ($this->session->userdata('student_in')) {
+	// 		$student_session = $this->session->userdata('student_in');
+	// 		$data['id'] = $student_session['id'];
+	// 		$student_id = $student_session['id'];
+	// 		$data['student_name'] = $student_session['student_name'];
+	// 		$data['page_title'] = "Dashboard";
+	// 		$data['menu'] = "dashboard";
 
-			$this->student_template->show('student/dashboard', $data);
-		} else {
-			redirect('student', 'refresh');
-		}
-	}
+	// 		$this->student_template->show('student/dashboard', $data);
+	// 	} else {
+	// 		redirect('student', 'refresh');
+	// 	}
+	// }
 
-	function profile()
-	{
-		if ($this->session->userdata('student_in')) {
-			$student_session = $this->session->userdata('student_in');
-			$data['id'] = $student_session['id'];
-			$data['usn'] = $student_session['usn'];
-			$data['student_name'] = $student_session['student_name'];
-			$data['page_title'] = "My Profile";
-			$data['menu'] = "my_profile";
+	public function dashboard()
+{
+    if ($this->session->userdata('student_in')) {
+        $student_session = $this->session->userdata('student_in');
+        $student_id = $student_session['id'];
+        $data['id'] = $student_id;
+        $data['student_name'] = $student_session['student_name'];
+        $data['page_title'] = "Dashboard";
+        $data['menu'] = "dashboard";
 
-			$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+        // Fetch student details, including change_password column
+        $student = $this->admin_model->get_student_by_id($student_id);
+        $data['change_password'] = $student->change_password;
 
-			$this->student_template->show('student/profile', $data);
-		} else {
-			redirect('student', 'refresh');
-		}
-	}
+        $this->student_template->show('student/dashboard', $data);
+    } else {
+        redirect('student', 'refresh');
+    }
+}
+
+	// function profile()
+	// {
+	// 	if ($this->session->userdata('student_in')) {
+	// 		$student_session = $this->session->userdata('student_in');
+	// 		$data['id'] = $student_session['id'];
+	// 		$data['usn'] = $student_session['usn'];
+	// 		$data['student_name'] = $student_session['student_name'];
+	// 		$data['page_title'] = "My Profile";
+	// 		$data['menu'] = "my_profile";
+
+	// 		$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+
+	// 		$this->student_template->show('student/profile', $data);
+	// 	} else {
+	// 		redirect('student', 'refresh');
+	// 	}
+	// }
+
+	public function profile()
+{
+    if ($this->session->userdata('student_in')) {
+        $student_session = $this->session->userdata('student_in');
+        $student_id = $student_session['id'];
+        $data['id'] = $student_id;
+        $data['usn'] = $student_session['usn'];
+        $data['student_name'] = $student_session['student_name'];
+        $data['page_title'] = "My Profile";
+        $data['menu'] = "my_profile";
+
+        // Fetch student details, including change_password column
+        $student = $this->admin_model->get_student_by_id($student_id);
+        $data['change_password'] = $student->change_password;
+
+        $data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+
+        $this->student_template->show('student/profile', $data);
+    } else {
+        redirect('student', 'refresh');
+    }
+}
 
 	public function personaldetails() 
 {
@@ -175,27 +241,55 @@ class Student extends CI_Controller
     }
 }
 
-	function fees(): void
-	{
-		if ($this->session->userdata('student_in')) {
-			$student_session = $this->session->userdata('student_in');
-			$data['id'] = $student_session['id'];
-			$data['usn'] = $student_session['usn'];
-			$data['student_name'] = $student_session['student_name'];
-			$data['page_title'] = "Fees";
-			$data['menu'] = "profile";
-			$data['action'] = "student/pay_now";
-			$data['voucher_types'] = $this->globals->voucher_types();
-			$data['paymentDetail'] = $this->admin_model->getDetailsbyfield2('usn',$data['usn'], 'offline','0', 'payment_structure1')->result();
-			$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($data['usn'], 'reg_no', 'transactions')->result();
-			$data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
-			$data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
+	// function fees(): void
+	// {
+	// 	if ($this->session->userdata('student_in')) {
+	// 		$student_session = $this->session->userdata('student_in');
+	// 		$data['id'] = $student_session['id'];
+	// 		$data['usn'] = $student_session['usn'];
+	// 		$data['student_name'] = $student_session['student_name'];
+	// 		$data['page_title'] = "Fees";
+	// 		$data['menu'] = "profile";
+	// 		$data['action'] = "student/pay_now";
+	// 		$data['voucher_types'] = $this->globals->voucher_types();
+	// 		$data['paymentDetail'] = $this->admin_model->getDetailsbyfield2('usn',$data['usn'], 'offline','0', 'payment_structure1')->result();
+	// 		$data['transactionDetails'] = $this->admin_model->getDetailsbyfield($data['usn'], 'reg_no', 'transactions')->result();
+	// 		$data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+	// 		$data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
 
-			$this->student_template->show('student/fees', $data);
-		} else {
-			redirect('student', 'refresh');
-		}
-	}
+	// 		$this->student_template->show('student/fees', $data);
+	// 	} else {
+	// 		redirect('student', 'refresh');
+	// 	}
+	// }
+
+	public function fees(): void
+{
+    if ($this->session->userdata('student_in')) {
+        $student_session = $this->session->userdata('student_in');
+        $student_id = $student_session['id'];
+        $data['id'] = $student_id;
+        $data['usn'] = $student_session['usn'];
+        $data['student_name'] = $student_session['student_name'];
+        $data['page_title'] = "Fees";
+        $data['menu'] = "fees";
+        
+        // Fetch student details, including change_password column
+        $student = $this->admin_model->get_student_by_id($student_id);
+        $data['change_password'] = $student->change_password; 
+
+        $data['action'] = "student/pay_now";
+        $data['voucher_types'] = $this->globals->voucher_types();
+        $data['paymentDetail'] = $this->admin_model->getDetailsbyfield2('usn', $data['usn'], 'offline', '0', 'payment_structure1')->result();
+        $data['transactionDetails'] = $this->admin_model->getDetailsbyfield($data['usn'], 'reg_no', 'transactions')->result();
+        $data['student'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
+        $data['fees'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'fee_master')->result();
+
+        $this->student_template->show('student/fees', $data);
+    } else {
+        redirect('student', 'refresh');
+    }
+}
 
 	public function pay_now()
 	{
@@ -630,46 +724,109 @@ class Student extends CI_Controller
 	}
 
 
-	function changePassword()
+	// function changePassword()
+	// {
+	// 	if ($this->session->userdata('student_in')) {
+	// 		$student_session = $this->session->userdata('student_in');
+	// 		$data['id'] = $student_session['id'];
+	// 		$student_id = $student_session['id'];
+	// 		$data['student_name'] = $student_session['student_name'];
+	// 		$data['page_title'] = "Change Password";
+	// 		$data['menu'] = "change_password";
+	// 		$data['admissionDetails'] = $this->admin_model->getDetails('students', $data['id'])->row();
+
+	// 		// $this->form_validation->set_rules('oldPassword', 'Old Password', 'required');
+	// 		$this->form_validation->set_rules('oldpassword', 'Old Password', 'required');
+	// 		$this->form_validation->set_rules('newpassword', 'New Password', 'required|min_length[8]|callback_check_password_strength');
+	// 		$this->form_validation->set_rules('confirmpassword', 'Confirm Password', 'required|matches[newpassword]');
+
+	// 		if ($this->form_validation->run() === FALSE) {
+
+	// 			$data['action'] = 'student/changePassword';
+	// 			$this->student_template->show('student/changepassword', $data);
+	// 		} else {
+	// 			// $oldPassword = $this->input->post('oldPassword');
+	// 			$oldpassword = $this->input->post('oldpassword');
+	// 			$newpassword = $this->input->post('newpassword');
+	// 			$confirmpassword = $this->input->post('confirmpassword');
+
+	// 			if ($oldpassword == $newpassword) {
+	// 				$this->session->set_flashdata('message', 'Old and New Password should not be same...!');
+	// 				$this->session->set_flashdata('status', 'alert-warning');
+	// 			} else {
+	// 				$updateDetails = array('password' => md5($newpassword));
+	// 				$result = $this->admin_model->changePassword($data['id'], $oldpassword, $updateDetails, 'students');
+	// 				if ($result) {
+	// 					$this->session->set_flashdata('message', 'Password udpated successfully...!');
+	// 					$this->session->set_flashdata('status', 'alert-success');
+	// 				} else {
+	// 					$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
+	// 					$this->session->set_flashdata('status', 'alert-warning');
+	// 				}
+	// 			}
+	// 			redirect('/student/changePassword', 'refresh');
+	// 		}
+	// 	} else {
+	// 		redirect('student', 'refresh');
+	// 	}
+	// }
+
+		public function changePassword()
 	{
 		if ($this->session->userdata('student_in')) {
 			$student_session = $this->session->userdata('student_in');
-			$data['id'] = $student_session['id'];
 			$student_id = $student_session['id'];
 			$data['student_name'] = $student_session['student_name'];
 			$data['page_title'] = "Change Password";
 			$data['menu'] = "change_password";
-			$data['admissionDetails'] = $this->admin_model->getDetails('students', $data['id'])->row();
+			$data['admissionDetails'] = $this->admin_model->getDetails('students', $student_id)->row();
 
-			// $this->form_validation->set_rules('oldPassword', 'Old Password', 'required');
+			// Fetch student details, including change_password column
+			$student = $this->admin_model->get_student_by_id($student_id);
+			$data['change_password'] = $student->change_password;
+
+			// Set security message if the password needs to be changed
+			if ($data['change_password'] == 0) {
+				$data['security_message'] = "For security reasons and to ensure proper access to the application, we kindly request that you change your password from the default USN.";
+			} else {
+				$data['security_message'] = ""; // No message if the password has already been changed
+			}
+
 			$this->form_validation->set_rules('oldpassword', 'Old Password', 'required');
 			$this->form_validation->set_rules('newpassword', 'New Password', 'required|min_length[8]|callback_check_password_strength');
 			$this->form_validation->set_rules('confirmpassword', 'Confirm Password', 'required|matches[newpassword]');
 
 			if ($this->form_validation->run() === FALSE) {
-
 				$data['action'] = 'student/changePassword';
 				$this->student_template->show('student/changepassword', $data);
 			} else {
-				// $oldPassword = $this->input->post('oldPassword');
 				$oldpassword = $this->input->post('oldpassword');
 				$newpassword = $this->input->post('newpassword');
-				$confirmpassword = $this->input->post('confirmpassword');
 
 				if ($oldpassword == $newpassword) {
-					$this->session->set_flashdata('message', 'Old and New Password should not be same...!');
+					$this->session->set_flashdata('message', 'Old and New Password should not be the same!');
 					$this->session->set_flashdata('status', 'alert-warning');
 				} else {
-					$updateDetails = array('password' => md5($newpassword));
-					$result = $this->admin_model->changePassword($data['id'], $oldpassword, $updateDetails, 'students');
+					// Call model function to change password
+					$result = $this->admin_model->change_password($student_id, $oldpassword, $newpassword);
+
 					if ($result) {
-						$this->session->set_flashdata('message', 'Password udpated successfully...!');
+						$this->session->set_flashdata('message', 'Password updated successfully!');
 						$this->session->set_flashdata('status', 'alert-success');
+						
+						// Logout the student after password change
+						$this->session->unset_userdata('student_in');
+						$this->session->sess_destroy();
+						
+						// Redirect to login page with a message
+						$this->session->set_flashdata('message', 'Password updated. Please log in again with your new password.');
+						redirect('student', 'refresh');
 					} else {
-						$this->session->set_flashdata('message', 'Oops something went wrong please try again.!');
-						$this->session->set_flashdata('status', 'alert-warning');
+						$this->session->set_flashdata('message', 'Old password incorrect. Please try again.');
+						$this->session->set_flashdata('status', 'alert-danger');
 					}
 				}
+
 				redirect('/student/changePassword', 'refresh');
 			}
 		} else {

@@ -8,6 +8,12 @@
                             <div class="col-lg-5 d-none d-lg-block bg-login rounded-left"></div>
                             <div class="col-lg-7">
                                 <div class="p-5">
+                                                        <?php if ($this->session->flashdata('message')): ?>
+                            <div class="alert <?php echo $this->session->flashdata('status'); ?>">
+                                <?php echo $this->session->flashdata('message'); ?>
+                            </div>
+                        <?php endif; ?>
+
                                     <div class="text-center mb-5">
                                         <a class="text-dark font-size-22 font-family-secondary">
                                             <b>Malnad College of Engineering</b>
@@ -15,7 +21,8 @@
                                         <h5>STUDENT ACCOUNT</h5>
                                     </div>
                                     <h1 class="h5 mb-1">Welcome Back!</h1>
-                                    <p class="text-muted mb-4">Enter your usn and password to access student panel.<br>USN and password should be in capital letters.</p>
+                                    <p class="text-muted mb-4">Enter your usn and password to access student
+                                        panel.<br>USN and password should be in capital letters.</p>
                                     <?php echo form_open($action, 'class="js-validation-signin" method="POST"'); ?>
                                     <?php echo '<span class="text-danger">' . validation_errors() . '</span>'; ?>
                                     <div class="input-group mb-3">
@@ -47,12 +54,12 @@
                                             <p class="text-muted mb-2"><a href="#"
                                                     class="text-muted font-weight-medium ml-1">Forgot your password?</a>
                                             </p>
-                                            <!-- <p class="text-muted mb-0">Don't have an account? <a href="pages-register.html" class="text-muted font-weight-medium ml-1"><b>Sign Up</b></a></p> -->
                                         </div> <!-- end col -->
                                     </div>
                                     <!-- end row -->
                                 </div> <!-- end .padding-5 -->
                             </div> <!-- end col -->
+
                         </div> <!-- end row -->
                     </div> <!-- end .w-100 -->
                 </div> <!-- end .d-flex -->
