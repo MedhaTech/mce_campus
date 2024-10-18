@@ -389,8 +389,8 @@
                                 if ($transactionDetails1->transaction_status == 1) {
                                     $result_array = array(
                                         $i++,
-                                        ($transactionDetails1->receipt_no) ? anchor('student/downloadReceipt/' . $transactionDetails1->reg_no . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-",
-                                        // ($transactionDetails1->receipt_no) ? $transactionDetails1->receipt_no : "-",
+                                        // ($transactionDetails1->receipt_no) ? anchor('student/downloadReceipt/' . $transactionDetails1->reg_no . '/' . $transactionDetails1->id, $transactionDetails1->receipt_no) : "-",
+                                        ($transactionDetails1->receipt_no) ? $transactionDetails1->receipt_no : "-",
                                         ($transactionDetails1->transaction_date != "") ? date('d-m-Y', strtotime($transactionDetails1->transaction_date)) : "-",
                                         $trans,
                                         number_format($transactionDetails1->amount, 2),
