@@ -1209,7 +1209,7 @@ class Admin extends CI_Controller
 				$accno = "110173085919";
 			}
 
-			
+
 
 			// Create a function to generate a single copy
 			function generateCopy($i, $pdf, $x, $y, $collegeName, $affiliation, $contactInfo, $contactInfo1, $issuedOn, $programe, $chellan, $dept, $tableData, $voucherDetails, $copy, $accno)
@@ -1602,7 +1602,7 @@ class Admin extends CI_Controller
 			printStudent($pdf, "Quota ", $admissionDetails->quota, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "College Code ", $admissionDetails->college_code, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "Gender ", $admissionDetails->gender, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			printStudent($pdf, "Year ", $feeDetails->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Year ", $transactionDetails->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "Ug ", 'Ug - ' . $admissionDetails->department, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			// printStudent($pdf, "Pg :", '', $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			$pdf->Ln(4);
@@ -1655,7 +1655,7 @@ class Admin extends CI_Controller
 			// Note and Receipt Date
 			$cellWidth = $pdf->GetPageWidth() - 20;
 			$rowHeight = 10;
-			$pdf->Ln(60);
+			$pdf->Ln(40);
 			$pdf->SetFont('Arial', '', 8);
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetX(12);
@@ -1689,7 +1689,7 @@ class Admin extends CI_Controller
 			$paid_amount = $this->admin_model->paidfee('reg_no', $usn, 'transaction_status', '1', 'transactions');
 			$studentfeeDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
 
-
+			$feemasterDetail = $this->admin_model->getDetailsbyfield2('usn', $usn, 'year', $transactionDetails->year, 'fee_master')->row();
 			$fees = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
 			$balance_amount = $fees->final_fee - $paid_amount;
 			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $transactionDetails->payment_id)->row();
@@ -1713,15 +1713,86 @@ class Admin extends CI_Controller
 			// Centered header
 			// $cellWidth = 40;
 			// $cellHeight = 5;
+
 			$pdf->SetFont('Arial', '', 9);
 			if ($transactionDetails->payment_mode == 0) {
+
+				if ($transactionDetails->payment_id != 0) {
+					$fees = [
+						'University Registration Fee' => $voucherDetails->renewal_of_registration_fees,
+						'E-Consortium Fee' => $voucherDetails->e_consortium_fees,
+						'Sport Fee' => $voucherDetails->students_sports_fees,
+						'Sports Development Fee' => $voucherDetails->students_sports_development_fees,
+						'Career Guidance Counseling Fee' => $voucherDetails->career_guideliness_and_counselling_fees,
+						'University Development Fund' => $voucherDetails->university_development_fees,
+						'Cultural Fee' => $voucherDetails->cultural_activities_fees,
+						'Teachers Development Fee' => $voucherDetails->teachers_development_fees,
+						'Student Development Fee' => $voucherDetails->student_development_fees,
+						'Indian Red Cross Membership Fee' => $voucherDetails->indian_red_cross_membership_fees,
+						'Women Cell Fee' => $voucherDetails->women_cell_fees,
+						'NSS Fee' => $voucherDetails->nss_fees,
+						'Teachers Flag Fee' => $voucherDetails->teachers_flag_fees
+					];
+					$university = 0;
+					foreach ($fees as $feeName => $feeValue) {
+						if ($feeValue > 0) {
+							$university += $feeValue;
+						}
+					}
+					if ($university > 0) {
+						$tableData[] = ["University Other Fee", $university];
+					}
+					if ($voucherDetails->college_other_fees > 0) {
+						$tableData[] = ['College Other Fee', $voucherDetails->college_other_fees];
+					}
+					if ($voucherDetails->exam_fee > 0) {
+						$tableData[] = ['Exam Fee', $voucherDetails->exam_fee];
+					}
+					if ($voucherDetails->tuition_fee > 0) {
+						$tableData[] = ['Tution Fee', $voucherDetails->tuition_fee];
+					}
+				} else {
+					$fees = [
+						'University Registration Fee' => $feemasterDetail->renewal_of_registration_fees,
+						'E-Consortium Fee' => $feemasterDetail->e_consortium_fees,
+						'Sport Fee' => $feemasterDetail->students_sports_fees,
+						'Sports Development Fee' => $feemasterDetail->students_sports_development_fees,
+						'Career Guidance Counseling Fee' => $feemasterDetail->career_guideliness_and_counselling_fees,
+						'University Development Fund' => $feemasterDetail->university_development_fees,
+						'Cultural Fee' => $feemasterDetail->cultural_activities_fees,
+						'Teachers Development Fee' => $feemasterDetail->teachers_development_fees,
+						'Student Development Fee' => $feemasterDetail->student_development_fees,
+						'Indian Red Cross Membership Fee' => $feemasterDetail->indian_red_cross_membership_fees,
+						'Women Cell Fee' => $feemasterDetail->women_cell_fees,
+						'NSS Fee' => $feemasterDetail->nss_fees,
+						'Teachers Flag Fee' => $feemasterDetail->teachers_flag_fees
+					];
+					$university = 0;
+					foreach ($fees as $feeName => $feeValue) {
+						if ($feeValue > 0) {
+							$university += $feeValue;
+						}
+					}
+					if ($university > 0) {
+						$tableData[] = ["University Other Fee", $university];
+					}
+					if ($feemasterDetail->college_other_fees > 0) {
+						$tableData[] = ['College Other Fee', $feemasterDetail->college_other_fees];
+					}
+					if ($feemasterDetail->exam_fee > 0) {
+						$tableData[] = ['Exam Fee', $feemasterDetail->exam_fee];
+					}
+					if ($feemasterDetail->tuition_fee > 0) {
+						$tableData[] = ['Tution Fee', $feemasterDetail->tuition_fee];
+					}
+				}
+
 
 				$collegeName = "MALNAD COLLEGE OF ENGINEERING";
 				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
 				$collegeName2 = "Under the auspices of the MTES (R),";
 				$collegeName3 = "PB NO. 21,SALAGAME ROAD HASSAN, KARNATAKA";
 				$contactInfo = "FEES RECEIPT - " . $admissionDetails->sub_quota;
-				$tableData[] = ['Tution Fee', $transactionDetails->amount];
 			} else {
 
 				$collegeName = "MALNAD TECHNICAL EDUCATION SOCIETY (R)";
@@ -1789,7 +1860,7 @@ class Admin extends CI_Controller
 			printStudent($pdf, "Quota ", $admissionDetails->quota, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "College Code ", $admissionDetails->college_code, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "Gender ", $admissionDetails->gender, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			printStudent($pdf, "Year ", $feeDetails->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Year ", $transactionDetails->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "Ug ", 'Ug - ' . $admissionDetails->department, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			// printStudent($pdf, "Pg :", '', $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			$pdf->Ln(4);
@@ -1842,7 +1913,7 @@ class Admin extends CI_Controller
 			// Note and Receipt Date
 			$cellWidth = $pdf->GetPageWidth() - 20;
 			$rowHeight = 10;
-			$pdf->Ln(60);
+			$pdf->Ln(40);
 			$pdf->SetFont('Arial', '', 8);
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetX(12);
@@ -1958,6 +2029,7 @@ class Admin extends CI_Controller
 			}
 			if ($voucherDetails->corpus_fee_demand > 0) {
 				$tableData[] = ['Corpus Fund', $voucherDetails->corpus_fee_demand];
+				$accno = "110173085919";
 			}
 
 			// Create a function to generate a single copy
@@ -2681,9 +2753,9 @@ class Admin extends CI_Controller
 				// Corpus fee demand and collection
 				$college_fee_demand = $student->college_fee_demand;
 				$college_collection = $student->college_fee_collection;
-				$collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); 
-				$paid_amount = $college_collection + $collection_amount; 
-				$college_balance = $college_fee_demand - $paid_amount; 
+				$collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0);
+				$paid_amount = $college_collection + $collection_amount;
+				$college_balance = $college_fee_demand - $paid_amount;
 
 				// Prepare data row
 				$result_array = array(
@@ -2724,160 +2796,166 @@ class Admin extends CI_Controller
 
 
 
-// 	public function feebalance_report($download = 0)
-// {
-//     if ($this->session->userdata('logged_in')) {
-//         $session_data = $this->session->userdata('logged_in');
-//         $data['id'] = $session_data['id'];
-//         $data['username'] = $session_data['username'];
-//         $data['full_name'] = $session_data['full_name'];
-//         $data['role'] = $session_data['role'];
+	// 	public function feebalance_report($download = 0)
+	// {
+	//     if ($this->session->userdata('logged_in')) {
+	//         $session_data = $this->session->userdata('logged_in');
+	//         $data['id'] = $session_data['id'];
+	//         $data['username'] = $session_data['username'];
+	//         $data['full_name'] = $session_data['full_name'];
+	//         $data['role'] = $session_data['role'];
 
-//         $data['currentAcademicYear'] = $this->globals->currentAcademicYear();
-//         $data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
-//         $data['department_options'] = array("" => "Select Department") + $this->departments();
-//         $data['page_title'] = 'FEE BALANCE REPORT';
-//         $data['menu'] = 'feebalancereport';
-//         $data['download_action'] = 'admin/feebalance_report';
+	//         $data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+	//         $data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
+	//         $data['department_options'] = array("" => "Select Department") + $this->departments();
+	//         $data['page_title'] = 'FEE BALANCE REPORT';
+	//         $data['menu'] = 'feebalancereport';
+	//         $data['download_action'] = 'admin/feebalance_report';
 
-//         // Fetch input values
-//         $academic_year = $this->input->post('academic_year');
-//         $department = $this->input->post('department');
-//         $year = $this->input->post('year');
+	//         // Fetch input values
+	//         $academic_year = $this->input->post('academic_year');
+	//         $department = $this->input->post('department');
+	//         $year = $this->input->post('year');
 
-//         // Corrected: No need to call ->result() here
-//         $students = $this->admin_model->get_fee_balance($academic_year, $department, $year);
+	//         // Corrected: No need to call ->result() here
+	//         $students = $this->admin_model->get_fee_balance($academic_year, $department, $year);
 
-//         // Table setup for displaying data
-//         $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
-//         $this->table->set_template($table_setup);
+	//         // Table setup for displaying data
+	//         $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+	//         $this->table->set_template($table_setup);
 
-//         $print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 'Student Number', 'Balance', 'College Fee Demand');
-//         $this->table->set_heading($print_fields);
+	//         $print_fields = array('S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 'Student Number', 'Balance', 'College Fee Demand');
+	//         $this->table->set_heading($print_fields);
 
-//         $i = 1;
-//         foreach ($students as $student) {
-//             $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+	//         $i = 1;
+	//         foreach ($students as $student) {
+	//             $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
 
-//             $result_array = array(
-//                 $i++,
-//                 $student->academic_year,
-//                 $student->usn,
-//                 $student->student_name,
-//                 $dmm,  // Department name
-// 				$year ? $year : $currentAcademicYear,  // Display selected or current academic year
-//                 // $student->year,
-//                 $student->student_number,  // Assuming this is the mobile number or student number
-//                 $student->balance,
-// 				$student->college_fee_demand,
-//             );
+	//             $result_array = array(
+	//                 $i++,
+	//                 $student->academic_year,
+	//                 $student->usn,
+	//                 $student->student_name,
+	//                 $dmm,  // Department name
+	// 				$year ? $year : $currentAcademicYear,  // Display selected or current academic year
+	//                 // $student->year,
+	//                 $student->student_number,  // Assuming this is the mobile number or student number
+	//                 $student->balance,
+	// 				$student->college_fee_demand,
+	//             );
 
-//             $this->table->add_row($result_array);
-//         }
+	//             $this->table->add_row($result_array);
+	//         }
 
-//         $data['table'] = $this->table->generate();
+	//         $data['table'] = $this->table->generate();
 
-//         // Handle download request
-//         if (!$download) {
-//             $this->admin_template->show('admin/feebalance_report', $data);
-//         } else {
-//             $response = array(
-//                 'op' => 'ok',
-//                 'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
-//             );
-//             die(json_encode($response));
-//         }
-//     } else {
-//         redirect('admin/timeout');
-//     }
-// }
+	//         // Handle download request
+	//         if (!$download) {
+	//             $this->admin_template->show('admin/feebalance_report', $data);
+	//         } else {
+	//             $response = array(
+	//                 'op' => 'ok',
+	//                 'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+	//             );
+	//             die(json_encode($response));
+	//         }
+	//     } else {
+	//         redirect('admin/timeout');
+	//     }
+	// }
 
-public function feebalance_report($download = 0)
-{
-    if ($this->session->userdata('logged_in')) {
-        $session_data = $this->session->userdata('logged_in');
-        $data['id'] = $session_data['id'];
-        $data['username'] = $session_data['username'];
-        $data['full_name'] = $session_data['full_name'];
-        $data['role'] = $session_data['role'];
+	public function feebalance_report($download = 0)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
 
-        $data['currentAcademicYear'] = $this->globals->currentAcademicYear();
-        $data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
-        $data['department_options'] = array("" => "Select Department") + $this->departments();
-        $data['page_title'] = 'FEE BALANCE REPORT';
-        $data['menu'] = 'feebalancereport';
-        $data['download_action'] = 'admin/feebalance_report';
+			$data['currentAcademicYear'] = $this->globals->currentAcademicYear();
+			$data['academicYears'] = array("" => "Select Academic Year") + $this->globals->academicYears();
+			$data['department_options'] = array("" => "Select Department") + $this->departments();
+			$data['page_title'] = 'FEE BALANCE REPORT';
+			$data['menu'] = 'feebalancereport';
+			$data['download_action'] = 'admin/feebalance_report';
 
-        // Fetch input values
-        $academic_year = $this->input->post('academic_year');
-        $department = $this->input->post('department');
-        $year = $this->input->post('year');
+			// Fetch input values
+			$academic_year = $this->input->post('academic_year');
+			$department = $this->input->post('department');
+			$year = $this->input->post('year');
 
-        $students = $this->admin_model->get_fee_balance($academic_year, $department, $year);
+			$students = $this->admin_model->get_fee_balance($academic_year, $department, $year);
 
-        // Table setup for displaying data
-        $table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
-        $this->table->set_template($table_setup);
+			// Table setup for displaying data
+			$table_setup = array('table_open' => '<table class="table dt-responsive nowrap table-bordered" border="1" id="basic-datatable">');
+			$this->table->set_template($table_setup);
 
-        // Define the table heading
-        $print_fields = array(
-            'S.No', 'Academic Year', 'Usn', 'Student Name', 'Course', 'Year', 
-            'Student Number',
-            'College Fee Demand', 'College Balance'
-        );
-        $this->table->set_heading($print_fields);
+			// Define the table heading
+			$print_fields = array(
+				'S.No',
+				'Academic Year',
+				'Usn',
+				'Student Name',
+				'Course',
+				'Year',
+				'Student Number',
+				'College Fee Demand',
+				'College Balance'
+			);
+			$this->table->set_heading($print_fields);
 
-        $i = 1;
-        foreach ($students as $student) {
-            $dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
+			$i = 1;
+			foreach ($students as $student) {
+				$dmm = $this->admin_model->get_dept_by_id($student->department_id)["department_name"];
 
-            // Corpus fee details
-            $corpus_fee_demand = $student->corpus_fee_demand; // Corpus fee demand
-            $corpus_collection = $student->corpus_fee_collection; // Corpus collected so far
-            $corpus_fee_collection = $this->admin_model->get_total_amount($year, $student->usn, 1); // Additional paid amount for corpus
-            $paid_amount_corpus = $corpus_fee_collection + $corpus_collection; // Total paid amount for corpus
-            $corpus_balance = $corpus_fee_demand - $paid_amount_corpus; // Corpus balance
+				// Corpus fee details
+				$corpus_fee_demand = $student->corpus_fee_demand; // Corpus fee demand
+				$corpus_collection = $student->corpus_fee_collection; // Corpus collected so far
+				$corpus_fee_collection = $this->admin_model->get_total_amount($year, $student->usn, 1); // Additional paid amount for corpus
+				$paid_amount_corpus = $corpus_fee_collection + $corpus_collection; // Total paid amount for corpus
+				$corpus_balance = $corpus_fee_demand - $paid_amount_corpus; // Corpus balance
 
-            // College fee details
-            $college_fee_demand = $student->college_fee_demand; // College fee demand
-            $college_collection = $student->college_fee_collection; // College collected so far
-            $collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); // Additional paid amount for college
-            $paid_amount_college = $college_collection + $collection_amount; // Total paid amount for college
-            $college_balance = $college_fee_demand - $paid_amount_college; // College balance
+				// College fee details
+				$college_fee_demand = $student->college_fee_demand; // College fee demand
+				$college_collection = $student->college_fee_collection; // College collected so far
+				$collection_amount = $this->admin_model->get_total_amount($year, $student->usn, 0); // Additional paid amount for college
+				$paid_amount_college = $college_collection + $collection_amount; // Total paid amount for college
+				$college_balance = $college_fee_demand - $paid_amount_college; // College balance
 
-            if ($corpus_balance > 0 || $college_balance > 0) {
-                $result_array = array(
-                    $i++,
-                    $student->academic_year,
-                    $student->usn,
-                    $student->student_name,
-                    $dmm,  // Department name
-                    $year ? $year : $data['currentAcademicYear'],  
-                    $student->student_number,  
-                    $college_fee_demand,
-                    $college_balance
-                );
+				if ($corpus_balance > 0 || $college_balance > 0) {
+					$result_array = array(
+						$i++,
+						$student->academic_year,
+						$student->usn,
+						$student->student_name,
+						$dmm,  // Department name
+						$year ? $year : $data['currentAcademicYear'],
+						$student->student_number,
+						$college_fee_demand,
+						$college_balance
+					);
 
-                $this->table->add_row($result_array);
-            }
-        }
+					$this->table->add_row($result_array);
+				}
+			}
 
-        $data['table'] = $this->table->generate();
+			$data['table'] = $this->table->generate();
 
-        // Handle download request
-        if (!$download) {
-            $this->admin_template->show('admin/feebalance_report', $data);
-        } else {
-            $response = array(
-                'op' => 'ok',
-                'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
-            );
-            die(json_encode($response));
-        }
-    } else {
-        redirect('admin/timeout');
-    }
-}
+			// Handle download request
+			if (!$download) {
+				$this->admin_template->show('admin/feebalance_report', $data);
+			} else {
+				$response = array(
+					'op' => 'ok',
+					'file' => "data:application/vnd.ms-excel;base64," . base64_encode($data['table'])
+				);
+				die(json_encode($response));
+			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
 
 	public function feebalance_report1($download = 0)
 	{
@@ -2942,6 +3020,304 @@ public function feebalance_report($download = 0)
 				);
 				die(json_encode($response));
 			}
+		} else {
+			redirect('admin/timeout');
+		}
+	}
+
+
+	function view_voucher()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+			$data['page_title'] = "Update Voucher Request";
+			$data['menu'] = "payments";
+			$feestruct_id = $this->input->post('fee_structure_id');
+			// Fetch existing voucher data
+			$voucherData = $this->admin_model->getDetails('payment_structure1', $feestruct_id)->row();
+
+			$fee_structure = $this->admin_model->get_fee_details_usn($voucherData->usn, $voucherData->year)->row();
+
+			$response = $this->load->view('admin/view_voucher', [
+				'fee_structure' => $fee_structure,
+				'voucherData' => $voucherData
+			], true);
+
+			// Send the response back as JSON
+			echo json_encode(['status' => 'success', 'html' => $response]);
+		}
+	}
+
+	function getFeebreakup()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+			$data['page_title'] = "Update Voucher Request";
+			$data['menu'] = "payments";
+			$feemasterId = $this->input->post('feemasterId');
+			// Fetch existing voucher data
+			$fee_structure = $this->admin_model->getDetails('fee_master', $feemasterId)->row();
+
+
+			$response = $this->load->view('admin/view_breakup', [
+				'fee_structure' => $fee_structure
+
+			], true);
+
+			// Send the response back as JSON
+			echo json_encode(['status' => 'success', 'html' => $response]);
+		}
+	}
+
+	public function voucher_cancel()
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+
+
+			$encryptId = $this->input->post('encryptId');
+			$usn = base64_decode($encryptId);
+			$id = $this->input->post('paymentId');
+			$reason = $this->input->post('reason');
+
+			$voucherExists = $this->admin_model->getDetails('payment_structure1', $id)->num_rows();
+
+			if ($voucherExists > 0) {
+
+				$updateDetails['cancel_reason'] = $reason;
+				$updateDetails['status'] = '4';
+
+				// Update voucher details in the database
+				$result = $this->admin_model->updateDetails($id, $updateDetails, 'payment_structure1');
+
+				echo json_encode(['status' => 'success']);
+			} else {
+
+				echo json_encode(['status' => 'error']);
+			}
+
+			exit;
+		}
+	}
+	public function consolidatedfeereceipt($encryptId, $feemasterid)
+	{
+		if ($this->session->userdata('logged_in')) {
+			$session_data = $this->session->userdata('logged_in');
+			$data['id'] = $session_data['id'];
+			$data['username'] = $session_data['username'];
+			$data['full_name'] = $session_data['full_name'];
+			$data['role'] = $session_data['role'];
+
+			$data['page_title'] = 'Fees Receipt';
+			$data['menu'] = 'feereceipt';
+			$usn = base64_decode($encryptId);
+			$data['admissionDetails'] = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+			$feemasterDetail = $this->admin_model->getDetailsbyfield($feemasterid, 'id', 'fee_master')->row();
+			$transactionDetail = $this->admin_model->getStudenttrans($usn, $feemasterDetail->year);
+			
+			$admissionDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'students')->row();
+
+			$this->load->library('fpdf'); // Load library
+			ini_set("session.auto_start", 0);
+			ini_set('memory_limit', '-1');
+			define('FPDF_FONTPATH', 'plugins/font');
+
+
+
+
+			$pdf = new FPDF();
+			$pdf->AddPage('P', 'A4'); // 'P' for portrait orientation, 'A4' for A4 size (210x297 mm)
+
+			// Set margins
+			$pdf->SetMargins(20, 20, 20);
+
+			$pdf->SetFont('Arial', 'B', 9);
+
+			// Centered header
+			// $cellWidth = 40;
+			// $cellHeight = 5;
+			$pdf->SetFont('Arial', '', 9);
+			
+				$collegeName = "MALNAD COLLEGE OF ENGINEERING";
+				$collegeName1 = "Autonomous Institute Affiliated to the VTU";
+				$collegeName2 = "Under the auspices of the MTES (R),";
+				$collegeName3 = "PB NO. 21,SALAGAME ROAD HASSAN, KARNATAKA";
+				$contactInfo = "CONSOLIDATED FEES RECEIPT - " . $admissionDetails->sub_quota;
+			
+			$fees = [
+				'University Registration Fee' => $feemasterDetail->renewal_of_registration_fees,
+				'E-Consortium Fee' => $feemasterDetail->e_consortium_fees,
+				'Sport Fee' => $feemasterDetail->students_sports_fees,
+				'Sports Development Fee' => $feemasterDetail->students_sports_development_fees,
+				'Career Guidance Counseling Fee' => $feemasterDetail->career_guideliness_and_counselling_fees,
+				'University Development Fund' => $feemasterDetail->university_development_fees,
+				'Cultural Fee' => $feemasterDetail->cultural_activities_fees,
+				'Teachers Development Fee' => $feemasterDetail->teachers_development_fees,
+				'Student Development Fee' => $feemasterDetail->student_development_fees,
+				'Indian Red Cross Membership Fee' => $feemasterDetail->indian_red_cross_membership_fees,
+				'Women Cell Fee' => $feemasterDetail->women_cell_fees,
+				'NSS Fee' => $feemasterDetail->nss_fees,
+				'Teachers Flag Fee' => $feemasterDetail->teachers_flag_fees
+			];
+			$university = 0;
+			foreach ($fees as $feeName => $feeValue) {
+				if ($feeValue > 0) {
+					$university += $feeValue;
+				}
+			}
+			if ($university > 0) {
+				$tableData[] = ["University Other Fee", $university];
+			}
+			if ($feemasterDetail->college_other_fees > 0) {
+				$tableData[] = ['College Other Fee', $feemasterDetail->college_other_fees];
+			}
+			if ($feemasterDetail->exam_fee > 0) {
+				$tableData[] = ['Exam Fee', $feemasterDetail->exam_fee];
+			}
+			if ($feemasterDetail->tuition_fee > 0) {
+				$tableData[] = ['Tution Fee', $feemasterDetail->tuition_fee];
+			}
+
+
+			$pdf->SetFont('Arial', 'B', 12);
+			$pdf->Cell(0, 2, $collegeName, 0, 1, 'C');
+
+
+			$pdf->SetFont('Arial', '', 10);
+			$pdf->Cell(160, 8, $collegeName1, 0, 1, 'C');
+
+
+			$pdf->Cell(161, 1, $collegeName2, 0, 1, 'C');
+			$pdf->SetFont('Arial', '', 8);
+			$pdf->Cell(160, 7, $collegeName3, 0, 1, 'C');
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->Cell(160, 7, $contactInfo, 0, 1, 'C');
+
+			$pageWidth = $pdf->GetPageWidth();
+			$xPos = ($pageWidth - $cellWidth) / 2;
+			// // Amount Paid Box
+
+			// Transaction Details Table
+			$pdf->Ln(3);
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->SetTextColor(33, 33, 33);
+			$rowHeight = 7;
+			$cellWidth1 = 80; // Width for the label column
+			$cellWidth2 = 70; // Width for the value column
+			$pdf->SetX(10);
+			// $pdf->Cell($cellWidth1 + $cellWidth2, $rowHeight, 'TRANSACTION DETAILS:', 0, 1, 'L');
+			$boxWidth = 188;
+			$boxHeight = 8;
+			$boxXPos = ($pageWidth - $boxWidth) / 2;
+			$pdf->SetX($boxXPos);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->Rect($boxXPos, $pdf->GetY(), $boxWidth, $boxHeight, 'F');
+			$pdf->SetX($boxXPos + 2);
+			$pdf->Cell($boxWidth, $boxHeight, 'STUDENT DETAILS', 0, 1, 'L');
+			$pdf->SetFont('Arial', '', 11);
+			$pdf->SetTextColor(0, 1, 0);
+
+			function printStudent($pdf, $label, $value, $startY, $rowHeight, $cellWidth1, $cellWidth2)
+			{
+				$pdf->SetXY(13, $startY);
+				$pdf->Cell($cellWidth1, $rowHeight, $label, 0, 0, 'L', false);
+				$pdf->Cell(10, $rowHeight, ':', 0, 0, 'L', false);
+				$pdf->Cell($cellWidth2, $rowHeight, $value, 0, 1, 'L', false);
+			}
+			$pdf->Ln(2);
+
+			printStudent($pdf, "USN ", $admissionDetails->usn, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Student Name ", $admissionDetails->student_name, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Email ID ", $admissionDetails->email, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Mobile Number ", $admissionDetails->student_number, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Category Claimed ", $admissionDetails->category_claimed, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Quota ", $admissionDetails->quota, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "College Code ", $admissionDetails->college_code, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Gender ", $admissionDetails->gender, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Year ", $feemasterDetail->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Ug ", 'Ug - ' . $admissionDetails->department, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Academic Year ", $feemasterDetail->academic_year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			$pdf->Ln(4);
+
+			// Student Details Table
+
+			$pdf->SetFont('Arial', 'B', 10);
+			$pdf->SetX(10);
+			$boxWidth = 188;
+			$boxHeight = 8;
+			$boxXPos = ($pageWidth - $boxWidth) / 2;
+			$pdf->SetX($boxXPos);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->Rect($boxXPos, $pdf->GetY(), $boxWidth, $boxHeight, 'F');
+			$pdf->SetX($boxXPos + 2);
+			$pdf->Cell($boxWidth, $boxHeight, 'PAYMENT DESCRIPTION', 0, 1, 'L');
+			$pdf->Ln(1);
+			$pdf->SetFont('Arial', '', 11);
+			$pdf->SetTextColor(0, 0, 0);
+
+			function printRow($pdf, $label, $value, $startY, $rowHeight, $cellWidth1, $cellWidth2)
+			{
+				$pdf->SetXY(13, $startY);
+				$pdf->Cell($cellWidth1, $rowHeight, $label, 0, 0, 'L', false);
+				$pdf->Cell(10, $rowHeight, ':', 0, 0, 'L', false);
+				$pdf->Cell($cellWidth2, $rowHeight, $value, 0, 1, 'L', false);
+				$pdf->Ln(1);
+			}
+			$transactionTypes = array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer", "5" => "DD");
+			$i=1;
+			foreach ($transactionDetail as $transactionDetails) {
+				
+				printRow($pdf, "Fee Receipt Number ".$i, $transactionDetails->receipt_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+				printRow($pdf, "Payment Mode ", $transactionTypes[$transactionDetails->transaction_type], $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+				printRow($pdf, "Transaction Status ", 'Successful', $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+				printRow($pdf, "Transaction Date-Time ", date('d-m-Y', strtotime($transactionDetails->transaction_date)), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+				if ($transactionDetails->transaction_id != '') {
+					printRow($pdf, "Transaction ID ", $transactionDetails->transaction_id, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+					printRow($pdf, "Payment Ref No ", $transactionDetails->reference_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+				}
+				$i++;
+			}
+			foreach ($tableData as $row) {
+
+				printRow($pdf, $row[0], number_format($row[1], 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			}
+
+			printRow($pdf, "Amount In Rupees :", number_format($feemasterDetail->college_fee_demand, 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			$pdf->Ln(1);
+
+			// // Amount in Words Heading
+			$pdf->Ln(4);
+			$pdf->SetX(13);
+			$pdf->SetFont('Arial', 'B', 12);
+			$pdf->Cell(0, $cellHeight, 'Amount In Words:' . convert_number_to_words($feemasterDetail->college_fee_demand) . ' Only', 0, 1, 'L');
+
+			// Note and Receipt Date
+			$cellWidth = $pdf->GetPageWidth() - 20;
+			$rowHeight = 10;
+			$pdf->Ln(40);
+			$pdf->SetFont('Arial', '', 8);
+			$pdf->SetTextColor(0, 0, 0);
+			$pdf->SetX(12);
+			$pdf->Cell($cellWidth, $rowHeight, 'NOTE: THIS IS A COMPUTER GENERATED RECEIPT AND DOES NOT REQUIRED SIGNATURE.', 0, 1, 'L');
+			$pdf->SetX(12);
+			$pdf->Cell($cellWidth, $rowHeight, 'RECEIPT GENERATED DATE & TIME : ' . date('F j, Y h:i:s A'), 0, 1, 'L');
+
+			// $pdf->Output();
+			$fileName = $admissionDetails->student_name . '-Receipt.pdf';
+			$pdf->output($fileName, 'D');
 		} else {
 			redirect('admin/timeout');
 		}

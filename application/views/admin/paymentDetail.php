@@ -149,7 +149,16 @@
                                 $college_paid_fee = $college_fee_collection + $college_collection_amount;
                                 // $college_fee_balance = $college_fee - $this->admin_model->get_total_amount($fee->year, $student->usn, 0);
                                 $college_fee_balance = $college_fee_demand - $college_paid_fee;
-
+                                if($college_fee_balance==0)
+                                {
+                                    $down=anchor('admin/consolidatedfeereceipt/' . $encryptId . '/' . $fee->id, "<i class='mdi mdi-download-multiple'></i>", 'class="btn btn-success btn-sm"');
+                                }
+                                else
+                                {
+                                    
+                                    $down='';
+                                }
+                                $button = '<button id="getFeebreakup" data-masterid="' . $fee->id . '" class="btn btn-warning getFeebreakup   btn-sm"><i class="feather-eye"></i></button>';
 
                                 $voucher_btn = ($college_fee_balance || $corpus_fee_balance) ? anchor('admin/new_voucher/' . $encryptId . '/' . $fee->id, "Create Voucher", 'class="btn btn-danger btn-sm"') : "-";
                                 echo "<tr>";
@@ -158,9 +167,9 @@
                                 echo "<td class='text-right'>" . formatIndianCurrency($fee->corpus_fee_demand) . "</td>";
                                 echo "<td class='text-right'>" . formatIndianCurrency($paid_amount) . "</td>";
                                 echo "<td class='text-right'>" . formatIndianCurrency($corpus_fee_balance) . "</td>";
-                                echo "<td class='text-right'>" . formatIndianCurrency($college_fee_demand) . "</td>";
+                                echo "<td class='text-right'>" . formatIndianCurrency($college_fee_demand) . " " . $button . "</td>";
                                 echo "<td class='text-right'>" . formatIndianCurrency($college_paid_fee) . "</td>";
-                                echo "<td class='text-right'>" . formatIndianCurrency($college_fee_balance) . "</td>";
+                                echo "<td class='text-right'>" . formatIndianCurrency($college_fee_balance) . " ".$down."</td>";
                                 echo "<td class='text-right'>" . $voucher_btn . "</td>";
                                 echo "</tr>";
                             }
@@ -170,6 +179,11 @@
                 </div>
             </div> <!-- end card body-->
 
+        </div>
+        <div id="loader" style="display: none;">
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status"></div>
+            </div>
         </div>
 
         <div class="card">
@@ -183,7 +197,7 @@
                         $this->table->set_template($table_setup);
                         $print_fields = array('S.No', 'Voucher', 'Amount', 'Voucher Type', 'Date', 'Status', 'Comments', 'Remarks', 'Action');
                         $this->table->set_heading($print_fields);
-                        $statusTypes = array("0" => "<span class='text-danger'>Not Paid</span>", "1" => "<span class='text-success'>Paid</span>", "2" => "Failed", "3" => "<span class='text-warning'>Processing</span>");
+                        $statusTypes = array("0" => "<span class='text-danger'>Not Paid</span>", "1" => "<span class='text-success'>Paid</span>", "2" => "Failed", "3" => "<span class='text-warning'>Processing</span>", "4" => "<span class='text-warning'>Cancelled</span>");
                         $i = 1;
                         $total = 0;
                         foreach ($paymentDetail as $paymentDetails1) {
@@ -204,12 +218,13 @@
                                 }
 
 
-                                if ($paymentDetails1->status != 1) {
-                                    $button = anchor('admin/mark_paid/' . $encryptId . '/' . $paymentDetails1->id, "Mark as paid", 'class="btn btn-success btn-sm"');
+                                if ($paymentDetails1->status == 0) {
+                                    $button = '<button id="getvoucherDetails" data-voucherid="' . $paymentDetails1->id . '" class="btn btn-warning getVoucherDetails   btn-sm">View</button>';
+                                    $button .= anchor('admin/mark_paid/' . $encryptId . '/' . $paymentDetails1->id, "Mark as paid", 'class="btn btn-success btn-sm"');
                                     $button .= anchor('admin/update_voucher/' . $encryptId . '/' . $paymentDetails1->id, "Edit", 'class="btn btn-primary btn-sm"');
-                                    $button .= anchor('admin/voucher_delete/' . $encryptId . '/' . $paymentDetails1->id, "Delete", 'class="btn btn-danger btn-sm"');
+                                    $button .= '<button class="btn btn-danger btn-sm delete-btn" data-encryptid="' . $encryptId . '" data-paymentid="' . $paymentDetails1->id . '" data-toggle="modal" data-target="#deleteModal">Cancel</button>';
                                 } else {
-                                    $button = '-';
+                                    $button = '<button id="getvoucherDetails" data-voucherid="' . $paymentDetails1->id . '"class="btn btn-warning getVoucherDetails  btn-sm">View</button>';
                                 }
                             }
 
@@ -324,3 +339,156 @@
 
     </div>
 </div>
+<div class="modal fade" id="feeDetailsModal" tabindex="-1" role="dialog" aria-labelledby="feeDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feeDetailsModalLabel">Fee Break-up</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="feeDetailsContent">
+                <!-- AJAX content will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Reason for Cancellation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="deleteForm">
+                    <input type="hidden" name="encryptId" id="encryptId">
+                    <input type="hidden" name="paymentId" id="paymentId">
+                    <div class="form-group">
+                        <label for="deletionReason">Please provide the reason for cancellation:</label>
+                        <textarea class="form-control" id="deletionReason" name="reason" rows="3" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="confirmDelete">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        var base_url = '<?php echo base_url(); ?>';
+        $(document).on('click', '.getVoucherDetails', function() {
+
+            var feeStructureId = $(this).data('voucherid');
+            $('#loader').show();
+            $.ajax({
+                url: '<?= base_url("admin/view_voucher"); ?>',
+                type: 'POST',
+                data: {
+                    fee_structure_id: feeStructureId
+
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Inject the HTML into the modal body
+                        $('#feeDetailsContent').html(response.html);
+                        // Show the modal
+                        $('#feeDetailsModal').modal('show');
+                        $('#loader').hide();
+                    } else {
+                        alert('Error retrieving fee details.');
+                        $('#loader').hide();
+                    }
+                },
+                error: function() {
+                    alert('AJAX request failed.');
+                }
+            });
+        });
+        $(document).on('click', '.getFeebreakup', function() {
+
+            var feemasterId = $(this).data('masterid');
+            $('#loader').show();
+            $.ajax({
+                url: '<?= base_url("admin/getFeebreakup"); ?>',
+                type: 'POST',
+                data: {
+                    feemasterId: feemasterId
+
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // Inject the HTML into the modal body
+                        $('#feeDetailsContent').html(response.html);
+                        // Show the modal
+                        $('#feeDetailsModal').modal('show');
+                        $('#loader').hide();
+                    } else {
+                        alert('Error retrieving fee details.');
+                        $('#loader').hide();
+                    }
+                },
+                error: function() {
+                    alert('AJAX request failed.');
+                }
+            });
+        });
+        $(document).on('click', '.delete-btn', function() {
+            // Get data from the clicked button
+            const encryptId = $(this).data('encryptid');
+            const paymentId = $(this).data('paymentid');
+
+            // Set the values in the modal's hidden fields
+            $('#encryptId').val(encryptId);
+            $('#paymentId').val(paymentId);
+        });
+
+        $('#confirmDelete').on('click', function() {
+            event.preventDefault();
+            const encryptId = $('#encryptId').val();
+            const paymentId = $('#paymentId').val();
+            const reason = $('#deletionReason').val();
+            
+            if (reason.trim() === '') {
+                alert('Please provide a reason for deletion.');
+                return;
+            }
+
+            $.ajax({
+                  'type': 'POST',
+                  'url': base_url + 'admin/voucher_cancel',
+                  'data': {
+                    'encryptId': encryptId,
+                    'paymentId': paymentId,
+                    'reason': reason
+
+                  },
+                  'dataType': 'json',
+                  'cache': false,
+          
+                'success': function(response) {
+                  
+                    alert('Voucher cancelled successfully.');
+                    $('#deleteModal').modal('hide');
+                    location.reload(); 
+                },
+                error: function() {
+                    alert('Error occurred while cancelling the voucher.');
+                }
+            });
+        });
+
+
+
+    });
+</script>

@@ -123,7 +123,7 @@ class Student extends CI_Controller
 			// Fetch student details, including change_password column
 			$student = $this->admin_model->get_student_by_id($student_id);
 			$data['change_password'] = $student->change_password;
-			
+
 			$data['details'] = $this->admin_model->getDetailsbyfield($data['usn'], 'usn', 'students')->row();
 
 			$this->student_template->show('student/dashboard', $data);
@@ -315,7 +315,6 @@ class Student extends CI_Controller
 					$midkey = "hbjUTwdjLDwzsFErRVCE0y0skHic1z2B";
 					$returnurl = base_url() . 'student/callbackaided';
 					$page = 'student/payment_aided';
-
 				} else {
 
 					$mid = "CNBMLNDEGC";
@@ -323,11 +322,9 @@ class Student extends CI_Controller
 					$midkey = "WHjXW5WHk27mr50KetSh75vyapmO14IT";
 					$returnurl = base_url() . 'student/callback';
 					$page = 'student/payment';
-
 				}
 
 				$payment_mode = 0;
-
 			} else {
 				$mid = "CNBMLNDTRT";
 				$clientid = "cnbmlndtrt";
@@ -878,10 +875,10 @@ class Student extends CI_Controller
 			$paid_amount = $this->admin_model->paidfee('reg_no', $usn, 'transaction_status', '1', 'transactions');
 			$studentfeeDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
 
-
+			$feemasterDetail = $this->admin_model->getDetailsbyfield2('usn', $usn, 'year', $transactionDetails->year, 'fee_master')->row();
 			$fees = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
 			$balance_amount = $fees->final_fee - $paid_amount;
-			$voucherDetails = $this->admin_model->getDetails('payment_structure', $transactionDetails->payment_id)->row();
+			$voucherDetails = $this->admin_model->getDetails('payment_structure1', $transactionDetails->payment_id)->row();
 			$feeDetails = $this->admin_model->getDetailsbyfield($usn, 'usn', 'fee_master')->row();
 			$this->load->library('fpdf'); // Load library
 			ini_set("session.auto_start", 0);
@@ -910,7 +907,75 @@ class Student extends CI_Controller
 				$collegeName2 = "Under the auspices of the MTES (R),";
 				$collegeName3 = "PB NO. 21,SALAGAME ROAD HASSAN, KARNATAKA";
 				$contactInfo = "FEES RECEIPT - " . $admissionDetails->sub_quota;
-				$tableData[] = ['Tution Fee', $transactionDetails->amount];
+				if ($transactionDetails->payment_id != 0) {
+					$fees = [
+						'University Registration Fee' => $voucherDetails->renewal_of_registration_fees,
+						'E-Consortium Fee' => $voucherDetails->e_consortium_fees,
+						'Sport Fee' => $voucherDetails->students_sports_fees,
+						'Sports Development Fee' => $voucherDetails->students_sports_development_fees,
+						'Career Guidance Counseling Fee' => $voucherDetails->career_guideliness_and_counselling_fees,
+						'University Development Fund' => $voucherDetails->university_development_fees,
+						'Cultural Fee' => $voucherDetails->cultural_activities_fees,
+						'Teachers Development Fee' => $voucherDetails->teachers_development_fees,
+						'Student Development Fee' => $voucherDetails->student_development_fees,
+						'Indian Red Cross Membership Fee' => $voucherDetails->indian_red_cross_membership_fees,
+						'Women Cell Fee' => $voucherDetails->women_cell_fees,
+						'NSS Fee' => $voucherDetails->nss_fees,
+						'Teachers Flag Fee' => $voucherDetails->teachers_flag_fees
+					];
+					$university = 0;
+					foreach ($fees as $feeName => $feeValue) {
+						if ($feeValue > 0) {
+							$university += $feeValue;
+						}
+					}
+					if ($university > 0) {
+						$tableData[] = ["University Other Fee", $university];
+					}
+					if ($voucherDetails->college_other_fees > 0) {
+						$tableData[] = ['College Other Fee', $voucherDetails->college_other_fees];
+					}
+					if ($voucherDetails->exam_fee > 0) {
+						$tableData[] = ['Exam Fee', $voucherDetails->exam_fee];
+					}
+					if ($voucherDetails->tuition_fee > 0) {
+						$tableData[] = ['Tution Fee', $voucherDetails->tuition_fee];
+					}
+				} else {
+					$fees = [
+						'University Registration Fee' => $feemasterDetail->renewal_of_registration_fees,
+						'E-Consortium Fee' => $feemasterDetail->e_consortium_fees,
+						'Sport Fee' => $feemasterDetail->students_sports_fees,
+						'Sports Development Fee' => $feemasterDetail->students_sports_development_fees,
+						'Career Guidance Counseling Fee' => $feemasterDetail->career_guideliness_and_counselling_fees,
+						'University Development Fund' => $feemasterDetail->university_development_fees,
+						'Cultural Fee' => $feemasterDetail->cultural_activities_fees,
+						'Teachers Development Fee' => $feemasterDetail->teachers_development_fees,
+						'Student Development Fee' => $feemasterDetail->student_development_fees,
+						'Indian Red Cross Membership Fee' => $feemasterDetail->indian_red_cross_membership_fees,
+						'Women Cell Fee' => $feemasterDetail->women_cell_fees,
+						'NSS Fee' => $feemasterDetail->nss_fees,
+						'Teachers Flag Fee' => $feemasterDetail->teachers_flag_fees
+					];
+					$university = 0;
+					foreach ($fees as $feeName => $feeValue) {
+						if ($feeValue > 0) {
+							$university += $feeValue;
+						}
+					}
+					if ($university > 0) {
+						$tableData[] = ["University Other Fee", $university];
+					}
+					if ($feemasterDetail->college_other_fees > 0) {
+						$tableData[] = ['College Other Fee', $feemasterDetail->college_other_fees];
+					}
+					if ($feemasterDetail->exam_fee > 0) {
+						$tableData[] = ['Exam Fee', $feemasterDetail->exam_fee];
+					}
+					if ($feemasterDetail->tuition_fee > 0) {
+						$tableData[] = ['Tution Fee', $feemasterDetail->tuition_fee];
+					}
+				}
 			} else {
 
 				$collegeName = "MALNAD TECHNICAL EDUCATION SOCIETY (R)";
@@ -979,9 +1044,9 @@ class Student extends CI_Controller
 			printStudent($pdf, "Quota ", $admissionDetails->quota, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "College Code ", $admissionDetails->college_code, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "Gender ", $admissionDetails->gender, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			printStudent($pdf, "Year ", $feeDetails->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Year ", $transactionDetails->year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printStudent($pdf, "Ug ", 'Ug - ' . $admissionDetails->department, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			// printStudent($pdf, "Pg :", '', $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			printStudent($pdf, "Academic Year ", $feemasterDetail->academic_year, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			$pdf->Ln(4);
 
 			// Student Details Table
@@ -1008,18 +1073,22 @@ class Student extends CI_Controller
 				$pdf->Cell($cellWidth2, $rowHeight, $value, 0, 1, 'L', false);
 				$pdf->Ln(1);
 			}
-
+			$transactionTypes = array("1" => "Cash", "2" => "Bank DD", "3" => "Online Payment", "4" => "Bank Transfer", "5" => "DD");
 			printRow($pdf, "Fee Receipt Number ", $transactionDetails->receipt_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			printRow($pdf, "Transaction Status ", 'Successful', $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			if ($transactionDetails->transaction_id != '') {
+				printRow($pdf, "Transaction ID ", $transactionDetails->transaction_id, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+				printRow($pdf, "Payment Ref No ", $transactionDetails->reference_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			} else {
+				printRow($pdf, "Payment Mode ", $transactionTypes[$transactionDetails->transaction_type], $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
+			}
 			printRow($pdf, "Transaction Date-Time ", date('d-m-Y', strtotime($transactionDetails->transaction_date)), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			printRow($pdf, "Transaction ID ", $transactionDetails->transaction_id, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			printRow($pdf, "Payment Ref No ", $transactionDetails->reference_no, $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
-			if ($voucherDetails->type == 0) {
+			// if ($voucherDetails->type == 0) {
 				foreach ($tableData as $row) {
 
 					printRow($pdf, $row[0], number_format($row[1], 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 				}
-			}
+			// }
 			printRow($pdf, "Amount In Rupees :", number_format($transactionDetails->amount, 2), $pdf->GetY(), $rowHeight, $cellWidth1, $cellWidth2);
 			$pdf->Ln(1);
 
@@ -1032,7 +1101,7 @@ class Student extends CI_Controller
 			// Note and Receipt Date
 			$cellWidth = $pdf->GetPageWidth() - 20;
 			$rowHeight = 10;
-			$pdf->Ln(60);
+			$pdf->Ln(40);
 			$pdf->SetFont('Arial', '', 8);
 			$pdf->SetTextColor(0, 0, 0);
 			$pdf->SetX(12);
@@ -1072,11 +1141,8 @@ class Student extends CI_Controller
 			} else {
 				$prev = "MCE/2024-25/UA/";
 			}
-
 		}
 
 		return $prev . $cnt_number;
 	}
-
-
 }
