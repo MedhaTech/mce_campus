@@ -39,8 +39,8 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label class="form-label">Receipt Number(Tally):</label>
-                                <input type="text" class="form-control" placeholder="Enter Receipt Number(Tally)" id="receipt_no" name="receipt_no" value="">
+                                <label class="form-label">Receipt Number:</label>
+                                <input type="text" class="form-control" placeholder="Enter Receipt Number" id="receipt_no" name="receipt_no" value="<?php if ($voucherDetails->voucher_type == 1) { echo "MCE24-25/".$voucherDetails->id;}?>">
                                 <span class="text-danger"><?php echo form_error('receipt_no'); ?></span>
                             </div>
                         </div>

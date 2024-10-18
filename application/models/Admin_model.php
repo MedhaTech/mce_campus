@@ -1067,4 +1067,15 @@ class Admin_model extends CI_Model
     return $query->row(); // Return the student data as an object
   }
 
+  public function getStudenttrans($usn,$year)
+  {
+    $this->db->select('*');
+    $this->db->where('reg_no', $usn);
+    $this->db->where('year', $year);
+    $this->db->where('transaction_status', '1');
+    $this->db->where('payment_mode', '0');
+    $query = $this->db->get('transactions');
+    return $query->result();
+  }
+
 }
