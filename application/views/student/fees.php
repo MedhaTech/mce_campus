@@ -218,7 +218,7 @@
                                         // $college_fee_balance = $college_fee - $this->admin_model->get_total_amount($fee->year, $student->usn, 0);
                                         $college_fee_balance = $college_fee_demand - $college_paid_fee;
 
-                                        if ($college_fee_balance > 0) {
+                                        if ($college_fee_balance > 0 &&  $fee->college_fee_demand==$college_fee_balance) {
                                             $college_pay_btn = '<form action="' . base_url(htmlspecialchars($action)) . '" method="post" class="user">
                                             <input type="hidden" name="usn" id="usn" value="' . htmlspecialchars($student->usn) . '">
                                             <input type="hidden" name="name" id="name" value="' . htmlspecialchars($student->student_name) . '">
